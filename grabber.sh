@@ -144,11 +144,12 @@ cat /etc/resolv.conf 2> >(tee -a $ERROR_LOG) > $DIR/etc-resolv-conf.file \
 	&& echo "[OK]: Fichier etc-resolv-conf.file généré" > tee -a $SUCCES_LOG \
 	|| echo "[ECHEC]: Erreur à la génération de etc-resolv-conf.file" > tee -a $ERROR_LOG
 
-
 declare -a DEVICES
 mapfile -t DEVICES < <(lsblk -dn -o NAME |grep -v loop)
 
 declare -A FILES
+
+declare -A PARTITIONS_BY_DISK
 
 FILES=(
     "sources_list.file" "/etc/apt/sources.list*"
@@ -157,3 +158,30 @@ FILES=(
     "/etc-network-interfaces.file" "/etc/network/interfaces"
     "/etc-resolv-conf.file" "/etc/resolv.conf"
 )
+
+for disk in ${DEVICES[@]}; do
+    disk_path="/dev/$disk"
+    disk_parts=$(lsblk -nr -o PKNAME,PATH $disk_path |grep -vE "^\ " |cut -d " " -f 2) 
+    PARTITIONS_BY_DISK[$disk]="${disk_parts[@]}"
+done
+
+echo "Combien de disques sur l'ordinateur ? ${#DEVICES[@]}"
+
+echo "keys: ${!PARTITIONS_BY_DISK[@]}"
+echo "values: ${PARTITIONS_BY_DISK[@]}"
+
+echo "DEVICES=${DEVICES[@]}" > $DIR/status.log
+
+for disk in ${!PARTITIONS_BY_DISK[@]}; do
+    echo "PARTS_$disk=$(printf '%s ' ${PARTITIONS_BY_DISK[$disk]})"
+done
+
+treat_file() {
+    echo "Les arguments : $@"
+    echo "Argument 1 : $1"
+    echo "Argument 2 : $2"
+}
+
+for file in ${!FILES[@]}; do
+    treat_file $file ${FILES[$file]}
+done
