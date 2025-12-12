@@ -2,7 +2,7 @@
 
 # ==============================================================================
 	# Script : grabber.sh
-	# Auteur : IDIR Ramzi
+	# Author : IDIR Ramzi
 	# Date   : 2025-12-11
 	# Version: 0.1
 	#
@@ -13,107 +13,197 @@
 	# Usage :
 	#   ./grabber.sh
 	#
-	# Dépendances :
-	#   - droits <<write>> dans le dossier /opt/grabber et /var/log/grabber
+	# Dependancies :
+        #   - dmidecode
+        #   - inxi
+	#   - execute and write for grabber and his group in folders /opt/grabber and /var/log/grabber
 # ==============================================================================
 
-# Def des variables principales
-DATE=$(date +'%Y-%m-%d-%H%M%S')
-DIR=/opt/grabber
-DIR_USED=$DIR/$DATE
+#----- MAIN VARIABLES -----
+DATE=$(date +'%Y-%m-%d_%H%M%S')
+
+# Declare where to store grabber results
+WORKING_DIR="logs_$DATE"
+DIR=/opt/grabber/$WORKING_DIR
+
+# Declare the files to be written
 SUM="summary.txt"
-DIR_SUM=$DIR_USED/$SUM
-SUCCESS_LOG=$DIR_GRABBER/grabber-success.log
-ERROR_LOG=$DIR_GRABBER/grabber-error.log
+SUM_FILE=$DIR/$SUM
+SUCCESS_LOG=$DIR/grabber-success.log
+ERROR_LOG=$DIR/grabber-error.log
 
-mkdir $DIR_USED
-touch $DIR_SUM
+#----- PROGRAM -----
 
-# Texte de démarrage
-hello () {
-echo "++++++++++++++++++++" >> $DIR_SUM
-echo "Démarrage de grabber" >> $DIR_SUM
-echo "lancé le $DATE" >> $DIR_SUM
-echo "++++++++++++++++++++" >> $DIR_SUM
-echo "" >> $DIR_SUM
+# Init actual log
+mkdir $DIR
+touch $SUM_FILE
+
+# Starting text for logs
+echo -e "Logs of $DATE :\n" > $SUCCESS_LOG
+echo -e "Logs of $DATE :\n" > $ERROR_LOG
+
+check_dependencies () {
+    echo -n "Checking dependencies... "
+
+    deps=0
+    for name in inxi dmidecode; do
+        if ! command -v "$name" >/dev/null 2>&1; then
+             echo -e "\n$name needs to be installed. Use: sudo apt-get install $name"
+             deps=1
+        fi
+    done
+
+    if [[ $deps -ne 1 ]]; then
+        echo "OK"
+    else
+        echo -e "\nInstall the above packages and rerun this script"
+	exit 1;
+    fi
 }
 
-mapfile -t DEVICES < <(lsblk -dn -o NAME |grep -v loop)
+# Starting text for summary
+hello () {
+    echo "+++++++++++++++++++++++++" >> $SUM_FILE
+    echo "Grabber startin'" >> $SUM_FILE
+    echo "launched the $DATE" >> $SUM_FILE
+    echo "+++++++++++++++++++++++++" >> $SUM_FILE
+    echo ""
+}
 
+#--------- Tables associates source file to a file inside grabber folder ---------
+
+#-------- ARRAYS -----------------------------
+# FILES arrays
 declare -A FILES
 
-declare -A PARTITIONS_BY_DISK
-
 FILES=(
-    "sources_list.file" "/etc/apt/sources.list*"
-    "passwd.file" "/etc/passwd"
-    "group.file" "/etc/group"
-    "/etc-network-interfaces.file" "/etc/network/interfaces"
-    "/etc-resolv-conf.file" "/etc/resolv.conf"
+    ["sources_list.file"]="/etc/apt/sources.list*"
+    ["passwd.file"]="/etc/passwd"
+    ["group.file"]="/etc/group"
+    ["etc-network-interfaces.file"]="/etc/network/interfaces"
+    ["etc-resolv-conf.file"]="/etc/resolv.conf"
 )
 
-for disk in ${DEVICES[@]}; do
-    disk_path="/dev/$disk"
-    disk_parts=$(lsblk -nr -o PKNAME,PATH $disk_path |grep -vE "^\ " |cut -d " " -f 2)
-    PARTITIONS_BY_DISK[$disk]="${disk_parts[@]}"
+# CMD arrays
+declare -A CMD
+
+CMD=(
+	["systemd-analyze.cmd"]="systemd-analyze"
+	["systemd-blame.cmd"]="systemd-analyze blame"
+	["lspci.cmd"]="lspci"
+	["lsmem.cmd"]="lsmem --output-all"
+	["lscpu.cmd"]="lscpu"
+	["lsusb.cmd"]="lsusb"
+	["apt-installed.cmd"]="apt list --installed"
+)
+#----------------------------------------------
+
+# Call arrays and store in files with same command name then write if success or not in proper log file
+treat_file() {
+    cat $2 | grep '^#' | grep '^$' 2> >(tee -a $ERROR_LOG) > $DIR/$1
+    if [ $? -eq 0 ]; then
+        echo "[OK]: Fichier $1 généré" >> $SUCCESS_LOG
+    else
+        echo "[ECHEC]: Erreur à la génération de $1 => Code de sortie $?" >> $ERROR_LOG
+    fi
+}
+
+for file in "${!FILES[@]}"; do
+        treat_file $file "${FILES[$file]}"
 done
 
-#echo "Combien de disques sur l'ordinateur ? ${#DEVICES[@]}"
+treat_cmd() {
+    eval "$2" > $DIR/$1 2> >(tee -a $ERROR_LOG)
+    if [ $? -eq 0 ]; then
+    	echo "[OK]: Fichier $1 généré avec la commande $2" >> $SUCCESS_LOG
+    else
+    	echo "[ECHEC]: Erreur à la génération de $1 => Code de sortie $?" >> $ERROR_LOG
+    fi
+}
 
-#echo "keys: ${!PARTITIONS_BY_DISK[@]}"
-#echo "values: ${PARTITIONS_BY_DISK[@]}"
-
-#echo "DEVICES=${DEVICES[@]}" > $DIR/status.log
-
-for disk in ${!PARTITIONS_BY_DISK[@]}; do
-    echo "PARTS_$disk=$(printf '%s ' ${PARTITIONS_BY_DISK[$disk]})"
+for cmd in "${!CMD[@]}"; do
+	treat_cmd "$cmd" "${CMD[$cmd]}"
 done
+###############################################
 
-#treat_file() {
-#    cat $2 | grep '^#' | grep '^$' > $1
-#}
+############ HARDWARE FETCHER #################
 
-#for file in ${!FILES[@]}; do
-#    treat_file $file "${FILES[$file]}"
-#done
-
-# HARDWARE
+#------------ CPU ----------------
 CPU_MODEL=$(lscpu -eMODELNAME | tail -n1)
 CPU_ID=$(sudo dmidecode -t processor | grep ID | cut -d: -f42 | sed 's/^ *//')
+#---------------------------------
+
+#------------ RAM ----------------
 RAM_SIZE=$(lsmem | grep 'Mémoire partagée' | cut -d: -f2 | sed 's/\ //g')
 RAM_GEN=$(sudo dmidecode -t memory | grep Type: | grep -v Unknown | tail -n1 | cut -d: -f2 | sed 's/\ //')
+#---------------------------------
+
+#------------ STORAGE ------------
+
+disks_partitions(){
+    declare -a DEVICES
+    mapfile -t DEVICES < <(lsblk -dn -o NAME |grep -v loop)
+
+    declare -A PARTITIONS_BY_DISK
+
+    for disk in ${DEVICES[@]}; do
+        disk_path="/dev/$disk"
+        disk_parts=$(lsblk -nr -o PKNAME,PATH $disk_path |grep -vE "^\ " |cut -d\  -f 2)
+        PARTITIONS_BY_DISK[$disk]="${disk_parts[@]}"
+    done
+
+    echo "DISKS=${DEVICES[@]}" >> $SUM_FILE
+
+    echo "Partitions in each disks: " >> $SUM_FILE
+
+    for disk in ${!PARTITIONS_BY_DISK[@]}; do
+        echo "PARTS_$disk=$(printf '%s ' ${PARTITIONS_BY_DISK[$disk]})" >> $SUM_FILE
+    done
+}
+
 SIZES=$(lsblk -dnb | grep -v loop | grep -v boot | tr -s " " | cut -d \  -f4)
 STOCKAGE_TOTAL=0
 
-for SIZE in ${sizes[@]}; do
-    STOCKAGE_TOTAL+=$SIZE
+for SIZE in ${SIZES[@]}; do
+    TOTAL_STORAGE+=$SIZE
 done
 
-STOCKAGE_TOTAL=$(numfmt --to iec $STOCKAGE_TOTAL)
+TOTAL_STORAGE=$(numfmt --to iec $TOTAL_STORAGE)
+#---------------------------------
 
-# SOFTWARE
+# Compile Hardware informations
+hardware() {
+    echo "[HARDWARE]" >> $SUM_FILE
+    echo "CPU_MODEL = $CPU_MODEL" >> $SUM_FILE
+    echo "CPU_ID = $CPU_ID" >> $SUM_FILE
+    echo "RAM_SIZE = $RAM_SIZE" >> $SUM_FILE
+    echo "RAM_GEN = $RAM_GEN" >> $SUM_FILE
+    disks_partitions
+    echo "STORAGE = $TOTAL_STORAGE" >> $SUM_FILE
+    echo "" >> $SUM_FILE
+}
+
+#-------------------------
+
+#----- SOFTWARE PART -----
 OS=$(lsb_release -a | grep Description | cut -f2)
 ARCH=$(uname -a | cut -d' ' -f10)
 KERNEL=$(uname -r)
 
-hardware() {
-    echo "[HARDWARE]" > $DIR_SUM
-    echo "CPU_MODEL = $CPU_MODEL" >> $DIR_SUM
-    echo "CPU_ID = $CPU_ID" >> $DIR_SUM
-    echo "RAM_SIZE = $RAM_SIZE" >> $DIR_SUM
-    echo "RAM_GEN = $RAM_GEN" >> $DIR_SUM
-    echo "STOCKAGE = $STOCKAGE_TOTAL" >> $DIR_SUM
-}
-
+# Compile Software informations
 software() {
-    echo "[SOFTWARE]" > $DIR_SUM
-    echo "OS = $OS" >> $DIR_SUM
-    echo "ARCHITECTURE = $ARCH" >> $DIR_SUM
-    echo "KERNEL = $KERNEL" >> $DIR_SUM
-    echo "DESKTOP = $XDG_CURRENT_DESKTOP" >> $DIR_SUM
-    echo "WINDOW MANAGER = $XDG_SESSION_TYPE" >> $DIR_SUM
+    echo "[SOFTWARE]" >> $SUM_FILE
+    echo "OS = $OS" >> $SUM_FILE
+    echo "ARCHITECTURE = $ARCH" >> $SUM_FILE
+    echo "KERNEL = $KERNEL" >> $SUM_FILE
+    echo "DESKTOP = $XDG_CURRENT_DESKTOP" >> $SUM_FILE
+    echo "WINDOW MANAGER = $XDG_SESSION_TYPE" >> $SUM_FILE
 }
 
+#-------------------------
+
+# Making the summary
+check_dependencies
 hello
 hardware
 software
