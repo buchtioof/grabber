@@ -4,18 +4,18 @@
 	# Script : grabber.sh
 	# Author : IDIR Ramzi
 	# Date   : 2025-12-11
-	# Version: 0.1
+	# Version: 0.2
 	#
 	# Description :
-	#   Grabber est un script bash qui récup toutes les infos
-	#   hardware et software de l'ordinateur hôte
+	#   Grabber is a bash program that fetch some informations 
+    #   of the computer like memory, storage or cpu for exemple.
 	#
 	# Usage :
 	#   ./grabber.sh
 	#
 	# Dependancies :
-        #   - dmidecode
-        #   - inxi
+    #   - dmidecode
+    #   - inxi
 	#   - execute and write for grabber and his group in folders /opt/grabber and /var/log/grabber
 # ==============================================================================
 
@@ -56,7 +56,7 @@ check_dependencies () {
     if [[ $deps -ne 1 ]]; then
         echo "OK"
     else
-        echo -e "\nInstall the above packages and rerun this script"
+        echo -e "\nInstall the packages and rerun this script"
 	exit 1;
     fi
 }
@@ -127,16 +127,25 @@ done
 ###############################################
 
 ############ HARDWARE FETCHER #################
-
 #------------ CPU ----------------
-CPU_MODEL=$(lscpu -eMODELNAME | tail -n1)
-CPU_ID=$(sudo dmidecode -t processor | grep ID | cut -d: -f42 | sed 's/^ *//')
+CPU_MODEL=$(lscpu -eMODELNAME | tail -n1 | cut -d' ' -f1,2,3,4)
+CPU_ID=$(sudo dmidecode -t processor | grep ID | cut -d: -f2 | sed 's/^ *//')
+CPU_FREQUENCY_MIN=$(lscpu | grep MHz | cut -d: -f2 | sed -n '3p' | tr -s " " | sed 's/\ //' | cut -d, -f1)
+CPU_FREQUENCY_CUR=$(sudo dmidecode | grep "MHz" | cut -d: -f2 | sed -n '3p' | sed 's/\ //')
+CPU_FREQUENCY_MAX=$(sudo dmidecode | grep "MHz" | cut -d: -f2 | sed -n '2p' | sed 's/\ //')
+CPU_CORES_NUMBER=$(inxi | grep core | cut -d' ' -f2 | sed 's/-core//')
+CPU_THREADS_NUMBER=$(nproc)
 #---------------------------------
 
 #------------ RAM ----------------
-RAM_SIZE=$(lsmem | grep 'Mémoire partagée' | cut -d: -f2 | sed 's/\ //g')
+RAM_SIZE=$(lsmem | grep "Mémoire partagée" | cut -d: -f2 | sed 's/\ *//')
 RAM_GEN=$(sudo dmidecode -t memory | grep Type: | grep -v Unknown | tail -n1 | cut -d: -f2 | sed 's/\ //')
+RAM_NUMBER=$(sudo dmidecode --type memory | grep 'Rank' | wc -l)
+RAM_SLOTS_NUMBER=$(sudo dmidecode --type memory | grep "Number Of Devices" | cut -d: -f2 | sed 's/\ //')
 #---------------------------------
+
+#------------ COMPONENTS ---------
+MB_SERIAL=$(sudo dmidecode | grep -A 4 "Base Board" | tail -n1 | cut -d: -f2 | sed 's/\ //')
 
 #------------ STORAGE ------------
 
@@ -174,10 +183,37 @@ TOTAL_STORAGE=$(numfmt --to iec $TOTAL_STORAGE)
 # Compile Hardware informations
 hardware() {
     echo "[HARDWARE]" >> $SUM_FILE
+    echo "" >> $SUM_FILE
+    echo "MB_SERIAL = $MB_SERIAL" >> $SUM_FILE
+    echo "" >> $SUM_FILE
+    echo "--- CPU DATA ---" >> $SUM_FILE
     echo "CPU_MODEL = $CPU_MODEL" >> $SUM_FILE
     echo "CPU_ID = $CPU_ID" >> $SUM_FILE
+    echo "CPU_CORES_NUMBER=$CPU_CORES_NUMBER" >> $SUM_FILE
+	echo "CPU_THREADS_NUMBER=$CPU_THREADS_NUMBER" >> $SUM_FILE
+	echo "CPU_FREQUENCY_MIN=$CPU_FREQUENCY_MIN" >> $SUM_FILE
+	echo "CPU_FREQUENCY_CUR=$CPU_FREQUENCY_CUR" >> $SUM_FILE
+	echo "CPU_FREQUENCY_MAX=$CPU_FREQUENCY_MAX" >> $SUM_FILE
+    echo "" >> $SUM_FILE
+    echo "--- GPU DATA ---" >> $SUM_FILE
+    echo "GPU_MODEL=$GPU_MODEL" >> $SUM_FILE
+    echo "" >> $SUM_FILE
+    echo "--- RAM DATA ---" >> $SUM_FILE
     echo "RAM_SIZE = $RAM_SIZE" >> $SUM_FILE
     echo "RAM_GEN = $RAM_GEN" >> $SUM_FILE
+    echo "RAM_SLOTS_NUMBER=$RAM_SLOTS_NUMBER" >> $SUM_FILE
+	echo "RAM_NUMBER=$RAM_NUMBER" >> $SUM_FILE
+    for i in $(seq 1 $RAM_SLOTS_NUMBER); do
+		R_SIZE=$(sudo dmidecode --type=memory | grep "Size:" | grep -v "Volatile" | grep -v "Cache" | grep -v "Logical" | cut -d: -f2 | sed -n "${i}p" | sed 's/\ //')
+		R_SLOT=$i
+		R_FREQ=$(sudo dmidecode --type=memory | grep Speed | grep -v "Memory" | cut -d: -f2 | sed -n "${i}p" | sed 's/\ //')
+
+		echo "RAM_${i}_SIZE=$R_SIZE" >> $SUM_FILE
+		echo "RAM_${i}_SLOT=$R_SLOT" >> $SUM_FILE
+		echo "RAM_${i}_FREQ=$R_FREQ" >> $SUM_FILE
+	done
+    echo "" >> $SUM_FILE
+    echo "--- STORAGE DATA ---" >> $SUM_FILE
     disks_partitions
     echo "STORAGE = $TOTAL_STORAGE" >> $SUM_FILE
     echo "" >> $SUM_FILE
@@ -193,6 +229,7 @@ KERNEL=$(uname -r)
 # Compile Software informations
 software() {
     echo "[SOFTWARE]" >> $SUM_FILE
+    echo "" >> $SUM_FILE
     echo "OS = $OS" >> $SUM_FILE
     echo "ARCHITECTURE = $ARCH" >> $SUM_FILE
     echo "KERNEL = $KERNEL" >> $SUM_FILE
@@ -207,3 +244,4 @@ check_dependencies
 hello
 hardware
 software
+echo "End of grabber, salam!"
