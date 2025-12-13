@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 
 # ==============================================================================
 	# Script : grabber.sh
@@ -8,14 +9,14 @@
 	#
 	# Description :
 	#   Grabber is a bash program that fetch some informations 
-    #   of the computer like memory, storage or cpu for exemple.
+	#   of the computer like memory, storage or cpu for exemple.
 	#
 	# Usage :
 	#   ./grabber.sh
 	#
 	# Dependancies :
-    #   - dmidecode
-    #   - inxi
+	#   - dmidecode
+	#   - inxi
 	#   - execute and write for grabber and his group in folders /opt/grabber and /var/log/grabber
 # ==============================================================================
 
@@ -100,16 +101,16 @@ CMD=(
 
 # Call arrays and store in files with same command name then write if success or not in proper log file
 treat_file() {
-    cat $2 | grep '^#' | grep '^$' 2> >(tee -a $ERROR_LOG) > $DIR/$1
-    if [ $? -eq 0 ]; then
-        echo "[OK]: Fichier $1 généré" >> $SUCCESS_LOG
-    else
-        echo "[ECHEC]: Erreur à la génération de $1 => Code de sortie $?" >> $ERROR_LOG
-    fi
+	cat $2 | grep -v '^#' | grep -v '^$' > $1 
+	if [ $? -eq 0 ]; then
+		echo "[OK]: Fichier $1 généré" >> $SUCCESS_LOG
+	else
+		echo "[ECHEC]: Erreur à la génération de $1 => Code de sortie $?" >> $ERROR_LOG
+	fi
 }
 
 for file in "${!FILES[@]}"; do
-        treat_file $file "${FILES[$file]}"
+	treat_file $file "${FILES[$file]}"
 done
 
 treat_cmd() {
@@ -184,35 +185,41 @@ TOTAL_STORAGE=$(numfmt --to iec $TOTAL_STORAGE)
 hardware() {
     echo "[HARDWARE]" >> $SUM_FILE
     echo "" >> $SUM_FILE
+
     echo "MB_SERIAL = $MB_SERIAL" >> $SUM_FILE
     echo "" >> $SUM_FILE
+
     echo "--- CPU DATA ---" >> $SUM_FILE
     echo "CPU_MODEL = $CPU_MODEL" >> $SUM_FILE
     echo "CPU_ID = $CPU_ID" >> $SUM_FILE
     echo "CPU_CORES_NUMBER=$CPU_CORES_NUMBER" >> $SUM_FILE
-	echo "CPU_THREADS_NUMBER=$CPU_THREADS_NUMBER" >> $SUM_FILE
-	echo "CPU_FREQUENCY_MIN=$CPU_FREQUENCY_MIN" >> $SUM_FILE
-	echo "CPU_FREQUENCY_CUR=$CPU_FREQUENCY_CUR" >> $SUM_FILE
-	echo "CPU_FREQUENCY_MAX=$CPU_FREQUENCY_MAX" >> $SUM_FILE
+    echo "CPU_THREADS_NUMBER=$CPU_THREADS_NUMBER" >> $SUM_FILE
+    echo "CPU_FREQUENCY_MIN=$CPU_FREQUENCY_MIN" >> $SUM_FILE
+    echo "CPU_FREQUENCY_CUR=$CPU_FREQUENCY_CUR" >> $SUM_FILE
+    echo "CPU_FREQUENCY_MAX=$CPU_FREQUENCY_MAX" >> $SUM_FILE
     echo "" >> $SUM_FILE
+
     echo "--- GPU DATA ---" >> $SUM_FILE
     echo "GPU_MODEL=$GPU_MODEL" >> $SUM_FILE
     echo "" >> $SUM_FILE
+
     echo "--- RAM DATA ---" >> $SUM_FILE
     echo "RAM_SIZE = $RAM_SIZE" >> $SUM_FILE
     echo "RAM_GEN = $RAM_GEN" >> $SUM_FILE
     echo "RAM_SLOTS_NUMBER=$RAM_SLOTS_NUMBER" >> $SUM_FILE
-	echo "RAM_NUMBER=$RAM_NUMBER" >> $SUM_FILE
-    for i in $(seq 1 $RAM_SLOTS_NUMBER); do
-		R_SIZE=$(sudo dmidecode --type=memory | grep "Size:" | grep -v "Volatile" | grep -v "Cache" | grep -v "Logical" | cut -d: -f2 | sed -n "${i}p" | sed 's/\ //')
-		R_SLOT=$i
-		R_FREQ=$(sudo dmidecode --type=memory | grep Speed | grep -v "Memory" | cut -d: -f2 | sed -n "${i}p" | sed 's/\ //')
+    echo "RAM_NUMBER=$RAM_NUMBER" >> $SUM_FILE
 
-		echo "RAM_${i}_SIZE=$R_SIZE" >> $SUM_FILE
-		echo "RAM_${i}_SLOT=$R_SLOT" >> $SUM_FILE
-		echo "RAM_${i}_FREQ=$R_FREQ" >> $SUM_FILE
-	done
+    for i in $(seq 1 $RAM_SLOTS_NUMBER); do
+	R_SIZE=$(sudo dmidecode --type=memory | grep "Size:" | grep -v "Volatile" | grep -v "Cache" | grep -v "Logical" | cut -d: -f2 | sed -n "${i}p" | sed 's/\ //')
+	R_SLOT=$i
+	R_FREQ=$(sudo dmidecode --type=memory | grep Speed | grep -v "Memory" | cut -d: -f2 | sed -n "${i}p" | sed 's/\ //')
+
+	echo "RAM_${i}_SIZE=$R_SIZE" >> $SUM_FILE
+	echo "RAM_${i}_SLOT=$R_SLOT" >> $SUM_FILE
+	echo "RAM_${i}_FREQ=$R_FREQ" >> $SUM_FILE
+    done
     echo "" >> $SUM_FILE
+
     echo "--- STORAGE DATA ---" >> $SUM_FILE
     disks_partitions
     echo "STORAGE = $TOTAL_STORAGE" >> $SUM_FILE
