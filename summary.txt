@@ -1,6 +1,0 @@
-[SOFTWARE]
-OS = Debian GNU/Linux 13 (trixie)
-ARCHITECTURE = GNU/Linux
-KERNEL = 6.12.57+deb13-arm64
-DESKTOP = GNOME
-WINDOW MANAGER = wayland
