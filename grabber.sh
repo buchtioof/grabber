@@ -1,9 +1,10 @@
 #!/bin/bash
 export PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
+export LC_ALL=C
+export LANG=C
 
 # ==============================================================================
 	# Script : grabber.sh
-	# Author : IDIR Ramzi
 	# Date   : 2025-12-11
 	# Version: 0.2
 	#
@@ -17,59 +18,64 @@ export PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 	# Dependancies :
 	#   - dmidecode
 	#   - inxi
-	#   - execute and write for grabber and his group in folders /opt/grabber and /var/log/grabber
 # ==============================================================================
+
+echo ""
+echo "==============================="
+echo "Welcome to grabber!"
+
+#----- CHECK IF SUDO -----
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run as root to be able to use superuser commands as dmidecode -> sudo ./grabber.sh"
+    echo "==============================="
+    exit 1
+fi
+
+###### CHECK DEPENDENCIES INSTALLED ############
+echo -n "Checking dependencies... "
+
+deps=0
+
+for name in inxi dmidecode; do
+    if ! command -v "$name" >/dev/null 2>&1; then
+         echo -e "\n$name needs to be installed. Use: sudo apt-get install $name"
+         deps=1
+    fi
+done
+
+if [[ $deps -ne 1 ]]; then
+    echo "All set!"
+else
+    echo -e "\nInstall the packages and rerun this script"
+    exit 1;
+fi
+
+echo "It's grabbin time!"
+echo "==============================="
+echo ""
 
 #----- MAIN VARIABLES -----
 DATE=$(date +'%Y-%m-%d_%H%M%S')
 
 # Declare where to store grabber results
-WORKING_DIR="logs_$DATE"
-DIR=/opt/grabber/$WORKING_DIR
+NAME_DIR="logs_$DATE"
+WORKING_DIR="$HOME/grabber/$NAME_DIR"
+mkdir $WORKING_DIR
 
 # Declare the files to be written
-SUM="summary.txt"
-SUM_FILE=$DIR/$SUM
+SUM_FILE=$WORKING_DIR/summary.txt
 SUCCESS_LOG=$DIR/grabber-success.log
 ERROR_LOG=$DIR/grabber-error.log
 
 #----- PROGRAM -----
 
 # Init actual log
-mkdir $DIR
-touch $SUM_FILE
+
+touch $SUM_FILE $SUCCESS_LOG $ERROR_LOG
 
 # Starting text for logs
 echo -e "Logs of $DATE :\n" > $SUCCESS_LOG
 echo -e "Logs of $DATE :\n" > $ERROR_LOG
-
-check_dependencies () {
-    echo -n "Checking dependencies... "
-
-    deps=0
-    for name in inxi dmidecode; do
-        if ! command -v "$name" >/dev/null 2>&1; then
-             echo -e "\n$name needs to be installed. Use: sudo apt-get install $name"
-             deps=1
-        fi
-    done
-
-    if [[ $deps -ne 1 ]]; then
-        echo "OK"
-    else
-        echo -e "\nInstall the packages and rerun this script"
-	exit 1;
-    fi
-}
-
-# Starting text for summary
-hello () {
-    echo "+++++++++++++++++++++++++" >> $SUM_FILE
-    echo "Grabber startin'" >> $SUM_FILE
-    echo "launched the $DATE" >> $SUM_FILE
-    echo "+++++++++++++++++++++++++" >> $SUM_FILE
-    echo ""
-}
 
 #--------- Tables associates source file to a file inside grabber folder ---------
 
@@ -103,9 +109,9 @@ CMD=(
 treat_file() {
 	cat $2 | grep -v '^#' | grep -v '^$' > $1 
 	if [ $? -eq 0 ]; then
-		echo "[OK]: Fichier $1 généré" >> $SUCCESS_LOG
+		echo "[OK]: Fichier $1 g\C3\A9n\C3\A9r\C3\A9" >> $SUCCESS_LOG
 	else
-		echo "[ECHEC]: Erreur à la génération de $1 => Code de sortie $?" >> $ERROR_LOG
+		echo "[ECHEC]: Erreur \C3\A0 la g\C3\A9n\C3\A9ration de $1 => Code de sortie $?" >> $ERROR_LOG
 	fi
 }
 
@@ -116,9 +122,9 @@ done
 treat_cmd() {
     eval "$2" > $DIR/$1 2> >(tee -a $ERROR_LOG)
     if [ $? -eq 0 ]; then
-    	echo "[OK]: Fichier $1 généré avec la commande $2" >> $SUCCESS_LOG
+    	echo "[OK]: Fichier $1 g\C3\A9n\C3\A9r\C3\A9 avec la commande $2" >> $SUCCESS_LOG
     else
-    	echo "[ECHEC]: Erreur à la génération de $1 => Code de sortie $?" >> $ERROR_LOG
+    	echo "[ECHEC]: Erreur \C3\A0 la g\C3\A9n\C3\A9ration de $1 => Code de sortie $?" >> $ERROR_LOG
     fi
 }
 
@@ -127,10 +133,20 @@ for cmd in "${!CMD[@]}"; do
 done
 ###############################################
 
+############ WRITING THE SUMMARY #################
+# Starting text for summary
+hello () {
+    echo "+++++++++++++++++++++++++" >> $SUM_FILE
+    echo "Grabber startin'" >> $SUM_FILE
+    echo "launched the $DATE" >> $SUM_FILE
+    echo "+++++++++++++++++++++++++" >> $SUM_FILE
+    echo "" >> $SUM_FILE
+}
+
 ############ HARDWARE FETCHER #################
 #------------ CPU ----------------
 CPU_MODEL=$(lscpu -eMODELNAME | tail -n1 | cut -d' ' -f1,2,3,4)
-CPU_ID=$(sudo dmidecode -t processor | grep ID | cut -d: -f2 | sed 's/^ *//')
+CPU_ID=$(sudo dmidecode -t processor | grep ID | cut -d: -f2 | sed 's/^ *//' | xarg)
 CPU_FREQUENCY_MIN=$(lscpu | grep MHz | cut -d: -f2 | sed -n '3p' | tr -s " " | sed 's/\ //' | cut -d, -f1)
 CPU_FREQUENCY_CUR=$(sudo dmidecode | grep "MHz" | cut -d: -f2 | sed -n '3p' | sed 's/\ //')
 CPU_FREQUENCY_MAX=$(sudo dmidecode | grep "MHz" | cut -d: -f2 | sed -n '2p' | sed 's/\ //')
@@ -139,7 +155,7 @@ CPU_THREADS_NUMBER=$(nproc)
 #---------------------------------
 
 #------------ RAM ----------------
-RAM_SIZE=$(lsmem | grep "Mémoire partagée" | cut -d: -f2 | sed 's/\ *//')
+RAM_SIZE=$(lsmem | grep "M\C3\A9moire partag\C3\A9e" | cut -d: -f2 | sed 's/\ *//')
 RAM_GEN=$(sudo dmidecode -t memory | grep Type: | grep -v Unknown | tail -n1 | cut -d: -f2 | sed 's/\ //')
 RAM_NUMBER=$(sudo dmidecode --type memory | grep 'Rank' | wc -l)
 RAM_SLOTS_NUMBER=$(sudo dmidecode --type memory | grep "Number Of Devices" | cut -d: -f2 | sed 's/\ //')
@@ -184,8 +200,6 @@ TOTAL_STORAGE=$(numfmt --to iec $TOTAL_STORAGE)
 # Compile Hardware informations
 hardware() {
     echo "[HARDWARE]" >> $SUM_FILE
-    echo "" >> $SUM_FILE
-
     echo "MB_SERIAL = $MB_SERIAL" >> $SUM_FILE
     echo "" >> $SUM_FILE
 
@@ -226,29 +240,28 @@ hardware() {
     echo "" >> $SUM_FILE
 }
 
-#-------------------------
+################################################
 
-#----- SOFTWARE PART -----
+######## SOFTWARE PART #########################
 OS=$(lsb_release -a | grep Description | cut -f2)
 ARCH=$(uname -a | cut -d' ' -f10)
 KERNEL=$(uname -r)
 
 # Compile Software informations
 software() {
-    echo "[SOFTWARE]" >> $SUM_FILE
-    echo "" >> $SUM_FILE
-    echo "OS = $OS" >> $SUM_FILE
-    echo "ARCHITECTURE = $ARCH" >> $SUM_FILE
-    echo "KERNEL = $KERNEL" >> $SUM_FILE
-    echo "DESKTOP = $XDG_CURRENT_DESKTOP" >> $SUM_FILE
-    echo "WINDOW MANAGER = $XDG_SESSION_TYPE" >> $SUM_FILE
-}
+    echo "[SOFTWARE]"
+    echo "OS = $OS"
+    echo "ARCHITECTURE = $ARCH"
+    echo "KERNEL = $KERNEL"
+    echo "DESKTOP = $XDG_CURRENT_DESKTOP"
+    echo "WINDOW MANAGER = $XDG_SESSION_TYPE"
+} >> $SUM_FILE
 
-#-------------------------
+###############################################
 
 # Making the summary
-check_dependencies
 hello
 hardware
 software
-echo "End of grabber, salam!"
+
+echo "Grabber has complete his mission! Find every logs saved in your home repository /grabber folder."
