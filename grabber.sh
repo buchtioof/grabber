@@ -33,21 +33,19 @@ fi
 
 ###### CHECK DEPENDENCIES INSTALLED ############
 echo -n "Checking dependencies... "
+REQUIRED_CMDS=(inxi dmidecode lscpu lsblk numfmt)
+MISSING=()
 
-deps=0
-
-for name in inxi dmidecode; do
-    if ! command -v "$name" >/dev/null 2>&1; then
-         echo -e "\n$name needs to be installed. Use: sudo apt-get install $name"
-         deps=1
-    fi
+for cmd in "${REQUIRED_CMDS[@]}"; do
+    command -v "$cmd" >/dev/null 2>&1 || MISSING+=("$cmd")
 done
-
-if [[ $deps -ne 1 ]]; then
-    echo "All set!"
+if (( ${#MISSING[@]} > 0 )); then
+    echo "Missing dependencies:"
+    printf ' - %s\n' "${MISSING[@]}"
+    echo "Install with: sudo apt install ${MISSING[*]}"
+    exit 1
 else
-    echo -e "\nInstall the packages and rerun this script"
-    exit 1;
+    echo "All set!"
 fi
 
 echo "It's grabbin time!"
@@ -57,15 +55,21 @@ echo ""
 #----- MAIN VARIABLES -----
 DATE=$(date +'%Y-%m-%d_%H%M%S')
 
+# D\C3\A9terminer l'utilisateur r\C3\A9el (celui qui a lanc\C3\A9 sudo)
+REAL_USER="${SUDO_USER:-$USER}"
+
+# R\C3\A9cup\C3\A9rer son HOME depuis /etc/passwd (fiable)
+REAL_HOME="$(getent passwd "$REAL_USER" | cut -d: -f6)"
+
 # Declare where to store grabber results
 NAME_DIR="logs_$DATE"
-WORKING_DIR="$HOME/grabber/$NAME_DIR"
-mkdir $WORKING_DIR
+WORKING_DIR="$REAL_HOME/grabber/$NAME_DIR"
+mkdir $WORKING_DIR -p
 
 # Declare the files to be written
 SUM_FILE=$WORKING_DIR/summary.txt
-SUCCESS_LOG=$DIR/grabber-success.log
-ERROR_LOG=$DIR/grabber-error.log
+SUCCESS_LOG=$WORKING_DIR/grabber-success.log
+ERROR_LOG=$WORKING_DIR/grabber-error.log
 
 #----- PROGRAM -----
 
@@ -146,23 +150,23 @@ hello () {
 ############ HARDWARE FETCHER #################
 #------------ CPU ----------------
 CPU_MODEL=$(lscpu -eMODELNAME | tail -n1 | cut -d' ' -f1,2,3,4)
-CPU_ID=$(sudo dmidecode -t processor | grep ID | cut -d: -f2 | sed 's/^ *//' | xarg)
+CPU_ID=$(dmidecode -t processor | grep ID | cut -d: -f2 | sed 's/^ *//' | xargs)
 CPU_FREQUENCY_MIN=$(lscpu | grep MHz | cut -d: -f2 | sed -n '3p' | tr -s " " | sed 's/\ //' | cut -d, -f1)
-CPU_FREQUENCY_CUR=$(sudo dmidecode | grep "MHz" | cut -d: -f2 | sed -n '3p' | sed 's/\ //')
-CPU_FREQUENCY_MAX=$(sudo dmidecode | grep "MHz" | cut -d: -f2 | sed -n '2p' | sed 's/\ //')
+CPU_FREQUENCY_CUR=$(dmidecode | grep "MHz" | cut -d: -f2 | sed -n '3p' | sed 's/\ //')
+CPU_FREQUENCY_MAX=$(dmidecode | grep "MHz" | cut -d: -f2 | sed -n '2p' | sed 's/\ //')
 CPU_CORES_NUMBER=$(inxi | grep core | cut -d' ' -f2 | sed 's/-core//')
 CPU_THREADS_NUMBER=$(nproc)
 #---------------------------------
 
 #------------ RAM ----------------
-RAM_SIZE=$(lsmem | grep "M\C3\A9moire partag\C3\A9e" | cut -d: -f2 | sed 's/\ *//')
-RAM_GEN=$(sudo dmidecode -t memory | grep Type: | grep -v Unknown | tail -n1 | cut -d: -f2 | sed 's/\ //')
-RAM_NUMBER=$(sudo dmidecode --type memory | grep 'Rank' | wc -l)
-RAM_SLOTS_NUMBER=$(sudo dmidecode --type memory | grep "Number Of Devices" | cut -d: -f2 | sed 's/\ //')
+RAM_SIZE=$(lsmem | grep "Total online memory" | cut -d: -f2 | sed 's/\ *//')
+RAM_GEN=$(dmidecode -t memory | grep Type: | grep -v Unknown | tail -n1 | cut -d: -f2 | sed 's/\ //')
+RAM_NUMBER=$(dmidecode --type memory | grep 'Rank' | wc -l)
+RAM_SLOTS_NUMBER=$(dmidecode --type memory | grep "Number Of Devices" | cut -d: -f2 | sed 's/\ //')
 #---------------------------------
 
 #------------ COMPONENTS ---------
-MB_SERIAL=$(sudo dmidecode | grep -A 4 "Base Board" | tail -n1 | cut -d: -f2 | sed 's/\ //')
+MB_SERIAL=$(dmidecode | grep -A 4 "Base Board" | tail -n1 | cut -d: -f2 | sed 's/\ //')
 
 #------------ STORAGE ------------
 
