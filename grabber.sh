@@ -55,10 +55,8 @@ echo ""
 #----- MAIN VARIABLES -----
 DATE=$(date +'%Y-%m-%d_%H%M%S')
 
-# D\C3\A9terminer l'utilisateur r\C3\A9el (celui qui a lanc\C3\A9 sudo)
+# Check who is behind sudo command then fetch his $HOME
 REAL_USER="${SUDO_USER:-$USER}"
-
-# R\C3\A9cup\C3\A9rer son HOME depuis /etc/passwd (fiable)
 REAL_HOME="$(getent passwd "$REAL_USER" | cut -d: -f6)"
 
 # Declare where to store grabber results
