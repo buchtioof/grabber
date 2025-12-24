@@ -1,3 +1,5 @@
+![grabber logo](./logo.png)
+
 # Grabber - Fetch all your PC
 
 ## About
@@ -7,7 +9,8 @@ Grabber is a bash program that fetch some informations of the computer like memo
 - inxi
 - dmidecode
 
-## Improvements
-- [x] Make error or success logs works
-- [x] Make a file that logs the informations
-- [x] Check dependencies needed
+## Versions
+- v0 : grabber base, works minimal, ask permission, needs upgrades and rework
+
+# Credits
+Logo inspired by [kawaiiLogos](https://github.com/SAWARATSUKI/KawaiiLogos) project
