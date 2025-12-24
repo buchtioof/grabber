@@ -20,18 +20,20 @@ export LANG=C
 	#   - inxi
 # ==============================================================================
 
+##### Start process #####
+
 echo ""
 echo "==============================="
 echo "Welcome to grabber!"
 
-#----- CHECK IF SUDO -----
+#----- Verify sudo command -----
 if [[ $EUID -ne 0 ]]; then
     echo "Please run as root to be able to use superuser commands as dmidecode -> sudo ./grabber.sh"
     echo "==============================="
     exit 1
 fi
 
-###### CHECK DEPENDENCIES INSTALLED ############
+#----- Verify dependecies available -----
 echo -n "Checking dependencies... "
 REQUIRED_CMDS=(inxi dmidecode lscpu lsblk numfmt)
 MISSING=()
@@ -52,8 +54,9 @@ echo "It's grabbin time!"
 echo "==============================="
 echo ""
 
-#----- MAIN VARIABLES -----
-DATE=$(date +'%Y-%m-%d_%H%M%S')
+##### MAIN VARIABLES #####
+
+DATE=$(date +'%Y-%m-%d_%H:%M:%S')
 
 # Check who is behind sudo command then fetch his $HOME
 REAL_USER="${SUDO_USER:-$USER}"
@@ -69,10 +72,7 @@ SUM_FILE=$WORKING_DIR/summary.txt
 SUCCESS_LOG=$WORKING_DIR/grabber-success.log
 ERROR_LOG=$WORKING_DIR/grabber-error.log
 
-#----- PROGRAM -----
-
-# Init actual log
-
+# Create the logs files
 touch $SUM_FILE $SUCCESS_LOG $ERROR_LOG
 
 # Starting text for logs
@@ -263,7 +263,10 @@ software() {
 
 # Making the summary
 hello
+echo "Fetching hardware data..."
 hardware
+echo "Fetching software data..."
 software
-
-echo "Grabber has complete his mission! Find every logs saved in your home repository /grabber folder."
+echo "Writing everything in summary.txt"
+echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
+echo "See you space cowboy..."
