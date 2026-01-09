@@ -256,7 +256,7 @@ software() {
     echo "ARCHITECTURE = $ARCH"
     echo "KERNEL = $KERNEL"
     echo "DESKTOP = $XDG_CURRENT_DESKTOP"
-    echo "WINDOW MANAGER = $XDG_SESSION_TYPE"
+    echo "WINDOW_MANAGER = $XDG_SESSION_TYPE"
 } >> $SUM_FILE
 
 ###############################################
