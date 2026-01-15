@@ -304,6 +304,10 @@ json_file() {
         }'
     )
     echo $json_data
+    #SIMPLE LOCAL
+    curl	-X POST http://localhost:8000/endpoint \
+            -H "Content-Type: application/json" \
+            -d "$json_data"
 }
 
 # Making the summary
@@ -313,7 +317,7 @@ hardware
 echo "Fetching software data..."
 software
 echo "Writing everything in summary.txt"
+echo "Pushing fetch data into json file..."
 json_file
-echo "Putting things everything in summary.txt"
 echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
 echo "See you space cowboy..."
