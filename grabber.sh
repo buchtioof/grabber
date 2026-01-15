@@ -111,9 +111,9 @@ CMD=(
 treat_file() {
 	cat $2 | grep -v '^#' | grep -v '^$' > $1 
 	if [ $? -eq 0 ]; then
-		echo "[OK]: Fichier $1 g\C3\A9n\C3\A9r\C3\A9" >> $SUCCESS_LOG
+		echo "[OK]: Fichier $1 géneré" >> $SUCCESS_LOG
 	else
-		echo "[ECHEC]: Erreur \C3\A0 la g\C3\A9n\C3\A9ration de $1 => Code de sortie $?" >> $ERROR_LOG
+		echo "[ECHEC]: Erreur a la génération de $1 => Code de sortie $?" >> $ERROR_LOG
 	fi
 }
 
@@ -124,9 +124,9 @@ done
 treat_cmd() {
     eval "$2" > $DIR/$1 2> >(tee -a $ERROR_LOG)
     if [ $? -eq 0 ]; then
-    	echo "[OK]: Fichier $1 g\C3\A9n\C3\A9r\C3\A9 avec la commande $2" >> $SUCCESS_LOG
+    	echo "[OK]: Fichier $1 géneré avec la commande $2" >> $SUCCESS_LOG
     else
-    	echo "[ECHEC]: Erreur \C3\A0 la g\C3\A9n\C3\A9ration de $1 => Code de sortie $?" >> $ERROR_LOG
+    	echo "[ECHEC]: Erreur a la génération de $1 => Code de sortie $?" >> $ERROR_LOG
     fi
 }
 
@@ -158,7 +158,6 @@ CPU_THREADS_NUMBER=$(nproc)
 
 #------------ RAM ----------------
 RAM_SIZE=$(lsmem | grep "Total online memory" | cut -d: -f2 | sed 's/\ *//')
-RAM_GEN=$(dmidecode -t memory | grep Type: | grep -v Unknown | tail -n1 | cut -d: -f2 | sed 's/\ //')
 RAM_NUMBER=$(dmidecode --type memory | grep 'Rank' | wc -l)
 RAM_SLOTS_NUMBER=$(dmidecode --type memory | grep "Number Of Devices" | cut -d: -f2 | sed 's/\ //')
 #---------------------------------
@@ -208,8 +207,8 @@ hardware() {
     echo "--- CPU DATA ---" >> $SUM_FILE
     echo "CPU_MODEL = $CPU_MODEL" >> $SUM_FILE
     echo "CPU_ID = $CPU_ID" >> $SUM_FILE
-    echo "CPU_CORES_NUMBER=$CPU_CORES_NUMBER" >> $SUM_FILE
-    echo "CPU_THREADS_NUMBER=$CPU_THREADS_NUMBER" >> $SUM_FILE
+    echo "CPU_CORES=$CPU_CORES" >> $SUM_FILE
+    echo "CPU_THREADS=$CPU_THREADS" >> $SUM_FILE
     echo "CPU_FREQUENCY_MIN=$CPU_FREQUENCY_MIN" >> $SUM_FILE
     echo "CPU_FREQUENCY_CUR=$CPU_FREQUENCY_CUR" >> $SUM_FILE
     echo "CPU_FREQUENCY_MAX=$CPU_FREQUENCY_MAX" >> $SUM_FILE
@@ -221,8 +220,7 @@ hardware() {
 
     echo "--- RAM DATA ---" >> $SUM_FILE
     echo "RAM_SIZE = $RAM_SIZE" >> $SUM_FILE
-    echo "RAM_GEN = $RAM_GEN" >> $SUM_FILE
-    echo "RAM_SLOTS_NUMBER=$RAM_SLOTS_NUMBER" >> $SUM_FILE
+    echo "RAM_SLOTS=$RAM_SLOTS" >> $SUM_FILE
     echo "RAM_NUMBER=$RAM_NUMBER" >> $SUM_FILE
 
     for i in $(seq 1 $RAM_SLOTS_NUMBER); do
@@ -248,18 +246,66 @@ hardware() {
 OS=$(lsb_release -a | grep Description | cut -f2)
 ARCH=$(uname -a | cut -d' ' -f10)
 KERNEL=$(uname -r)
+HOSTNAME=$(hostname)
 
 # Compile Software informations
 software() {
     echo "[SOFTWARE]"
     echo "OS = $OS"
+    echo "HOSTNAME = $HOSTNAME"
     echo "ARCHITECTURE = $ARCH"
     echo "KERNEL = $KERNEL"
-    echo "DESKTOP = $XDG_CURRENT_DESKTOP"
+    echo "DESKTOP_ENV = $XDG_CURRENT_DESKTOP"
     echo "WINDOW_MANAGER = $XDG_SESSION_TYPE"
 } >> $SUM_FILE
 
 ###############################################
+
+##### JSON PART ###############################
+json_file() { 
+    json_data=$(jq -n \
+        --arg hostname "$HOSTNAME" \
+        --arg motherboard "$MB_SERIAL" \
+        --arg cpu_model "$CPU_MODEL" \
+        --arg cpu_id "$CPU_ID" \
+        --arg cpu_cores "$CPU_CORES" \
+        --arg cpu_threads "$CPU_THREADS" \
+        --arg cpu_frequency_min "$CPU_FREQUENCY_MIN" \
+        --arg cpu_frequency_cur "$CPU_FREQUENCY_CUR" \
+        --arg cpu_frequency_max "$CPU_FREQUENCY_MAX" \
+        --arg gpu_model "$GPU_MODEL" \
+        --arg ram_slots "$RAM_SLOTS" \
+        --arg os "$OS" \
+        --arg arch "$ARCH" \
+        --arg desktop_env "$XDG_CURRENT_DESKTOP" \
+        --arg window_manager "$XDG_SESSION_TYPE" \
+        --arg kernel "$KERNEL" \
+        '{
+        HARDWARE: {
+            hostname:$hostname,
+            mb_serial:$mb_serial,
+            chassis_serial:$chassis_serial,
+            cpu:$cpu,
+            cpu_id:$cpu_id,
+            cpu_cores_number:$cpu_cores_number,
+            cpu_threads_number:$cpu_threads_number,
+            cpu_frequency_min:$cpu_frequency_min,
+            cpu_frequency_cur:$cpu_frequency_cur,
+            cpu_frequency_max:$cpu_frequency_max,
+            gpu_model:$gpu_model,
+            ram_slots:$ram_slots
+        },
+        SOFTWARE: {
+            os:$os,
+            architecture:$arch,
+            desktop_environment:$desktop_env,
+            window_manager:$window_manager,
+            kernel:$kernel
+        }
+        }'
+    )
+    echo $json_data
+}
 
 # Making the summary
 hello
@@ -268,5 +314,7 @@ hardware
 echo "Fetching software data..."
 software
 echo "Writing everything in summary.txt"
+json_file
+echo "Putting things everything in summary.txt"
 echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
 echo "See you space cowboy..."
