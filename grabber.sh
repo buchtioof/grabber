@@ -283,12 +283,11 @@ json_file() {
         '{
         HARDWARE: {
             hostname:$hostname,
-            mb_serial:$mb_serial,
-            chassis_serial:$chassis_serial,
-            cpu:$cpu,
+            mb_serial:$motherboard,
+            cpu_model:$cpu_model,
             cpu_id:$cpu_id,
-            cpu_cores_number:$cpu_cores_number,
-            cpu_threads_number:$cpu_threads_number,
+            cpu_cores:$cpu_cores,
+            cpu_threads:$cpu_threads,
             cpu_frequency_min:$cpu_frequency_min,
             cpu_frequency_cur:$cpu_frequency_cur,
             cpu_frequency_max:$cpu_frequency_max,
