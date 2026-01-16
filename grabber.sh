@@ -152,14 +152,14 @@ CPU_ID=$(dmidecode -t processor | grep ID | cut -d: -f2 | sed 's/^ *//' | xargs)
 CPU_FREQUENCY_MIN=$(lscpu | grep MHz | cut -d: -f2 | sed -n '3p' | tr -s " " | sed 's/\ //' | cut -d, -f1)
 CPU_FREQUENCY_CUR=$(dmidecode | grep "MHz" | cut -d: -f2 | sed -n '3p' | sed 's/\ //')
 CPU_FREQUENCY_MAX=$(dmidecode | grep "MHz" | cut -d: -f2 | sed -n '2p' | sed 's/\ //')
-CPU_CORES_NUMBER=$(inxi | grep core | cut -d' ' -f2 | sed 's/-core//')
-CPU_THREADS_NUMBER=$(nproc)
+CPU_CORES=$(inxi | grep core | cut -d' ' -f2 | sed 's/-core//')
+CPU_THREADS=$(nproc)
 #---------------------------------
 
 #------------ RAM ----------------
 RAM_SIZE=$(lsmem | grep "Total online memory" | cut -d: -f2 | sed 's/\ *//')
 RAM_NUMBER=$(dmidecode --type memory | grep 'Rank' | wc -l)
-RAM_SLOTS_NUMBER=$(dmidecode --type memory | grep "Number Of Devices" | cut -d: -f2 | sed 's/\ //')
+RAM_SLOTS=$(dmidecode --type memory | grep "Number Of Devices" | cut -d: -f2 | sed 's/\ //')
 #---------------------------------
 
 #------------ COMPONENTS ---------
