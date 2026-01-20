@@ -43,7 +43,7 @@ fi
 
 #----- Verify dependecies available -----
 echo -n "Checking dependencies... "
-REQUIRED_CMDS=(inxi dmidecode lscpu lsblk nproc numfmt python3)
+REQUIRED_CMDS=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq)
 MISSING=()
 
 for cmd in "${REQUIRED_CMDS[@]}"; do
