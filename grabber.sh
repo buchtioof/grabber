@@ -368,9 +368,9 @@ echo "Writing everything in summary.txt"
 if [ "$choice" = "1" ]; then 
 echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
 echo "See you space cowboy..."
-exit
 else
 echo "Pushing fetch data into json file..."
 json_file
 echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
 echo "See you space cowboy..."
+fi
