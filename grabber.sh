@@ -24,6 +24,21 @@ export LANG=C
 
 echo ""
 echo "==============================="
+echo "                                                                                                                                           
+                                ,---,     ,---,                       
+             __  ,-.          ,---.'|   ,---.'|               __  ,-. 
+  ,----._,.,' ,'/ /|          |   | :   |   | :             ,' ,'/ /| 
+ /   /  ' /'  | |' | ,--.--.  :   : :   :   : :      ,---.  '  | |' | 
+|   :     ||  |   ,'/       \ :     |,-.:     |,-.  /     \ |  |   ,' 
+|   | .\  .'  :  / .--.  .-. ||   : '  ||   : '  | /    /  |'  :  /   
+.   ; ';  ||  | '   \__\/: . .|   |  / :|   |  / :.    ' / ||  | '    
+'   .   . |;  : |   ," .--.; |'   : |: |'   : |: |'   ;   /|;  : |    
+ `---`-'| ||  , ;  /  /  ,.  ||   | '/ :|   | '/ :'   |  / ||  , ;    
+ .'__/\_: | ---'  ;  :   .'   \   :    ||   :    ||   :    | ---'     
+ |   :    :       |  ,     .-./    \  / /    \  /  \   \  /           
+  \   \  /         `--`---'   `-'----'  `-'----'    `----'            
+   `--`-'                                                             
+"
 echo "Welcome to grabber!"
 
 #----- Verify sudo command -----
@@ -35,7 +50,7 @@ fi
 
 #----- Verify dependecies available -----
 echo -n "Checking dependencies... "
-REQUIRED_CMDS=(inxi dmidecode lscpu lsblk numfmt)
+REQUIRED_CMDS=(inxi dmidecode lscpu lsblk nproc numfmt python3)
 MISSING=()
 
 for cmd in "${REQUIRED_CMDS[@]}"; do
@@ -50,9 +65,10 @@ else
     echo "All set!"
 fi
 
-echo "It's grabbin time!"
 echo "==============================="
 echo ""
+
+
 
 ##### MAIN VARIABLES #####
 
@@ -79,60 +95,60 @@ touch $SUM_FILE $SUCCESS_LOG $ERROR_LOG
 echo -e "Logs of $DATE :\n" > $SUCCESS_LOG
 echo -e "Logs of $DATE :\n" > $ERROR_LOG
 
-#--------- Tables associates source file to a file inside grabber folder ---------
+#--------- Tables associates source file to a file inside grabber folder, we won't use it atm ---------
 
 #-------- ARRAYS -----------------------------
-# FILES arrays
-declare -A FILES
+## FILES arrays
+#declare -A FILES
 
-FILES=(
-    ["sources_list.file"]="/etc/apt/sources.list*"
-    ["passwd.file"]="/etc/passwd"
-    ["group.file"]="/etc/group"
-    ["etc-network-interfaces.file"]="/etc/network/interfaces"
-    ["etc-resolv-conf.file"]="/etc/resolv.conf"
-)
+#FILES=(
+#    ["sources_list.file"]="/etc/apt/sources.list*"
+#    ["passwd.file"]="/etc/passwd"
+#    ["group.file"]="/etc/group"
+#    ["etc-network-interfaces.file"]="/etc/network/interfaces"
+#    ["etc-resolv-conf.file"]="/etc/resolv.conf"
+#)
 
-# CMD arrays
-declare -A CMD
+## CMD arrays
+#declare -A CMD
 
-CMD=(
-	["systemd-analyze.cmd"]="systemd-analyze"
-	["systemd-blame.cmd"]="systemd-analyze blame"
-	["lspci.cmd"]="lspci"
-	["lsmem.cmd"]="lsmem --output-all"
-	["lscpu.cmd"]="lscpu"
-	["lsusb.cmd"]="lsusb"
-	["apt-installed.cmd"]="apt list --installed"
-)
+#CMD=(
+#	["systemd-analyze.cmd"]="systemd-analyze"
+#	["systemd-blame.cmd"]="systemd-analyze blame"
+#	["lspci.cmd"]="lspci"
+#	["lsmem.cmd"]="lsmem --output-all"
+#	["lscpu.cmd"]="lscpu"
+#	["lsusb.cmd"]="lsusb"
+#	["apt-installed.cmd"]="apt list --installed"
+#)
 #----------------------------------------------
 
-# Call arrays and store in files with same command name then write if success or not in proper log file
-treat_file() {
-	cat $2 | grep -v '^#' | grep -v '^$' > $1 
-	if [ $? -eq 0 ]; then
-		echo "[OK]: Fichier $1 géneré" >> $SUCCESS_LOG
-	else
-		echo "[ECHEC]: Erreur a la génération de $1 => Code de sortie $?" >> $ERROR_LOG
-	fi
-}
+## Call arrays and store in files with same command name then write if success or not in proper log file
+#treat_file() {
+#	cat $2 | grep -v '^#' | grep -v '^$' > $1 
+#	if [ $? -eq 0 ]; then
+#		echo "[OK]: Fichier $1 géneré" >> $SUCCESS_LOG
+#	else
+#		echo "[ECHEC]: Erreur a la génération de $1 => Code de sortie $?" >> $ERROR_LOG
+#	fi
+#}
 
-for file in "${!FILES[@]}"; do
-	treat_file $file "${FILES[$file]}"
-done
+#for file in "${!FILES[@]}"; do
+#	treat_file $file "${FILES[$file]}"
+#done
 
-treat_cmd() {
-    eval "$2" > $DIR/$1 2> >(tee -a $ERROR_LOG)
-    if [ $? -eq 0 ]; then
-    	echo "[OK]: Fichier $1 géneré avec la commande $2" >> $SUCCESS_LOG
-    else
-    	echo "[ECHEC]: Erreur a la génération de $1 => Code de sortie $?" >> $ERROR_LOG
-    fi
-}
+#treat_cmd() {
+#    eval "$2" > $DIR/$1 2> >(tee -a $ERROR_LOG)
+#    if [ $? -eq 0 ]; then
+#    	echo "[OK]: Fichier $1 géneré avec la commande $2" >> $SUCCESS_LOG
+#    else
+#    	echo "[ECHEC]: Erreur a la génération de $1 => Code de sortie $?" >> $ERROR_LOG
+#   fi
+#}
 
-for cmd in "${!CMD[@]}"; do
-	treat_cmd "$cmd" "${CMD[$cmd]}"
-done
+#for cmd in "${!CMD[@]}"; do
+#	treat_cmd "$cmd" "${CMD[$cmd]}"
+#done
 ###############################################
 
 ############ WRITING THE SUMMARY #################
@@ -140,7 +156,7 @@ done
 hello () {
     echo "+++++++++++++++++++++++++" >> $SUM_FILE
     echo "Grabber startin'" >> $SUM_FILE
-    echo "launched the $DATE" >> $SUM_FILE
+    echo "launched the $DATE by $REAL_USER" >> $SUM_FILE
     echo "+++++++++++++++++++++++++" >> $SUM_FILE
     echo "" >> $SUM_FILE
 }
@@ -189,7 +205,7 @@ disks_partitions(){
 }
 
 SIZES=$(lsblk -dnb | grep -v loop | grep -v boot | tr -s " " | cut -d \  -f4)
-STOCKAGE_TOTAL=0
+TOTAL_STORAGE=0
 
 for SIZE in ${SIZES[@]}; do
     TOTAL_STORAGE+=$SIZE
@@ -311,6 +327,7 @@ json_file() {
 }
 
 # Making the summary
+echo "It's grabbin time!"
 hello
 echo "Fetching hardware data..."
 hardware
