@@ -45,7 +45,7 @@ echo ""
 
 #----- Verify dependecies available -----
 REQUIRED_CMDS_SIMPLE=(inxi dmidecode lscpu lsblk nproc numfmt)
-REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 python3.13-venv jq)
+REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq)
 
 requirements_simple() {
     echo -n "Checking dependencies... "
