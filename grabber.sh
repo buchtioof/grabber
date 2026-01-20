@@ -40,13 +40,15 @@ if [[ $EUID -ne 0 ]]; then
     echo "==============================="
     exit 1
 fi
+echo "==============================="
+echo ""
 
 #----- Verify dependecies available -----
-echo -n "Checking dependencies... "
 REQUIRED_CMDS_SIMPLE=(inxi dmidecode lscpu lsblk nproc numfmt)
-REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq)
+REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 python3.13-venv jq)
 
 requirements_simple() {
+    echo -n "Checking dependencies... "
     MISSING=()
 
     for cmd in "${REQUIRED_CMDS_SIMPLE[@]}"; do
@@ -63,6 +65,7 @@ requirements_simple() {
 }
 
 requirements_full() {
+    echo -n "Checking dependencies... "
     MISSING=()
 
     for cmd in "${REQUIRED_CMDS_FULL[@]}"; do
@@ -78,10 +81,7 @@ requirements_full() {
     fi
 }
 
-
-echo "==============================="
-echo ""
-
+#----- Ask what user wants to do -----
 echo "What you want grabber to do for you?"
 echo "1: Simple grab (Just make a summary file with your computer data)"
 echo "2: Full grab (Grab and makes a showcase webpage)"
@@ -358,7 +358,10 @@ json_file() {
 }
 
 python_venv() {
-    python3 -m venv gbvenv
+    if [ ! -d "./gbvenv" ]; then
+        echo "Virtual environement doesn't exist, creating one..."
+        python3 -m venv gbvenv
+    fi
     source gbvenv/bin/activate
     pip install --upgrade pip
     pip install -r requirements.txt
