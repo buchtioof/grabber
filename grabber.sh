@@ -365,6 +365,7 @@ python_venv() {
     source gbvenv/bin/activate
     pip install --upgrade pip
     pip install -r requirements.txt
+    uvicorn app:app --reload --host 0.0.0.0 --port 8000
 }
 
 # Making the summary
