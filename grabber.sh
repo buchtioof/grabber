@@ -365,6 +365,14 @@ python_venv() {
     source gbvenv/bin/activate
     pip install --upgrade pip
     pip install -r requirements.txt
+    if [ ! -d "./static" ]; then
+        echo "static folder doesn't exist, creating one..."
+        mkdir static
+    fi
+    if [ ! -d "./ordi1" ]; then
+        echo "1st computer folder doesn't exist, creating one..."
+        mkdir ordi1
+    fi
     uvicorn app:app --reload --host 0.0.0.0 --port 8000
 }
 
