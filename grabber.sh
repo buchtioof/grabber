@@ -43,24 +43,62 @@ fi
 
 #----- Verify dependecies available -----
 echo -n "Checking dependencies... "
-REQUIRED_CMDS=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq)
-MISSING=()
+REQUIRED_CMDS_SIMPLE=(inxi dmidecode lscpu lsblk nproc numfmt)
+REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq)
 
-for cmd in "${REQUIRED_CMDS[@]}"; do
-    command -v "$cmd" >/dev/null 2>&1 || MISSING+=("$cmd")
-done
-if (( ${#MISSING[@]} > 0 )); then
-    echo "Missing dependencies:"
-    printf ' - %s\n' "${MISSING[@]}"
-    echo "Install with: sudo apt install ${MISSING[*]}"
-    exit 1
-else
-    echo "All set!"
-fi
+requirements_simple() {
+    MISSING=()
+
+    for cmd in "${REQUIRED_CMDS_SIMPLE[@]}"; do
+        command -v "$cmd" >/dev/null 2>&1 || MISSING+=("$cmd")
+    done
+    if (( ${#MISSING[@]} > 0 )); then
+        echo "Missing dependencies:"
+        printf ' - %s\n' "${MISSING[@]}"
+        echo "Install with: sudo apt install ${MISSING[*]}"
+        exit 1
+    else
+        echo "All set!"
+    fi
+}
+
+requirements_full() {
+    MISSING=()
+
+    for cmd in "${REQUIRED_CMDS_FULL[@]}"; do
+        command -v "$cmd" >/dev/null 2>&1 || MISSING+=("$cmd")
+    done
+    if (( ${#MISSING[@]} > 0 )); then
+        echo "Missing dependencies:"
+        printf ' - %s\n' "${MISSING[@]}"
+        echo "Install with: sudo apt install ${MISSING[*]}"
+        exit 1
+    else
+        echo "All set!"
+    fi
+}
+
 
 echo "==============================="
 echo ""
 
+echo "What you want grabber to do for you?"
+echo "1: Simple grab (Just make a summary file with your computer data)"
+echo "2: Full grab (Grab and makes a showcase webpage)"
+
+read -p " 1 / 2 / Cancel(c):- " choice
+if [ "$choice" = "1" ]; then 
+echo "Simple task for today"
+requirements_simple
+elif [ "$choice" = "2" ];then
+echo "Big work for today"
+requirements_full
+elif [ "$choice" = "c" ];then
+echo "Installation cancelled"
+exit
+else 
+echo "No choices detected!"
+fi
 
 
 ##### MAIN VARIABLES #####
@@ -327,6 +365,11 @@ hardware
 echo "Fetching software data..."
 software
 echo "Writing everything in summary.txt"
+if [ "$choice" = "1" ]; then 
+echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
+echo "See you space cowboy..."
+exit
+else
 echo "Pushing fetch data into json file..."
 json_file
 echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
