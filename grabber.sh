@@ -21,15 +21,12 @@ export LANG=C
 # ==============================================================================
 
 ##### Start process #####
-
-echo ""
-echo "==============================="
 echo "   ____     ____        _        ____     ____  U _____ u   ____     "                                                                                                                
 echo 'U /"___|uU |  _"\ u U  /"\  u U | __")uU | __")u\| ___"|/U |  _"\ u  '
 echo '\| |  _ / \| |_) |/  \/ _ \/   \|  _ \/ \|  _ \/ |  _|"   \| |_) |/  '
 echo " | |_| |   |  _ <    / ___ \    | |_) |  | |_) | | |___    |  _ <    "
 echo "  \____|   |_| \_\  /_/   \_\   |____/   |____/  |_____|   |_| \_\   "
-echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_  <<   >> / /  \ \  "
+echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_ <<   >>  / /  \ \  "
 echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__) (__)  (__) "      
 echo ""
 echo "Welcome to grabber!"
@@ -37,10 +34,8 @@ echo "Welcome to grabber!"
 #----- Verify sudo command -----
 if [[ $EUID -ne 0 ]]; then
     echo "Please run as root to be able to use superuser commands as dmidecode -> sudo ./grabber.sh"
-    echo "==============================="
     exit 1
 fi
-echo "==============================="
 echo ""
 
 #----- Verify dependecies available -----
