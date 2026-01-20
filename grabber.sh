@@ -362,9 +362,9 @@ python_venv() {
         echo "Virtual environement doesn't exist, creating one..."
         python3 -m venv gbvenv
     fi
-    source gbvenv/bin/activate
     pip install --upgrade pip
     pip install -r requirements.txt
+    source gbvenv/bin/activate
 }
 
 # Making the summary
