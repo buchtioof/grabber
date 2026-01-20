@@ -29,7 +29,7 @@ echo 'U /"___|uU |  _"\ u U  /"\  u U | __")uU | __")u\| ___"|/U |  _"\ u  '
 echo '\| |  _ / \| |_) |/  \/ _ \/   \|  _ \/ \|  _ \/ |  _|"   \| |_) |/  '
 echo " | |_| |   |  _ <    / ___ \    | |_) |  | |_) | | |___    |  _ <    "
 echo "  \____|   |_| \_\  /_/   \_\   |____/   |____/  |_____|   |_| \_\   "
-echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_  <<   >>   //  \ \_  "
+echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_  <<   >> / /  \ \  "
 echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__) (__)  (__) "      
 echo ""
 echo "Welcome to grabber!"
@@ -357,6 +357,13 @@ json_file() {
             -d "$json_data"
 }
 
+python_venv() {
+    python3 -m venv gbvenv
+    source gbvenv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
+}
+
 # Making the summary
 echo "It's grabbin time!"
 hello
@@ -371,6 +378,8 @@ echo "See you space cowboy..."
 else
 echo "Pushing fetch data into json file..."
 json_file
+echo "Creating a python virtual environement..."
+python_venv
 echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
 echo "See you space cowboy..."
 fi
