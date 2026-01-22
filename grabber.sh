@@ -306,7 +306,6 @@ software() {
 ##### JSON PART ###############################
 json_file() { 
     json_data=$(jq -n \
-        --arg hostname "$HOSTNAME" \
         --arg motherboard "$MB_SERIAL" \
         --arg cpu_model "$CPU_MODEL" \
         --arg cpu_id "$CPU_ID" \
@@ -317,6 +316,7 @@ json_file() {
         --arg cpu_frequency_max "$CPU_FREQUENCY_MAX" \
         --arg gpu_model "$GPU_MODEL" \
         --arg ram_slots "$RAM_SLOTS" \
+        --arg hostname "$HOSTNAME" \
         --arg os "$OS" \
         --arg arch "$ARCH" \
         --arg desktop_env "$XDG_CURRENT_DESKTOP" \
@@ -324,31 +324,32 @@ json_file() {
         --arg kernel "$KERNEL" \
         '{
         HARDWARE: {
-            hostname:$hostname,
-            mb_serial:$motherboard,
-            cpu_model:$cpu_model,
-            cpu_id:$cpu_id,
-            cpu_cores:$cpu_cores,
-            cpu_threads:$cpu_threads,
-            cpu_frequency_min:$cpu_frequency_min,
-            cpu_frequency_cur:$cpu_frequency_cur,
-            cpu_frequency_max:$cpu_frequency_max,
-            gpu_model:$gpu_model,
-            ram_slots:$ram_slots
+            motherboard: $motherboard,
+            cpu_model: $cpu_model,
+            cpu_id: $cpu_id,
+            cpu_cores: $cpu_cores,
+            cpu_threads: $cpu_threads,
+            cpu_frequency_min: $cpu_frequency_min,
+            cpu_frequency_cur: $cpu_frequency_cur,
+            cpu_frequency_max: $cpu_frequency_max,
+            gpu_model: $gpu_model,
+            ram_slots: $ram_slots
         },
         SOFTWARE: {
-            os:$os,
-            architecture:$arch,
-            desktop_environment:$desktop_env,
-            window_manager:$window_manager,
-            kernel:$kernel
+            hostname: $hostname,
+            os: $os,
+            arch: $arch,
+            desktop_env: $desktop_env,
+            window_manager: $window_manager,
+            kernel: $kernel
         }
         }'
     )
-    #SIMPLE LOCAL
-    curl	-X POST http://localhost:8000/endpoint \
-            -H "Content-Type: application/json" \
-            -d "$json_data"
+    
+    # Envoi au serveur
+    curl -X POST http://localhost:8000/endpoint \
+         -H "Content-Type: application/json" \
+         -d "$json_data"
 }
 
 python_venv() {
@@ -371,13 +372,27 @@ echo "Fetching software data..."
 software
 echo "Writing everything in summary.txt"
 if [ "$choice" = "1" ]; then 
-echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
-echo "See you space cowboy..."
+    echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
+    echo "See you space cowboy..."
 else
-echo "Pushing fetch data into json file..."
-json_file
-echo "Creating a python virtual environement..."
-python_venv
-echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
-echo "See you space cowboy..."
+    echo "Creating a python virtual environement and starting server..."
+    # 1. On lance la fonction python_venv en arrière-plan avec '&'
+    python_venv &
+    
+    # On récupère l'ID du processus du serveur pour pouvoir l'attendre plus tard
+    SERVER_PID=$!
+
+    echo "Waiting for server to initialize (10s)..."
+    # 2. On attend quelques secondes que uvicorn soit bien démarré
+    sleep 10
+
+    echo "Pushing fetch data into json file..."
+    # 3. Maintenant que le serveur tourne, on envoie le JSON
+    json_file
+
+    echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
+    echo "Server is running on http://localhost:8000. Press Ctrl+C to stop."
+    
+    # 4. On empêche le script de se fermer (ce qui tuerait le serveur si configuré ainsi)
+    wait $SERVER_PID
 fi
