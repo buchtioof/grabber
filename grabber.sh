@@ -345,7 +345,6 @@ json_file() {
         }
         }'
     )
-    echo $json_data
     #SIMPLE LOCAL
     curl	-X POST http://localhost:8000/endpoint \
             -H "Content-Type: application/json" \

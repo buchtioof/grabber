@@ -3,7 +3,7 @@ import configparser
 import requests
 
 class Grabber():
-    mb_serial = " "
+    motherboard = " "
     cpu_model = " "
     cpu_id = " "
     cpu_cores = " "
@@ -15,6 +15,7 @@ class Grabber():
     ram_slots = " "
     ram_number = " "
 
+    hostname = " "
     os = " "
     arch = " "
     desktop_env = " "
