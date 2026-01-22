@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations Système</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .section { margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; }
+        .section h2 { margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Informations de l'Ordinateur</h1>
+
+    <div class="section">
+        <h2>[HARDWARE]</h2>
+        <table>
+            <tr><th>Propriété</th><th>Valeur</th></tr>
+            <tr><td>Hostname</td><td>{{ ordi.hostname }}</td></tr>
+            <tr><td>CPU</td><td>{{ ordi.cpu_model }}</td></tr>
+            <tr><td>ID CPU</td><td>{{ ordi.cpu_id }}</td></tr>
+            <tr><td>Nombre de Cœurs CPU</td><td>{{ ordi.cpu_cores }}</td></tr>
+            <tr><td>Nombre de Threads CPU</td><td>{{ ordi.cpu_threads }}</td></tr>
+            <tr><td>Fréquence Min CPU</td><td>{{ ordi.cpu_frequency_min }}</td></tr>
+            <tr><td>Fréquence Courante CPU</td><td>{{ ordi.cpu_frequency_cur }}</td></tr>
+            <tr><td>Fréquence Max CPU</td><td>{{ ordi.cpu_frequency_max }}</td></tr>
+            <tr><td>Nombre de slots de RAM</td><td>{{ ordi.ram_slots }}</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>[SOFTWARE]</h2>
+        <table>
+            <tr><th>Propriété</th><th>Valeur</th></tr>
+            <tr><td>OS</td><td>{{ ordi.os }}</td></tr>
+            <tr><td>Architecture</td><td>{{ ordi.arch }}</td></tr>
+            <tr><td>Desktop</td><td>{{ ordi.desktop_env }}</td></tr>
+            <tr><td>Window Manager</td><td>{{ ordi.window_manager }}</td></tr>
+            <tr><td>Kernel</td><td>{{ ordi.kernel }}</td></tr>
+        </table>
+    </div>
+</body>
+</html>
