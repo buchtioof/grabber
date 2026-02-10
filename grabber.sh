@@ -140,6 +140,7 @@ json_file() {
          -H "Content-Type: application/json" \
          -d "$json_data" \
          --connect-timeout 5 || echo "Erreur: Serveur injoignable."
+    echo ""
 }
 
 python_venv() {
@@ -157,6 +158,6 @@ if [ "$choice" = "1" ]; then
     sleep 5
     echo "Fetching data..."
     json_file
-    echo "✅ Dashboard: http://localhost:8000"
+    echo "Dashboard launched at http://localhost:8000"
     wait $SERVER_PID
 fi

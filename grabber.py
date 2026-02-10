@@ -67,8 +67,8 @@ class Grabber:
             "cpu_frequency_max": hw.get("cpu_frequency_max", "N/A"),
             "gpu_model": hw.get("gpu_model", "N/A"),
             "ram_slots": hw.get("ram_slots", "N/A"),
-            "ram_total": hw.get("ram_total", "N/A"),       # Ajouté
-            "total_storage": hw.get("total_storage", "N/A"), # Ajouté
+            "ram_total": hw.get("ram_total", "N/A"),
+            "total_storage": hw.get("total_storage", "N/A"),
             "os": sw.get("os", "N/A"),
             "arch": sw.get("arch", "N/A"),
             "desktop_env": sw.get("desktop_env", "N/A"),
