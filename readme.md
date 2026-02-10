@@ -1,4 +1,4 @@
-![grabber logo](./logo.png)
+![grabber logo](./assets/logo.png)
 
 # Grabber - Fetch all your PC
 

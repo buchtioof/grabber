@@ -3,50 +3,76 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import json
-from grabber import Grabber
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+from grabber import Grabber, flotte, create_db_and_tables
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
+
+app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
-ordi1 = Grabber()
 
 @app.post("/endpoint")
 async def receive_info(request: Request):
-    # Lire le body brut
     body = await request.body()
-    print(body)
-
-    # Parser le JSON
     try:
         data = json.loads(body)
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON")
     
-    hw = data["HARDWARE"]
-    sw = data["SOFTWARE"]
+    sw = data.get("SOFTWARE", {})
+    # On récupère l'adresse MAC, c'est notre nouvel identifiant unique
+    mac = sw.get("mac_address")
+    hostname = sw.get("hostname", "Inconnu")
 
-    ordi1.motherboard = hw["motherboard"]
-    ordi1.cpu_model = hw["cpu_model"]
-    ordi1.cpu_id = hw["cpu_id"]
-    ordi1.cpu_cores = hw["cpu_cores"]
-    ordi1.cpu_threads = hw["cpu_threads"]
-    ordi1.cpu_frequency_min = hw["cpu_frequency_min"]
-    ordi1.cpu_frequency_cur = hw["cpu_frequency_cur"]
-    ordi1.cpu_frequency_max = hw["cpu_frequency_max"]
+    if not mac:
+        raise HTTPException(status_code=400, detail="Adresse MAC manquante dans le JSON")
 
-    ordi1.hostname = sw["hostname"]
-    ordi1.os = sw["os"]
-    ordi1.arch = sw["arch"]
-    ordi1.desktop_env = sw["desktop_env"]
-    ordi1.window_manager = sw["window_manager"]
-    ordi1.kernel = sw["kernel"]
+    # Si la machine n'est pas encore connue par son adresse MAC
+    if mac not in flotte:
+        print(f"Nouvelle machine détectée : {hostname} ({mac})")
+        flotte[mac] = Grabber(mac, hostname)
+    
+    ordi_actuel = flotte[mac]
+    ordi_actuel.update(data)
+    ordi_actuel.save()
 
-    print(f"Hostname is {ordi1.hostname}")
-    print(f"Motherboard serial is {ordi1.motherboard}")
+    return {"status": "ok", "mac": mac}
 
-    return {"status": "ok"}
+@app.get("/")
+async def list_ordis(request: Request):
+    """Affiche la liste des ordis, identifiés par MAC mais affichés par Hostname."""
+    # On crée des liens qui pointent vers /ordi/ADRESSE_MAC
+    # Mais pour l'humain, on affiche "Hostname (Mac)"
+    list_items = []
+    for mac, grabber_obj in flotte.items():
+        nom_affiche = f"{grabber_obj.hostname} <small>({mac})</small>"
+        list_items.append(f'<li><a href="/ordi/{mac}">{nom_affiche}</a></li>')
+    
+    liens_html = "".join(list_items)
 
+    return HTMLResponse(f"""
+    <html>
+        <head>
+            <title>Dashboard Grabber</title>
+            <style>body{{font-family:sans-serif; padding:20px;}} li{{margin:5px 0;}}</style>
+        </head>
+        <body>
+            <h1>Tableau de bord Grabber</h1>
+            <h2>Machines connectées</h2>
+            <ul>{liens_html or "En attente de données..."}</ul>
+        </body>
+    </html>
+    """)
 
-@app.get("/ordi1")
-async def show_info(request: Request):
-    return templates.TemplateResponse("item.html", {"request": request, "ordi": ordi1})
+# L'URL attend maintenant une adresse MAC (ex: /ordi/00:11:22:33:44:55)
+@app.get("/ordi/{mac_address}")
+async def show_info(request: Request, mac_address: str):
+    if mac_address in flotte:
+        return templates.TemplateResponse("item.html", {"request": request, "ordi": flotte[mac_address]})
+    else:
+        return HTMLResponse("<h1>Machine introuvable</h1>", status_code=404)

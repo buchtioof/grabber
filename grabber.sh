@@ -40,7 +40,7 @@ echo ""
 
 #----- Verify dependecies available -----
 REQUIRED_CMDS_SIMPLE=(inxi dmidecode lscpu lsblk nproc numfmt)
-REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq)
+REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq sqlite3)
 
 requirements_simple() {
     echo -n "Checking dependencies... "
@@ -184,48 +184,6 @@ done
 TOTAL_STORAGE=$(numfmt --to iec $TOTAL_STORAGE)
 #---------------------------------
 
-# Compile Hardware informations
-hardware() {
-    echo "[HARDWARE]" >> $SUM_FILE
-    echo "MB_SERIAL = $MB_SERIAL" >> $SUM_FILE
-    echo "" >> $SUM_FILE
-
-    echo "--- CPU DATA ---" >> $SUM_FILE
-    echo "CPU_MODEL = $CPU_MODEL" >> $SUM_FILE
-    echo "CPU_ID = $CPU_ID" >> $SUM_FILE
-    echo "CPU_CORES=$CPU_CORES" >> $SUM_FILE
-    echo "CPU_THREADS=$CPU_THREADS" >> $SUM_FILE
-    echo "CPU_FREQUENCY_MIN=$CPU_FREQUENCY_MIN" >> $SUM_FILE
-    echo "CPU_FREQUENCY_CUR=$CPU_FREQUENCY_CUR" >> $SUM_FILE
-    echo "CPU_FREQUENCY_MAX=$CPU_FREQUENCY_MAX" >> $SUM_FILE
-    echo "" >> $SUM_FILE
-
-    echo "--- GPU DATA ---" >> $SUM_FILE
-    echo "GPU_MODEL=$GPU_MODEL" >> $SUM_FILE
-    echo "" >> $SUM_FILE
-
-    echo "--- RAM DATA ---" >> $SUM_FILE
-    echo "RAM_SIZE = $RAM_SIZE" >> $SUM_FILE
-    echo "RAM_SLOTS=$RAM_SLOTS" >> $SUM_FILE
-    echo "RAM_NUMBER=$RAM_NUMBER" >> $SUM_FILE
-
-    for i in $(seq 1 $RAM_SLOTS_NUMBER); do
-	R_SIZE=$(sudo dmidecode --type=memory | grep "Size:" | grep -v "Volatile" | grep -v "Cache" | grep -v "Logical" | cut -d: -f2 | sed -n "${i}p" | sed 's/\ //')
-	R_SLOT=$i
-	R_FREQ=$(sudo dmidecode --type=memory | grep Speed | grep -v "Memory" | cut -d: -f2 | sed -n "${i}p" | sed 's/\ //')
-
-	echo "RAM_${i}_SIZE=$R_SIZE" >> $SUM_FILE
-	echo "RAM_${i}_SLOT=$R_SLOT" >> $SUM_FILE
-	echo "RAM_${i}_FREQ=$R_FREQ" >> $SUM_FILE
-    done
-    echo "" >> $SUM_FILE
-
-    echo "--- STORAGE DATA ---" >> $SUM_FILE
-    disks_partitions
-    echo "STORAGE = $TOTAL_STORAGE" >> $SUM_FILE
-    echo "" >> $SUM_FILE
-}
-
 ################################################
 
 ######## SOFTWARE PART #########################
@@ -233,17 +191,7 @@ OS=$(lsb_release -a | grep Description | cut -f2)
 ARCH=$(uname -a | cut -d' ' -f10)
 KERNEL=$(uname -r)
 HOSTNAME=$(hostname)
-
-# Compile Software informations
-software() {
-    echo "[SOFTWARE]"
-    echo "OS = $OS"
-    echo "HOSTNAME = $HOSTNAME"
-    echo "ARCHITECTURE = $ARCH"
-    echo "KERNEL = $KERNEL"
-    echo "DESKTOP_ENV = $XDG_CURRENT_DESKTOP"
-    echo "WINDOW_MANAGER = $XDG_SESSION_TYPE"
-} >> $SUM_FILE
+MAC_ADDRESS=$(cat /sys/class/net/$(ls /sys/class/net | grep -vE '^(lo|docker|veth|br)' | head -n 1)/address)
 
 ###############################################
 
@@ -261,6 +209,7 @@ json_file() {
         --arg gpu_model "$GPU_MODEL" \
         --arg ram_slots "$RAM_SLOTS" \
         --arg hostname "$HOSTNAME" \
+        --arg mac_address "$MAC_ADDRESS" \
         --arg os "$OS" \
         --arg arch "$ARCH" \
         --arg desktop_env "$XDG_CURRENT_DESKTOP" \
@@ -281,6 +230,7 @@ json_file() {
         },
         SOFTWARE: {
             hostname: $hostname,
+            mac_address:$mac_address,
             os: $os,
             arch: $arch,
             desktop_env: $desktop_env,
@@ -311,10 +261,7 @@ python_venv() {
 echo "It's grabbin time!"
 hello
 echo "Fetching hardware data..."
-hardware
 echo "Fetching software data..."
-software
-echo "Writing everything in summary.txt"
 if [ "$choice" = "1" ]; then 
     echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
     echo "See you space cowboy..."
