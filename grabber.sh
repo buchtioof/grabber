@@ -121,62 +121,6 @@ touch $SUM_FILE $SUCCESS_LOG $ERROR_LOG
 echo -e "Logs of $DATE :\n" > $SUCCESS_LOG
 echo -e "Logs of $DATE :\n" > $ERROR_LOG
 
-#--------- Tables associates source file to a file inside grabber folder, we won't use it atm ---------
-
-#-------- ARRAYS -----------------------------
-## FILES arrays
-#declare -A FILES
-
-#FILES=(
-#    ["sources_list.file"]="/etc/apt/sources.list*"
-#    ["passwd.file"]="/etc/passwd"
-#    ["group.file"]="/etc/group"
-#    ["etc-network-interfaces.file"]="/etc/network/interfaces"
-#    ["etc-resolv-conf.file"]="/etc/resolv.conf"
-#)
-
-## CMD arrays
-#declare -A CMD
-
-#CMD=(
-#	["systemd-analyze.cmd"]="systemd-analyze"
-#	["systemd-blame.cmd"]="systemd-analyze blame"
-#	["lspci.cmd"]="lspci"
-#	["lsmem.cmd"]="lsmem --output-all"
-#	["lscpu.cmd"]="lscpu"
-#	["lsusb.cmd"]="lsusb"
-#	["apt-installed.cmd"]="apt list --installed"
-#)
-#----------------------------------------------
-
-## Call arrays and store in files with same command name then write if success or not in proper log file
-#treat_file() {
-#	cat $2 | grep -v '^#' | grep -v '^$' > $1 
-#	if [ $? -eq 0 ]; then
-#		echo "[OK]: Fichier $1 géneré" >> $SUCCESS_LOG
-#	else
-#		echo "[ECHEC]: Erreur a la génération de $1 => Code de sortie $?" >> $ERROR_LOG
-#	fi
-#}
-
-#for file in "${!FILES[@]}"; do
-#	treat_file $file "${FILES[$file]}"
-#done
-
-#treat_cmd() {
-#    eval "$2" > $DIR/$1 2> >(tee -a $ERROR_LOG)
-#    if [ $? -eq 0 ]; then
-#    	echo "[OK]: Fichier $1 géneré avec la commande $2" >> $SUCCESS_LOG
-#    else
-#    	echo "[ECHEC]: Erreur a la génération de $1 => Code de sortie $?" >> $ERROR_LOG
-#   fi
-#}
-
-#for cmd in "${!CMD[@]}"; do
-#	treat_cmd "$cmd" "${CMD[$cmd]}"
-#done
-###############################################
-
 ############ WRITING THE SUMMARY #################
 # Starting text for summary
 hello () {
