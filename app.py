@@ -73,10 +73,16 @@ async def list_ordis(request: Request):
     </html>
     """)
 
-# L'URL attend maintenant une adresse MAC (ex: /ordi/00:11:22:33:44:55)
 @app.get("/ordi/{mac_address}")
 async def show_info(request: Request, mac_address: str):
-    if mac_address in flotte:
-        return templates.TemplateResponse("item.html", {"request": request, "ordi": flotte[mac_address]})
+    # On ouvre une session pour parler à la base de données
+    with Session(engine) as session:
+        # On cherche la ligne qui correspond à l'adresse MAC
+        statement = select(SystemLog).where(SystemLog.mac_address == mac_address)
+        ordi_trouve = session.exec(statement).first()
+        
+    # Si on l'a trouvé dans la BDD, on l'affiche
+    if ordi_trouve:
+        return templates.TemplateResponse("item.html", {"request": request, "ordi": ordi_trouve})
     else:
         return HTMLResponse("<h1>Machine introuvable</h1>", status_code=404)
