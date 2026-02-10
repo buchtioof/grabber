@@ -42,24 +42,7 @@ echo ""
 REQUIRED_CMDS_SIMPLE=(inxi dmidecode lscpu lsblk nproc numfmt)
 REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq sqlite3)
 
-requirements_simple() {
-    echo -n "Checking dependencies... "
-    MISSING=()
-
-    for cmd in "${REQUIRED_CMDS_SIMPLE[@]}"; do
-        command -v "$cmd" >/dev/null 2>&1 || MISSING+=("$cmd")
-    done
-    if (( ${#MISSING[@]} > 0 )); then
-        echo "Missing dependencies:"
-        printf ' - %s\n' "${MISSING[@]}"
-        echo "Install with: sudo apt install ${MISSING[*]}"
-        exit 1
-    else
-        echo "All set!"
-    fi
-}
-
-requirements_full() {
+requirements() {
     echo -n "Checking dependencies... "
     MISSING=()
 
@@ -78,18 +61,18 @@ requirements_full() {
 
 #----- Ask what user wants to do -----
 echo "What you want grabber to do for you?"
-echo "1: Simple grab (Just make a summary file with your computer data)"
-echo "2: Full grab (Grab and makes a showcase webpage)"
+echo "1: Launch grabber"
+echo "2: Uninstall grabber"
 
 read -p " 1 / 2 / Cancel(c):- " choice
 if [ "$choice" = "1" ]; then 
-echo "Simple task for today"
-requirements_simple
-elif [ "$choice" = "2" ];then
 echo "Big work for today"
-requirements_full
+requirements
+elif [ "$choice" = "2" ];then
+echo "Uninstalling"
+exit
 elif [ "$choice" = "c" ];then
-echo "Installation cancelled"
+echo "Grabber canceled"
 exit
 else 
 echo "No choices detected!"
@@ -113,23 +96,6 @@ mkdir $WORKING_DIR -p
 SUM_FILE=$WORKING_DIR/summary.txt
 SUCCESS_LOG=$WORKING_DIR/grabber-success.log
 ERROR_LOG=$WORKING_DIR/grabber-error.log
-
-# Create the logs files
-touch $SUM_FILE $SUCCESS_LOG $ERROR_LOG
-
-# Starting text for logs
-echo -e "Logs of $DATE :\n" > $SUCCESS_LOG
-echo -e "Logs of $DATE :\n" > $ERROR_LOG
-
-############ WRITING THE SUMMARY #################
-# Starting text for summary
-hello () {
-    echo "+++++++++++++++++++++++++" >> $SUM_FILE
-    echo "Grabber startin'" >> $SUM_FILE
-    echo "launched the $DATE by $REAL_USER" >> $SUM_FILE
-    echo "+++++++++++++++++++++++++" >> $SUM_FILE
-    echo "" >> $SUM_FILE
-}
 
 ############ HARDWARE FETCHER #################
 #------------ CPU ----------------
@@ -257,16 +223,12 @@ python_venv() {
     uvicorn app:app --reload --host 0.0.0.0 --port 8000
 }
 
-# Making the summary
-echo "It's grabbin time!"
-hello
-echo "Fetching hardware data..."
-echo "Fetching software data..."
-if [ "$choice" = "1" ]; then 
+if [ "$choice" = "2" ]; then 
     echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
     echo "See you space cowboy..."
 else
-    echo "Creating a python virtual environement and starting server..."
+    echo "It's grabbin time!"
+    echo "Opening a python virtual environement and starting server..."
     # 1. On lance la fonction python_venv en arrière-plan avec '&'
     python_venv &
     
@@ -275,7 +237,7 @@ else
 
     echo "Waiting for server to initialize (10s)..."
     # 2. On attend quelques secondes que uvicorn soit bien démarré
-    sleep 10
+    sleep 5
 
     echo "Pushing fetch data into json file..."
     # 3. Maintenant que le serveur tourne, on envoie le JSON

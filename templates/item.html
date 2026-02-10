@@ -3,85 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informations Système</title>
+    <title>Détails Machine - {{ ordi.hostname }}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
-        h1 { color: #333; text-align: center; }
-        
-        /* Style pour le conteneur d'un seul PC */
-        .computer-container {
-            background-color: white;
-            border: 2px solid #333;
-            border-radius: 8px;
-            margin-bottom: 40px; /* Espace entre chaque ordi */
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .computer-header {
-            background-color: #333;
-            color: white;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-
-        .section { margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; }
-        .section h2 { margin-top: 0; color: #555; border-bottom: 2px solid #ddd; padding-bottom: 5px;}
-        
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
+        .nav-link { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #fff; background-color: #3498db; padding: 10px 15px; border-radius: 5px; }
+        .nav-link:hover { background-color: #2980b9; }
+        .section { background: #fff; margin-bottom: 20px; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .section h2 { margin-top: 0; color: #e67e22; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; width: 30%; }
+        th, td { border-bottom: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; color: #555; width: 30%; }
+        tr:hover { background-color: #f1f1f1; }
     </style>
 </head>
 <body>
-    <h1>Parc Informatique ({{ ordinateurs|length }} machines)</h1>
+    <a href="/" class="nav-link">← Retour au tableau de bord</a>
 
-    {% for ordi in ordinateurs %}
-    
-    <div class="computer-container">
-        <div class="computer-header">
-            <h2>🖥️ {{ ordi.hostname }} <small>(MAC: {{ ordi.mac_address }})</small></h2>
-        </div>
+    <h1>Détails de {{ ordi.hostname }}</h1>
 
-        <div class="section">
-            <h2>[HARDWARE]</h2>
-            <table>
-                <tr><th>Propriété</th><th>Valeur</th></tr>
-                <tr><td>Série Carte Mère</td><td>{{ ordi.mb_serial }}</td></tr>
-                <tr><td>Série Châssis</td><td>{{ ordi.chassis_serial }}</td></tr>
-                <tr><td>CPU</td><td>{{ ordi.cpu }}</td></tr>
-                <tr><td>CPU ID</td><td>{{ ordi.cpu_id }}</td></tr>
-                <tr><td>Nombre de Cœurs CPU</td><td>{{ ordi.cpu_cores_number }}</td></tr>
-                <tr><td>Nombre de Threads CPU</td><td>{{ ordi.cpu_threads_number }}</td></tr>
-                <tr><td>Fréquence Min CPU</td><td>{{ ordi.cpu_frequency_min }}</td></tr>
-                <tr><td>Fréquence Courante CPU</td><td>{{ ordi.cpu_frequency_cur }}</td></tr>
-                <tr><td>Fréquence Max CPU</td><td>{{ ordi.cpu_frequency_max }}</td></tr>
-                <tr><td>Modèle GPU</td><td>{{ ordi.gpu_model }}</td></tr>
-                <tr><td>Stockage Total</td><td>{{ ordi.stockage_total }}</td></tr>
-                <tr><td>Nombre de slots de RAM</td><td>{{ ordi.ram_slots_number }}</td></tr>
-                <tr><td>Génération RAM</td><td>{{ ordi.ram_gen }}</td></tr>
-            </table>
-        </div>
+    <div class="section">
+        <h2>[IDENTIFICATION]</h2>
+        <table>
+            <tr><th>Hostname</th><td><b>{{ ordi.hostname }}</b></td></tr>
+            <tr><th>Adresse MAC (ID Unique)</th><td><code>{{ ordi.mac_address }}</code></td></tr>
+        </table>
+    </div>
 
-        <div class="section">
-            <h2>[SOFTWARE]</h2>
-            <table>
-                <tr><th>Propriété</th><th>Valeur</th></tr>
-                <tr><td>Hostname</td><td>{{ ordi.hostname }}</td></tr>
-                <tr><td>OS</td><td>{{ ordi.os }}</td></tr>
-                <tr><td>Architecture</td><td>{{ ordi.arch }}</td></tr>
-                <tr><td>Desktop</td><td>{{ ordi.desktop }}</td></tr>
-                <tr><td>Window Manager</td><td>{{ ordi.wm }}</td></tr>
-                <tr><td>Kernel</td><td>{{ ordi.kernel }}</td></tr>
-            </table>
-        </div>
+    <div class="section">
+        <h2>[HARDWARE]</h2>
+        <table>
+            <tr><th>Carte Mère</th><td>{{ ordi.motherboard }}</td></tr>
+            <tr><th>Modèle CPU</th><td>{{ ordi.cpu_model }}</td></tr>
+            <tr><th>ID CPU</th><td>{{ ordi.cpu_id }}</td></tr>
+            <tr><th>Cœurs / Threads</th><td>{{ ordi.cpu_cores }} Cores / {{ ordi.cpu_threads }} Threads</td></tr>
+            <tr><th>Fréquences (Min/Cur/Max)</th><td>{{ ordi.cpu_frequency_min }} / {{ ordi.cpu_frequency_cur }} / {{ ordi.cpu_frequency_max }} MHz</td></tr>
+            <tr><th>Modèle GPU</th><td>{{ ordi.gpu_model }}</td></tr>
+            <tr><th>Slots RAM</th><td>{{ ordi.ram_slots }}</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>[SOFTWARE]</h2>
+        <table>
+            <tr><th>Système d'exploitation (OS)</th><td>{{ ordi.os }}</td></tr>
+            <tr><th>Architecture</th><td>{{ ordi.arch }}</td></tr>
+            <tr><th>Noyau (Kernel)</th><td>{{ ordi.kernel }}</td></tr>
+            <tr><th>Environnement de Bureau</th><td>{{ ordi.desktop_env }}</td></tr>
+            <tr><th>Gestionnaire de Fenêtres</th><td>{{ ordi.window_manager }}</td></tr>
+        </table>
     </div>
     
-    {% endfor %}
-    {% if not ordinateurs %}
-        <p style="text-align:center; color: red;">Aucun ordinateur enregistré dans la base de données.</p>
-    {% endif %}
-
+    <div style="text-align: center; color: #888; font-size: 0.9em; margin-top: 40px;">
+        Généré par Grabber v0.2
+    </div>
 </body>
 </html>

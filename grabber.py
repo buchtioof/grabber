@@ -1,6 +1,6 @@
 from typing import Optional
 from datetime import datetime
-from sqlmodel import Field, Session, SQLModel, create_engine
+from sqlmodel import Field, Session, SQLModel, create_engine, select # <--- Ajout de select
 
 # --- CONFIGURATION BASE DE DONNÉES ---
 DB_FILE = "grabberman.db"
@@ -12,8 +12,7 @@ class SystemLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     date_scan: datetime = Field(default_factory=datetime.now)
     
-    # NOUVEAU : mac_address devient un champ indexé important
-    mac_address: str = Field(index=True)
+    mac_address: str = Field(index=True) # On s'en sert pour la recherche
     hostname: str 
 
     # Champs Hardware
@@ -39,7 +38,6 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 # --- GESTION DE LA FLOTTE EN MÉMOIRE ---
-# Le dictionnaire stockera maintenant : {"AA:BB:CC:DD:EE:FF": GrabberObject}
 flotte = {}
 
 class Grabber:
@@ -53,13 +51,11 @@ class Grabber:
         hw = json_data.get("HARDWARE", {})
         sw = json_data.get("SOFTWARE", {})
         
-        # Mise à jour du hostname s'il a changé, mais on garde la MAC comme ancre
         if "hostname" in sw:
             self.hostname = sw["hostname"]
 
-        # On prépare les données pour la DB
         self.data_cache = {
-            "mac_address": self.mac_address, # On n'oublie pas la MAC
+            "mac_address": self.mac_address,
             "hostname": self.hostname,
             "motherboard": hw.get("motherboard", "N/A"),
             "cpu_model": hw.get("cpu_model", "N/A"),
@@ -79,17 +75,37 @@ class Grabber:
         }
 
     def save(self):
-        """Enregistre les données via SQLModel."""
+        """Enregistre ou met à jour les données dans la BDD."""
         try:
-            log_entry = SystemLog(**self.data_cache)
             with Session(engine) as session:
-                session.add(log_entry)
-                session.commit()
-                session.refresh(log_entry)
-            print(f"Sauvegarde réussie pour {self.hostname} ({self.mac_address})")
-        except Exception as e:
-            print(f"Erreur SQLModel : {e}")
+                # 1. On cherche si une machine avec cette MAC existe déjà
+                statement = select(SystemLog).where(SystemLog.mac_address == self.mac_address)
+                existing_pc = session.exec(statement).first()
 
-    # Permet d'accéder aux propriétés comme ordi.cpu_model dans le template
+                if existing_pc:
+                    # --- MISE À JOUR (UPDATE) ---
+                    print(f"Mise à jour de la BDD pour : {self.hostname} ({self.mac_address})")
+                    
+                    # On met à jour chaque champ existant
+                    for key, value in self.data_cache.items():
+                        if hasattr(existing_pc, key):
+                            setattr(existing_pc, key, value)
+                    
+                    # On force la mise à jour de la date de scan
+                    existing_pc.date_scan = datetime.now()
+                    
+                    session.add(existing_pc)
+                
+                else:
+                    # --- CRÉATION (INSERT) ---
+                    print(f"Création d'une nouvelle entrée BDD : {self.hostname}")
+                    log_entry = SystemLog(**self.data_cache)
+                    session.add(log_entry)
+
+                session.commit()
+                
+        except Exception as e:
+            print(f"Erreur critique BDD : {e}")
+
     def __getattr__(self, name):
         return self.data_cache.get(name, "N/A")

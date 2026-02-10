@@ -2,10 +2,11 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from sqlmodel import select, Session
 import json
 from contextlib import asynccontextmanager
 
-from grabber import Grabber, flotte, create_db_and_tables
+from grabber import Grabber, engine, flotte, SystemLog, create_db_and_tables
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,13 +46,16 @@ async def receive_info(request: Request):
 
 @app.get("/")
 async def list_ordis(request: Request):
-    """Affiche la liste des ordis, identifiés par MAC mais affichés par Hostname."""
-    # On crée des liens qui pointent vers /ordi/ADRESSE_MAC
-    # Mais pour l'humain, on affiche "Hostname (Mac)"
+    # On lit la vraie BDD pour avoir l'historique même après redémarrage
+    with Session(engine) as session:
+        statement = select(SystemLog)
+        results = session.exec(statement).all()
+    
     list_items = []
-    for mac, grabber_obj in flotte.items():
-        nom_affiche = f"{grabber_obj.hostname} <small>({mac})</small>"
-        list_items.append(f'<li><a href="/ordi/{mac}">{nom_affiche}</a></li>')
+    for pc in results:
+        nom_affiche = f"{pc.hostname} <small>({pc.mac_address})</small>"
+        # On peut ajouter une petite icône ou couleur si la date_scan est récente
+        list_items.append(f'<li><a href="/ordi/{pc.mac_address}">{nom_affiche}</a></li>')
     
     liens_html = "".join(list_items)
 
