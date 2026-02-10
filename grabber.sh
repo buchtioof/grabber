@@ -4,20 +4,8 @@ export LC_ALL=C
 export LANG=C
 
 # ==============================================================================
-	# Script : grabber.sh
-	# Date   : 2025-12-11
-	# Version: 0.2
-	#
-	# Description :
-	#   Grabber is a bash program that fetch some informations 
-	#   of the computer like memory, storage or cpu for exemple.
-	#
-	# Usage :
-	#   ./grabber.sh
-	#
-	# Dependancies :
-	#   - dmidecode
-	#   - inxi
+#   Script : grabber.sh
+#   Version: 0.4 (Full Display)
 # ==============================================================================
 
 ##### Start process #####
@@ -29,29 +17,18 @@ echo "  \____|   |_| \_\  /_/   \_\   |____/   |____/  |_____|   |_| \_\   "
 echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_ <<   >>  / /  \ \  "
 echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__) (__)  (__) "      
 echo ""
-echo "Welcome to grabber!"
 
-#----- Verify sudo command -----
-if [[ $EUID -ne 0 ]]; then
-    echo "Please run as root to be able to use superuser commands as dmidecode -> sudo ./grabber.sh"
-    exit 1
-fi
-echo ""
-
-#----- Verify dependecies available -----
-REQUIRED_CMDS_SIMPLE=(inxi dmidecode lscpu lsblk nproc numfmt)
-REQUIRED_CMDS_FULL=(inxi dmidecode lscpu lsblk nproc numfmt python3 jq sqlite3)
+#----- Verify dependecies -----
+REQUIRED_CMDS=(inxi lscpu lsblk nproc numfmt python3 jq sqlite3)
 
 requirements() {
     echo -n "Checking dependencies... "
     MISSING=()
-
-    for cmd in "${REQUIRED_CMDS_FULL[@]}"; do
+    for cmd in "${REQUIRED_CMDS[@]}"; do
         command -v "$cmd" >/dev/null 2>&1 || MISSING+=("$cmd")
     done
     if (( ${#MISSING[@]} > 0 )); then
-        echo "Missing dependencies:"
-        printf ' - %s\n' "${MISSING[@]}"
+        echo "Missing dependencies: ${MISSING[*]}"
         echo "Install with: sudo apt install ${MISSING[*]}"
         exit 1
     else
@@ -59,109 +36,58 @@ requirements() {
     fi
 }
 
-#----- Ask what user wants to do -----
-echo "What you want grabber to do for you?"
-echo "1: Launch grabber"
-echo "2: Uninstall grabber"
-
-read -p " 1 / 2 / Cancel(c):- " choice
-if [ "$choice" = "1" ]; then 
-echo "Big work for today"
-requirements
-elif [ "$choice" = "2" ];then
-echo "Uninstalling"
-exit
-elif [ "$choice" = "c" ];then
-echo "Grabber canceled"
-exit
-else 
-echo "No choices detected!"
-fi
-
+echo "1: Launch grabber | 2: Uninstall | c: Cancel"
+read -p ":- " choice
+if [ "$choice" = "1" ]; then requirements;
+elif [ "$choice" = "2" ]; then rm -rf gbvenv; exit;
+elif [ "$choice" = "c" ]; then exit;
+else echo "Invalid choice"; exit; fi
 
 ##### MAIN VARIABLES #####
-
 DATE=$(date +'%Y-%m-%d_%H:%M:%S')
 
-# Check who is behind sudo command then fetch his $HOME
-REAL_USER="${SUDO_USER:-$USER}"
-REAL_HOME="$(getent passwd "$REAL_USER" | cut -d: -f6)"
-
-# Declare where to store grabber results
-NAME_DIR="logs_$DATE"
-WORKING_DIR="$REAL_HOME/grabber/$NAME_DIR"
-mkdir $WORKING_DIR -p
-
-# Declare the files to be written
-SUM_FILE=$WORKING_DIR/summary.txt
-SUCCESS_LOG=$WORKING_DIR/grabber-success.log
-ERROR_LOG=$WORKING_DIR/grabber-error.log
-
 ############ HARDWARE FETCHER #################
-#------------ CPU ----------------
-CPU_MODEL=$(lscpu -eMODELNAME | tail -n1 | cut -d' ' -f1,2,3,4)
-CPU_ID=$(dmidecode -t processor | grep ID | cut -d: -f2 | sed 's/^ *//' | xargs)
-CPU_FREQUENCY_MIN=$(lscpu | grep MHz | cut -d: -f2 | sed -n '3p' | tr -s " " | sed 's/\ //' | cut -d, -f1)
-CPU_FREQUENCY_CUR=$(dmidecode | grep "MHz" | cut -d: -f2 | sed -n '3p' | sed 's/\ //')
-CPU_FREQUENCY_MAX=$(dmidecode | grep "MHz" | cut -d: -f2 | sed -n '2p' | sed 's/\ //')
-CPU_CORES=$(inxi | grep core | cut -d' ' -f2 | sed 's/-core//')
+
+# --- CPU ---
+CPU_MODEL=$(lscpu | grep "Model name:" | cut -d: -f2 | sed 's/^ *//')
+_VENDOR=$(lscpu | grep "Vendor ID:" | cut -d: -f2 | xargs)
+_FAMILY=$(lscpu | grep "CPU family:" | cut -d: -f2 | xargs)
+_MODEL=$(lscpu | grep "Model:" | cut -d: -f2 | xargs)
+CPU_ID="${_VENDOR} Fam ${_FAMILY} Mod ${_MODEL}"
+CPU_FREQUENCY_MIN=$(lscpu | grep "CPU min MHz" | cut -d: -f2 | xargs | cut -d. -f1)
+CPU_FREQUENCY_MAX=$(lscpu | grep "CPU max MHz" | cut -d: -f2 | xargs | cut -d. -f1)
+CPU_FREQUENCY_CUR=$(grep "cpu MHz" /proc/cpuinfo | head -n1 | cut -d: -f2 | cut -d. -f1 | xargs)
+CPU_CORES=$(lscpu | grep "^CPU(s):" | cut -d: -f2 | xargs)
 CPU_THREADS=$(nproc)
-#---------------------------------
 
-#------------ RAM ----------------
-RAM_SIZE=$(lsmem | grep "Total online memory" | cut -d: -f2 | sed 's/\ *//')
-RAM_NUMBER=$(dmidecode --type memory | grep 'Rank' | wc -l)
-RAM_SLOTS=$(dmidecode --type memory | grep "Number Of Devices" | cut -d: -f2 | sed 's/\ //')
-#---------------------------------
+# --- RAM ---
+# On récupère la RAM totale via free -h
+RAM_TOTAL=$(free -h | awk '/^Mem:/ {print $2}')
+# On récupère les slots via inxi
+RAM_SLOTS=$(inxi -m -c 0 | grep "slots:" | head -n1 | sed -E 's/.*slots: ([0-9]+).*/\1/')
+if [ -z "$RAM_SLOTS" ]; then RAM_SLOTS="N/A"; fi
 
-#------------ COMPONENTS ---------
-MB_SERIAL=$(dmidecode | grep -A 4 "Base Board" | tail -n1 | cut -d: -f2 | sed 's/\ //')
+# --- MOTHERBOARD / GPU ---
+MB_SERIAL=$(inxi -M -c 0 | grep "Mobo:" | sed -E 's/.*Mobo: (.*) model: (.*) serial: .*/\1 \2/' | xargs)
+[ -z "$MB_SERIAL" ] && MB_SERIAL=$(inxi -M -c 0 | grep "Mobo:" | cut -d: -f2 | cut -d',' -f1 | xargs)
+GPU_MODEL=$(inxi -G -c 0 | grep "Device-1:" | cut -d: -f2 | xargs)
 
-#------------ STORAGE ------------
-
-disks_partitions(){
-    declare -a DEVICES
-    mapfile -t DEVICES < <(lsblk -dn -o NAME |grep -v loop)
-
-    declare -A PARTITIONS_BY_DISK
-
-    for disk in ${DEVICES[@]}; do
-        disk_path="/dev/$disk"
-        disk_parts=$(lsblk -nr -o PKNAME,PATH $disk_path |grep -vE "^\ " |cut -d\  -f 2)
-        PARTITIONS_BY_DISK[$disk]="${disk_parts[@]}"
-    done
-
-    echo "DISKS=${DEVICES[@]}" >> $SUM_FILE
-
-    echo "Partitions in each disks: " >> $SUM_FILE
-
-    for disk in ${!PARTITIONS_BY_DISK[@]}; do
-        echo "PARTS_$disk=$(printf '%s ' ${PARTITIONS_BY_DISK[$disk]})" >> $SUM_FILE
-    done
-}
-
+# --- STORAGE ---
+# Calcul du stockage total
 SIZES=$(lsblk -dnb | grep -v loop | grep -v boot | tr -s " " | cut -d \  -f4)
 TOTAL_STORAGE=0
-
-for SIZE in ${SIZES[@]}; do
-    TOTAL_STORAGE+=$SIZE
-done
-
+for SIZE in ${SIZES[@]}; do TOTAL_STORAGE=$((TOTAL_STORAGE + SIZE)); done
 TOTAL_STORAGE=$(numfmt --to iec $TOTAL_STORAGE)
-#---------------------------------
 
-################################################
-
-######## SOFTWARE PART #########################
-OS=$(lsb_release -a | grep Description | cut -f2)
-ARCH=$(uname -a | cut -d' ' -f10)
+# --- SOFTWARE ---
+OS=$(lsb_release -d 2>/dev/null | cut -f2 || grep PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
+ARCH=$(uname -m)
 KERNEL=$(uname -r)
 HOSTNAME=$(hostname)
-MAC_ADDRESS=$(cat /sys/class/net/$(ls /sys/class/net | grep -vE '^(lo|docker|veth|br)' | head -n 1)/address)
+DEFAULT_IFACE=$(ls /sys/class/net | grep -vE '^(lo|docker|veth|br)' | head -n 1)
+MAC_ADDRESS=$(cat "/sys/class/net/$DEFAULT_IFACE/address" 2>/dev/null || echo "Unknown-MAC")
 
-###############################################
-
-##### JSON PART ###############################
+##### JSON PART #####
 json_file() { 
     json_data=$(jq -n \
         --arg motherboard "$MB_SERIAL" \
@@ -174,12 +100,14 @@ json_file() {
         --arg cpu_frequency_max "$CPU_FREQUENCY_MAX" \
         --arg gpu_model "$GPU_MODEL" \
         --arg ram_slots "$RAM_SLOTS" \
+        --arg ram_total "$RAM_TOTAL" \
+        --arg total_storage "$TOTAL_STORAGE" \
         --arg hostname "$HOSTNAME" \
         --arg mac_address "$MAC_ADDRESS" \
         --arg os "$OS" \
         --arg arch "$ARCH" \
-        --arg desktop_env "$XDG_CURRENT_DESKTOP" \
-        --arg window_manager "$XDG_SESSION_TYPE" \
+        --arg desktop_env "${XDG_CURRENT_DESKTOP:-N/A}" \
+        --arg window_manager "${XDG_SESSION_TYPE:-N/A}" \
         --arg kernel "$KERNEL" \
         '{
         HARDWARE: {
@@ -192,7 +120,9 @@ json_file() {
             cpu_frequency_cur: $cpu_frequency_cur,
             cpu_frequency_max: $cpu_frequency_max,
             gpu_model: $gpu_model,
-            ram_slots: $ram_slots
+            ram_slots: $ram_slots,
+            ram_total: $ram_total,
+            total_storage: $total_storage
         },
         SOFTWARE: {
             hostname: $hostname,
@@ -206,46 +136,27 @@ json_file() {
         }'
     )
     
-    # Envoi au serveur
     curl -X POST http://localhost:8000/endpoint \
          -H "Content-Type: application/json" \
-         -d "$json_data"
+         -d "$json_data" \
+         --connect-timeout 5 || echo "Erreur: Serveur injoignable."
 }
 
 python_venv() {
-    if [ ! -d "./gbvenv" ]; then
-        echo "Virtual environement doesn't exist, creating one..."
-        python3 -m venv gbvenv
-    fi
+    [ ! -d "./gbvenv" ] && python3 -m venv gbvenv
     source gbvenv/bin/activate
-    pip install --upgrade pip
-    pip install -r requirements.txt
+    pip install -q --upgrade pip
+    pip install -q -r requirements.txt
     uvicorn app:app --reload --host 0.0.0.0 --port 8000
 }
 
-if [ "$choice" = "2" ]; then 
-    echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
-    echo "See you space cowboy..."
-else
-    echo "It's grabbin time!"
-    echo "Opening a python virtual environement and starting server..."
-    # 1. On lance la fonction python_venv en arrière-plan avec '&'
+if [ "$choice" = "1" ]; then
+    echo "Starting Python Server..."
     python_venv &
-    
-    # On récupère l'ID du processus du serveur pour pouvoir l'attendre plus tard
     SERVER_PID=$!
-
-    echo "Waiting for server to initialize (10s)..."
-    # 2. On attend quelques secondes que uvicorn soit bien démarré
     sleep 5
-
-    echo "Pushing fetch data into json file..."
-    # 3. Maintenant que le serveur tourne, on envoie le JSON
+    echo "Fetching data..."
     json_file
-
-    echo "Grabber has complete his mission! Find every logs saved in your home repository inside the /grabber folder."
-    echo "Server is running on http://localhost:8000. Press Ctrl+C to stop."
-    
-    # 4. On empêche le script de se fermer (ce qui tuerait le serveur si configuré ainsi)
+    echo "✅ Dashboard: http://localhost:8000"
     wait $SERVER_PID
 fi

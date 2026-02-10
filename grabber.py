@@ -1,21 +1,18 @@
 from typing import Optional
 from datetime import datetime
-from sqlmodel import Field, Session, SQLModel, create_engine, select # <--- Ajout de select
+from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-# --- CONFIGURATION BASE DE DONNÉES ---
 DB_FILE = "grabberman.db"
 sqlite_url = f"sqlite:///{DB_FILE}"
 engine = create_engine(sqlite_url, echo=False)
 
-# --- MODÈLE DE DONNÉES (TABLE SQL) ---
 class SystemLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     date_scan: datetime = Field(default_factory=datetime.now)
-    
-    mac_address: str = Field(index=True) # On s'en sert pour la recherche
+    mac_address: str = Field(index=True)
     hostname: str 
 
-    # Champs Hardware
+    # Hardware
     motherboard: Optional[str] = None
     cpu_model: Optional[str] = None
     cpu_id: Optional[str] = None
@@ -25,9 +22,13 @@ class SystemLog(SQLModel, table=True):
     cpu_frequency_cur: Optional[str] = None
     cpu_frequency_max: Optional[str] = None
     gpu_model: Optional[str] = None
-    ram_slots: Optional[str] = None
     
-    # Champs Software
+    # NOUVEAUX CHAMPS
+    ram_slots: Optional[str] = None
+    ram_total: Optional[str] = None
+    total_storage: Optional[str] = None
+    
+    # Software
     os: Optional[str] = None
     arch: Optional[str] = None
     desktop_env: Optional[str] = None
@@ -37,7 +38,7 @@ class SystemLog(SQLModel, table=True):
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
-# --- GESTION DE LA FLOTTE EN MÉMOIRE ---
+# Flotte temporaire pour compatibilité, mais on utilise surtout la BDD
 flotte = {}
 
 class Grabber:
@@ -47,7 +48,6 @@ class Grabber:
         self.data_cache = {} 
 
     def update(self, json_data):
-        """Met à jour les données et prépare l'objet SQLModel."""
         hw = json_data.get("HARDWARE", {})
         sw = json_data.get("SOFTWARE", {})
         
@@ -67,6 +67,8 @@ class Grabber:
             "cpu_frequency_max": hw.get("cpu_frequency_max", "N/A"),
             "gpu_model": hw.get("gpu_model", "N/A"),
             "ram_slots": hw.get("ram_slots", "N/A"),
+            "ram_total": hw.get("ram_total", "N/A"),       # Ajouté
+            "total_storage": hw.get("total_storage", "N/A"), # Ajouté
             "os": sw.get("os", "N/A"),
             "arch": sw.get("arch", "N/A"),
             "desktop_env": sw.get("desktop_env", "N/A"),
@@ -75,37 +77,22 @@ class Grabber:
         }
 
     def save(self):
-        """Enregistre ou met à jour les données dans la BDD."""
         try:
             with Session(engine) as session:
-                # 1. On cherche si une machine avec cette MAC existe déjà
                 statement = select(SystemLog).where(SystemLog.mac_address == self.mac_address)
                 existing_pc = session.exec(statement).first()
 
                 if existing_pc:
-                    # --- MISE À JOUR (UPDATE) ---
-                    print(f"Mise à jour de la BDD pour : {self.hostname} ({self.mac_address})")
-                    
-                    # On met à jour chaque champ existant
+                    # Update
                     for key, value in self.data_cache.items():
                         if hasattr(existing_pc, key):
                             setattr(existing_pc, key, value)
-                    
-                    # On force la mise à jour de la date de scan
                     existing_pc.date_scan = datetime.now()
-                    
                     session.add(existing_pc)
-                
                 else:
-                    # --- CRÉATION (INSERT) ---
-                    print(f"Création d'une nouvelle entrée BDD : {self.hostname}")
+                    # Insert
                     log_entry = SystemLog(**self.data_cache)
                     session.add(log_entry)
-
                 session.commit()
-                
         except Exception as e:
-            print(f"Erreur critique BDD : {e}")
-
-    def __getattr__(self, name):
-        return self.data_cache.get(name, "N/A")
+            print(f"Erreur BDD : {e}")

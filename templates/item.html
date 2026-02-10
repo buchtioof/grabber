@@ -207,9 +207,18 @@
                     <span class="label">Coeurs / Threads</span>
                     <span class="value">{{ ordi.cpu_cores }}C / {{ ordi.cpu_threads }}T</span>
                 </div>
+                
                 <div class="data-row">
-                    <span class="label">Fréquence Max</span>
-                    <span class="value">{{ ordi.cpu_frequency_max }} MHz</span>
+                    <span class="label">Mémoire RAM</span>
+                    <span class="value badge badge-ram">{{ ordi.ram_total }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">Slots RAM</span>
+                    <span class="value">{{ ordi.ram_slots }}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">Stockage Total</span>
+                    <span class="value" style="color: #fbbf24; font-weight:bold;">{{ ordi.total_storage }}</span>
                 </div>
                 <div class="data-row">
                     <span class="label">Carte Mère</span>
@@ -218,10 +227,6 @@
                 <div class="data-row">
                     <span class="label">GPU</span>
                     <span class="value">{{ ordi.gpu_model }}</span>
-                </div>
-                <div class="data-row">
-                    <span class="label">Slots RAM</span>
-                    <span class="value badge badge-ram">{{ ordi.ram_slots }}</span>
                 </div>
             </div>
 
