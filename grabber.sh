@@ -17,10 +17,19 @@ echo "  \____|   |_| \_\  /_/   \_\   |____/   |____/  |_____|   |_| \_\   "
 echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_ <<   >>  / /  \ \  "
 echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__) (__)  (__) "      
 echo ""
+echo "1: Launch grabber | 2: Uninstall | c: Cancel"
+read -p ";> " choice
+if [ "$choice" = "1" ]; then requirements;
+elif [ "$choice" = "2" ]; then rm -rf gbvenv; exit;
+elif [ "$choice" = "c" ]; then exit;
+else echo "Invalid choice"; exit; fi
 
-#----- Verify dependecies -----
+##### MAIN VARIABLES #####
+DATE=$(date +'%Y-%m-%d_%H:%M:%S')
+
+############ REQUIREMENTS #################
+
 REQUIRED_CMDS=(inxi lscpu lsblk nproc numfmt python3 jq sqlite3)
-
 requirements() {
     echo -n "Checking dependencies... "
     MISSING=()
@@ -36,18 +45,7 @@ requirements() {
     fi
 }
 
-echo "1: Launch grabber | 2: Uninstall | c: Cancel"
-read -p ":- " choice
-if [ "$choice" = "1" ]; then requirements;
-elif [ "$choice" = "2" ]; then rm -rf gbvenv; exit;
-elif [ "$choice" = "c" ]; then exit;
-else echo "Invalid choice"; exit; fi
-
-##### MAIN VARIABLES #####
-DATE=$(date +'%Y-%m-%d_%H:%M:%S')
-
 ############ HARDWARE FETCHER #################
-
 # --- CPU ---
 CPU_MODEL=$(lscpu | grep "Model name:" | cut -d: -f2 | sed 's/^ *//')
 _VENDOR=$(lscpu | grep "Vendor ID:" | cut -d: -f2 | xargs)
