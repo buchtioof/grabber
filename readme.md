@@ -3,11 +3,13 @@
 # Grabber - Fetch all your PC
 
 ## About
-Grabber is a bash program that fetch some informations of the computer like memory, storage or cpu for exemple.
+Grabber is an administration interface that allows you to manage a group of computers at a glance.
+*it's a school project*
 
 ## Dependencies
 - inxi
-- dmidecode
+- python3
+- sqlite3
 
 ## Versions
 - v0.1 : grabber base, write fetch data in summary.txt needs upgrades
