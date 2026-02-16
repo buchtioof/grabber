@@ -146,7 +146,7 @@ python_venv() {
     source gbvenv/bin/activate
     pip install -q --upgrade pip
     pip install -q -r requirements.txt
-    uvicorn app:app --reload --host 0.0.0.0 --port 8000
+    python manage.py runserver 0.0.0.0:8000
 }
 
 if [ "$choice" = "1" ]; then

@@ -1,4 +1,4 @@
 .DS_Store
 gbvenv
 __pycache__
-*.db
+*.sqlite3

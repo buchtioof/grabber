@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <header>
+        <div class="header-title">💻 Dashboard Grabber</div>
+        <a href="/admin/api/systeminfo/" class="edit-btn" title="Éditer la base de données">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Éditer
+        </a>
+    </header>
+
+    <div class="container">
+        
+        <div class="hero">
+            <h1>Machines connectées</h1>
+            <p>Sélectionnez un poste pour voir les détails</p>
+        </div>
+
+        <ul class="pc-list">
+            {% for computer in computers %}
+                <li class="pc-item">
+                    <a href="/ordi/{{ computer.mac_address }}" class="pc-link">
+                        <span class="pc-name">{{ computer.hostname }}</span>
+                        <span class="pc-mac">{{ computer.mac_address }}</span>
+                    </a>
+                </li>
+            {% empty %}
+                <li class="empty-list">En attente de données... Lancez le script sur une machine !</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+
+{% endblock %}
