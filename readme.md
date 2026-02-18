@@ -6,10 +6,9 @@
 Grabber is an administration interface that allows you to manage a group of computers at a glance.
 *it's a school project*
 
-## Dependencies
-- inxi
-- python3
-- sqlite3
+## Usage
+
+when admin portal is finished (v0.5) i'll add setup and config. atm, need to use alfred separately with grabber launched before
 
 ## Versions
 - v0.1 : grabber base, write fetch data in summary.txt needs upgrades
@@ -17,6 +16,11 @@ Grabber is an administration interface that allows you to manage a group of comp
 - v0.3 : minimal uvicorn usage, shows data fetch for one pc saved in json data locally
 - v0.4 (actual) : save fetch data in a sql database and can save multiple pc in a pretty interface
 - v0.5 (wip) : switch to Django, use API model, adding admin tools (add/rm employees...)
+
+## Dependencies
+- inxi
+- python3
+- sqlite3
 
 # Credits
 Logo inspired by [kawaiiLogos](https://github.com/SAWARATSUKI/KawaiiLogos) project
