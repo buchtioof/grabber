@@ -9,8 +9,16 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+
+dynamic_host = os.environ.get('DJANGO_ALLOWED_HOST', 'localhost')
+
+ALLOWED_HOSTS = [
+    dynamic_host, # IP given by the user
+    '127.0.0.1',
+    'localhost',
+]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,8 +32,6 @@ SECRET_KEY = 'django-insecure-p88lx%vb+t&&glqmqwv9oyjvvm1%32b4+jx@u$6l25pn7z85%z
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition

@@ -11,6 +11,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 if User.objects.filter(is_superuser=True).exists():
-    sys.exit(0)  # Code 0 = Succès (le superuser existe)
+    sys.exit(0)
 else:
-    sys.exit(1)  # Code 1 = Erreur/Faux (aucun superuser)
+    sys.exit(1)

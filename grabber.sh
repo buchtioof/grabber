@@ -13,6 +13,7 @@ ALERT='\033[0;31m'
 SUCCESS='\033[0;32m'
 WARNING='\033[0;33m'
 ECM='\033[0m' # stands for END COLOR MESSAGE
+
 ADMIN_ADDRESS=$(cat settings.json | jq -r .ip_address)
 PORT=$(cat settings.json | jq -r .port)
 
@@ -59,17 +60,18 @@ server() {
 
     # Check if user added settings
     if [[ "$ADMIN_ADDRESS" == "null" ]]; then 
-        echo -e "${ALERT}> No Address set in settings.json, address "localhost" is chosen${ECM}"
+        echo -e "${WARNING}> No Address set in settings.json, address "localhost" is chosen${ECM}"
         ADMIN_ADDRESS="localhost" 
     fi
     sleep 1
     if [[ "$PORT" == "null" ]]; then 
-        echo -e "${ALERT}> No Address set in settings.json, port "8000" is chosen${ECM}"; 
+        echo -e "${WARNING}> No Address set in settings.json, port "8000" is chosen${ECM}"; 
         PORT="8000"
     fi
 
     # Run server in background
     sleep 2
+    export DJANGO_ALLOWED_HOST=$ADMIN_ADDRESS
     python manage.py runserver $ADMIN_ADDRESS:$PORT > /dev/null &
     SERVER_PID=$!
 
