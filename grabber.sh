@@ -5,7 +5,7 @@ export LANG=C
 
 # ==============================================================================
 #   Script : grabber.sh
-#   Version: 0.5 (Full Display)
+#   Version: 0.5
 # ==============================================================================
 
 ##### MAIN VARIABLES #####
@@ -37,10 +37,6 @@ requirements() {
 
 ##############################
 
-########## INIT SETUP ##########
-
-
-
 ########## ADMIN PANEL ##########
 
 server() {
@@ -60,8 +56,13 @@ server() {
     pip install -q --upgrade pip
     pip install -q -r requirements.txt
 
+    # Prepare DB
+    echo "Checking database..."
+    python manage.py migrate --noinput
+
+    # Check for admin user
     echo "Checking Superuser existence..."
-    if ! python check_admin.py; then
+    if ! python ./lib/check_admin.py; then
         echo -e "${ALERT}> No Superuser detected! Create one now in order to use Grabber normally.${ECM}"
         echo ""
         python manage.py createsuperuser
@@ -108,7 +109,7 @@ echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_ <<   >>   / /  \ \  "
 echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__)  (__)  (__) "      
 echo ""
 
-echo "Welcome, this is the admin side of Grabber"
+echo "Hello World! This is the admin side of Grabber"
 echo "1: Launch grabber | 2: Edit settings | 3: Uninstall | c: Cancel"
 read -p ";> " choice
 

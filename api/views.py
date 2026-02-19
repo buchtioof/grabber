@@ -47,7 +47,7 @@ def deploy_ssh(request):
             
             # 2. Send Alfred in temp path
             sftp = ssh.open_sftp()
-            local_path = os.path.join(settings.BASE_DIR, 'alfred.run')
+            local_path = os.path.join(settings.BASE_DIR, './lib/alfred.run')
             remote_path = '/tmp/alfred.run'
             sftp.put(local_path, remote_path)
             sftp.close()
