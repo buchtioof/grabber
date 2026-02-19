@@ -8,7 +8,7 @@ Grabber is an administration interface that allows you to manage a group of comp
 
 ## Usage
 
-when admin portal is finished (v0.5) i'll add setup and config. atm, need to use alfred separately with grabber launched before
+when admin portal is finished (v0.6) i'll add setup and config. atm, need to use alfred separately with grabber launched before
 
 ## Versions
 - v0.1 : grabber base, write fetch data in summary.txt needs upgrades
@@ -23,6 +23,8 @@ when admin portal is finished (v0.5) i'll add setup and config. atm, need to use
 - python3
 - sqlite3
 - paramiko
+- django
+- jq
 
 # Credits
 Logo inspired by [kawaiiLogos](https://github.com/SAWARATSUKI/KawaiiLogos) project
