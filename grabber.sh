@@ -37,9 +37,18 @@ requirements() {
 
 ##############################
 
+########## INIT SETUP ##########
+
+
+
 ########## ADMIN PANEL ##########
 
 server() {
+    
+    # Creating a session token to identify grabber
+    SESSION_TOKEN=$(openssl rand -hex 32)
+    jq --arg key "$SESSION_TOKEN" '.session_token = $key' settings.json > temp_settings.json
+    mv temp_settings.json settings.json
 
     # Check if venv already exists
     if [ ! -d "./gbvenv" ]; then
@@ -58,6 +67,7 @@ server() {
         python manage.py createsuperuser
     fi
 
+    echo "Starting the server..."
     # Check if user added settings
     if [[ "$ADMIN_ADDRESS" == "null" ]]; then 
         echo -e "${WARNING}> No Address set in settings.json, address "localhost" is chosen${ECM}"
@@ -99,17 +109,21 @@ echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__)  (__)  (__) "
 echo ""
 
 echo "Welcome, this is the admin side of Grabber"
-echo "1: Launch grabber | 2: Uninstall | c: Cancel"
+echo "1: Launch grabber | 2: Edit settings | 3: Uninstall | c: Cancel"
 read -p ";> " choice
 
 if [ "$choice" = "1" ]; then
-
     requirements
     echo ""
     echo "Starting Admin Panel..."
     server
 
-elif [ "$choice" = "2" ]; then 
+elif [ "$choice" = "2" ]; then
+    echo "Opening settings..."
+    sleep 1
+    nano settings.json
+
+elif [ "$choice" = "3" ]; then 
     echo "Not available atm, uninstall manually by using "rm -rf gbvenv""
     # rm -rf gbvenv 
     exit

@@ -244,3 +244,43 @@ header {
     border-radius: 8px;
     border: 1px dashed var(--border);
 }
+
+/* --- Bouton de suppression (Corbeille) --- */
+.delete-btn {
+    background: rgba(239, 68, 68, 0.1); /* Fond rouge très léger */
+    color: #ef4444; /* Rouge vif pour l'icône */
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn:hover {
+    background: #ef4444;
+    color: white;
+    transform: scale(1.05); /* Grossit légèrement au survol */
+    border-color: #ef4444;
+}
+
+/* --- Bouton Déconnexion --- */
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.2s, transform 0.2s;
+    width: 120px;
+    justify-content: flex-end;
+}
+
+.logout-btn:hover {
+    color: #ef4444; /* Devient rouge au survol */
+    transform: translateX(2px); /* Se décale légèrement vers la droite (la sortie) */
+}

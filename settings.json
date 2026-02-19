@@ -1,4 +1,5 @@
 {
   "ip_address": "172.20.10.5",
-  "port": "8000"
+  "port": "8000",
+  "session_token": "c4027eb66ef3854966bcf99719edd562348275e9de96cf3ad291736943998c3a"
 }

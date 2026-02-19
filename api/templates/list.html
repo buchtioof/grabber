@@ -2,35 +2,115 @@
 {% block content %}
 
     <header>
-        <div class="header-title">grabber v.0.5</div>
-        <a href="/admin/api/systeminfo/" class="edit-btn" title="Éditer la base de données">
+        <div style="width: 120px;"></div> <div class="header-title">💻 Dashboard Grabber</div>
+        
+        <a href="/logout" class="logout-btn" title="Se déconnecter">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
-            Éditer
+            Déconnexion
         </a>
     </header>
 
     <div class="container">
+
+        <div class="card" style="margin-bottom: 40px; border-left: 4px solid var(--accent);">
+            <h3 style="margin-top: 0; color: var(--accent);">🚀 Déploiement distant (Alfred)</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
+                Envoyez le script sur une machine du réseau via SSH pour l'ajouter automatiquement au tableau de bord.
+            </p>
+            
+            {% if messages %}
+                <ul style="list-style: none; padding: 0; margin-bottom: 15px;">
+                    {% for message in messages %}
+                        <li style="padding: 10px; border-radius: 4px; font-weight: bold; 
+                            background: {% if message.tags == 'success' %}rgba(16, 185, 129, 0.2); color: #6ee7b7;
+                                        {% else %}rgba(239, 68, 68, 0.2); color: #fca5a5;{% endif %}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <form id="deploy-form" method="POST" action="/deploy" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                {% csrf_token %}
+                
+                <input type="text" name="target" placeholder="IP ou Hostname" required 
+                       style="padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-color); color: white;">
+                
+                <input type="text" name="username" placeholder="Utilisateur SSH" required 
+                       style="padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-color); color: white;">
+                
+                <input type="password" name="password" placeholder="Mot de passe" required 
+                       style="padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-color); color: white;">
+                
+                <button id="submit-btn" type="submit" style="background-color: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">
+                    ⚡ Lancer le scan
+                </button>
+
+                <div id="loading-indicator" style="display: none; align-items: center; gap: 10px; color: var(--accent); font-weight: bold; padding: 10px;">
+                    <svg style="width: 24px; height: 24px; animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="2" x2="12" y2="6"></line>
+                        <line x1="12" y1="18" x2="12" y2="22"></line>
+                        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+                        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+                        <line x1="2" y1="12" x2="6" y2="12"></line>
+                        <line x1="18" y1="12" x2="22" y2="12"></line>
+                        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+                        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+                    </svg>
+                    Connexion SSH en cours, veuillez patienter...
+                </div>
+            </form>
+        </div>
         
         <div class="hero">
-            <h1>Machines enregistrées</h1>
-            <p>Sélectionnez un poste pour voir les détails</p>
+            <h1>Machines connectées</h1>
+            <p>Sélectionnez un poste pour voir les détails ou supprimez-le de la base de données.</p>
         </div>
 
         <ul class="pc-list">
             {% for computer in computers %}
-                <li class="pc-item">
-                    <a href="/ordi/{{ computer.mac_address }}" class="pc-link">
+                <li class="pc-item" style="display: flex; justify-content: space-between; align-items: center; padding-right: 20px;">
+                    
+                    <a href="/ordi/{{ computer.mac_address }}" class="pc-link" style="flex-grow: 1;">
                         <span class="pc-name">{{ computer.hostname }}</span>
                         <span class="pc-mac">{{ computer.mac_address }}</span>
                     </a>
+                    
+                    <form method="POST" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="delete_mac" value="{{ computer.mac_address }}">
+                        
+                        <button type="submit" class="delete-btn" title="Supprimer cet ordinateur" 
+                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement {{ computer.hostname }} ?');">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    </form>
+
                 </li>
             {% empty %}
-                <li class="empty-list">En attente de données... Lancez le script sur une machine !</li>
+                <li class="empty-list">En attente de données... Déployez Alfred ou lancez le script local !</li>
             {% endfor %}
         </ul>
 
     </div>
+    
+    <style>
+        /* Crée l'animation de rotation pour le spinner */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+
+    <script>
+        // On écoute le moment où le formulaire est validé (soumis)
+        document.getElementById('deploy-form').addEventListener('submit', function() {
+            // On cache le bouton
+            document.getElementById('submit-btn').style.display = 'none';
+            // On affiche le spinner
+            document.getElementById('loading-indicator').style.display = 'flex';
+        });
+    </script>
 
 {% endblock %}

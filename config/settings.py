@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
+import json
+from django.core.exceptions import ImproperlyConfigured
 from pathlib import Path
 
 dynamic_host = os.environ.get('DJANGO_ALLOWED_HOST', 'localhost')
@@ -33,6 +35,8 @@ SECRET_KEY = 'django-insecure-p88lx%vb+t&&glqmqwv9oyjvvm1%32b4+jx@u$6l25pn7z85%z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Application definition
 
@@ -126,3 +130,19 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+
+# Session token verification
+
+SETTINGS_FILE = os.path.join(BASE_DIR, 'settings.json')
+
+if not os.path.exists(SETTINGS_FILE):
+    raise ImproperlyConfigured("ERROR: Settings not found!")
+
+with open(SETTINGS_FILE, 'r') as f:
+    try:
+        config_data = json.load(f)
+        SESSION_TOKEN = config_data['session_token']
+    except json.JSONDecodeError:
+        raise ImproperlyConfigured("[ERROR]: JSON is not understandable.")
+    except KeyError:
+        raise ImproperlyConfigured("[ERROR] : The Session Token is not found in the settings.")
