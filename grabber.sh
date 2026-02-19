@@ -37,6 +37,18 @@ requirements() {
 
 ##############################
 
+######### CLEANUP END ##########
+
+cleanup() {
+    echo -e "\n${WARNING}> Closing the Server...${ECM}"
+    kill $SERVER_PID
+    jq '.session_token = ""' settings.json > temp_settings.json
+    mv temp_settings.json settings.json
+    echo ""
+    echo "See you space cowboy..."
+    exit 0
+}
+
 ########## ADMIN PANEL ##########
 
 server() {
@@ -58,7 +70,7 @@ server() {
 
     # Prepare DB
     echo "Checking database..."
-    python manage.py migrate --noinput
+    python manage.py migrate --noinput > /dev/null
 
     # Check for admin user
     echo "Checking Superuser existence..."
@@ -70,12 +82,12 @@ server() {
 
     echo "Starting the server..."
     # Check if user added settings
-    if [[ "$ADMIN_ADDRESS" == "null" ]]; then 
+    if [[ -z "$ADMIN_ADDRESS" || "$ADMIN_ADDRESS" == "null" ]]; then 
         echo -e "${WARNING}> No Address set in settings.json, address "localhost" is chosen${ECM}"
         ADMIN_ADDRESS="localhost" 
     fi
     sleep 1
-    if [[ "$PORT" == "null" ]]; then 
+    if [[ -z "$PORT" || "$PORT" == "null" ]]; then 
         echo -e "${WARNING}> No Address set in settings.json, port "8000" is chosen${ECM}"; 
         PORT="8000"
     fi
@@ -86,7 +98,7 @@ server() {
     python manage.py runserver $ADMIN_ADDRESS:$PORT > /dev/null &
     SERVER_PID=$!
 
-    trap 'echo -e "\n${WARNING}> Closing the Server...${ECM}"; kill $SERVER_PID; exit 0' INT
+    trap cleanup INT
 
     echo ""
     echo -e "${SUCCESS}> Dashboard launched at http://$ADMIN_ADDRESS:$PORT${ECM}"
