@@ -11,12 +11,12 @@ Grabber is an administration interface that allows you to manage a group of comp
 ### for v0.5
 
 firstly, git clone this repo:\
-`git clone https://github.com/buchtioof/grabber.git`\
+`git clone https://github.com/buchtioof/grabber.git`
 
 then, inside your cloned directory, run the bash script:\
-`./grabber.sh`\
+`./grabber.sh`
 
-in order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other computers data, you will need to add the host ip address in settings.json\
+in order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other computers data, you will need to add the host ip address in settings.json
 ```json
 {
   "ip_address": "", # if no address detected, grabber use localhost, important to change for Alfred
