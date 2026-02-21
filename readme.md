@@ -3,20 +3,20 @@
 # Grabber - Fetch all your PC
 
 ## About
-Grabber is an administration interface that allows you to manage a group of computers at a glance.
-*it's a school project*
+Grabber is an administration interface that allows you to manage a group of computers at a glance.\
+*it's a school project, learn more about the project [in the docs notes (in french)](https://buchtioof.github.io/notes/projects/2025-12-05/)*
 
 ## Usage
 
 ### for v0.5
 
-firstly, git clone this repo:\
+Firstly, git clone this repo:\
 `git clone https://github.com/buchtioof/grabber.git`
 
-then, inside your cloned directory, run the bash script:\
+Then, inside your cloned directory, run the bash script:\
 `./grabber.sh`
 
-in order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other computers data, you will need to add the host ip address in settings.json
+In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other computers data, you will need to add the host ip address in settings.json
 ```json
 {
   "ip_address": "", # if no address detected, grabber use localhost, important to change for Alfred
@@ -34,13 +34,19 @@ in order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 - v0.6 (wip) : adding admin tools (add/rm employees...), rework admin panel (not made by me atm)
 
 ## Dependencies
-- inxi
-- python3
-- sqlite3
-- paramiko
-- django
-- jq
-- alfred (mine yea boi)
+
+To run Grabber properly on your device, you will need these 3 dependencies available:
+- [jq](https://github.com/jqlang/jq)
+- [python3](https://www.python.org/)
+- [sqlite3](https://sqlite.org/index.html)
+
+Grabber will install automatically these 2 dependencies in python virtual environment:
+- [paramiko](https://www.paramiko.org/)
+- [django](https://www.djangoproject.com/)
+
+This one is already available in Grabber:
+- [alfred](https://github.com/buchtioof/alfred)
 
 # Credits
-Logo inspired by [kawaiiLogos](https://github.com/SAWARATSUKI/KawaiiLogos) project
+To the big work of all the dependencies used\
+To [kawaiiLogos](https://github.com/SAWARATSUKI/KawaiiLogos) for the logo inspiration

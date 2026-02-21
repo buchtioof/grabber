@@ -1,10 +1,16 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.views.generic import RedirectView
 from api import views, api
 
+# Redirect /admin path to / root but lets login possible
+admin_patterns = ([
+    path('login/', admin.site.login, name='login'),
+    path('', RedirectView.as_view(url='/', permanent=False), name='index'),
+], 'admin')
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', include(admin_patterns)),
 
     path('endpoint', api.receive_system_info, name='receive_system_info'), # API fetch grabber.sh data
 

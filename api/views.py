@@ -9,9 +9,9 @@ from .models import SystemInfo
 
 def logout_view(request):
     logout(request)
-    return redirect('/admin/login/')
+    return redirect('admin:login')
 
-@staff_member_required(login_url='/admin/login/')
+@staff_member_required(login_url='admin:login')
 def computers_list(request):
     
     if request.method == 'POST' and 'delete_mac' in request.POST:
@@ -23,7 +23,7 @@ def computers_list(request):
     computers = SystemInfo.objects.all()
     return render(request, 'list.html', {'computers': computers})
 
-@staff_member_required(login_url='/admin/login/')
+@staff_member_required(login_url='admin:login')
 def show_info(request, mac_address):
     
     # Object that fetch the system informations via SystemInfo in models.py linked to the mac adress asked, if no return = 404
@@ -32,7 +32,7 @@ def show_info(request, mac_address):
     # Return the requested object in item.html by using the keyword "data"
     return render(request, 'item.html', {'data': computer_info})
 
-@staff_member_required(login_url='/admin/login/')
+@staff_member_required(login_url='admin:login')
 def deploy_ssh(request):
     if request.method == 'POST':
         target = request.POST.get('target')

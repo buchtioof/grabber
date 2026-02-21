@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>Connexion - Grabber</title>
+    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Prend toute la hauteur de l'écran */
+        }
+        
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            padding: 40px !important;
+        }
+
+        /* Styles pour les champs du formulaire */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* On cible les inputs générés par Django */
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent); /* Bordure bleue au focus */
+        }
+
+        /* Bouton de connexion personnalisé */
+        .login-btn {
+            width: 100%;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Boîte d'erreur */
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <div class="card login-card">
+            
+            <div class="hero" style="margin-bottom: 30px;">
+                <h1>Grabber</h1>
+                <p>Authentification</p>
+            </div>
+
+            {% if form.errors and not form.non_field_errors %}
+                <div class="error-msg">Identifiant ou mot de passe incorrect.</div>
+            {% endif %}
+            {% if form.non_field_errors %}
+                <div class="error-msg">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <form method="post" action="{{ app_path }}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_username">Nom d'utilisateur</label>
+                    {{ form.username }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_password">Mot de passe</label>
+                    {{ form.password }}
+                </div>
+                
+                <input type="hidden" name="next" value="{{ next }}">
+                
+                <button type="submit" class="login-btn">Se connecter</button>
+            </form>
+
+        </div>
+    </div>
+
+</body>
+</html>
