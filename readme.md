@@ -27,7 +27,7 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 
 ## Versions
 
-Pre-release phase
+### Pre-release phase
 
 - v0.1 : Grabber base, write fetch data in summary.txt needs upgrades
 - v0.2 : Use admin to fetch more data like cpu info
