@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
-from .models import SystemInfo
+from .models import SystemInfo, Employees
 
 def logout_view(request):
     logout(request)
@@ -14,14 +14,49 @@ def logout_view(request):
 @staff_member_required(login_url='admin:login')
 def computers_list(request):
     
-    if request.method == 'POST' and 'delete_mac' in request.POST:
-        mac_to_delete = request.POST.get('delete_mac')
-        pc = get_object_or_404(SystemInfo, mac_address=mac_to_delete)
-        pc.delete()
-        return redirect('computers_list')
+    if request.method == 'POST':
+        
+        # Action via button to delete a PC
+        if 'delete_mac' in request.POST:
+            mac_to_delete = request.POST.get('delete_mac')
+            pc = get_object_or_404(SystemInfo, mac_address=mac_to_delete)
+            pc.delete()
+            return redirect('computers_list')
+        
+        # Action via form to create an employee
+        elif 'add_employee' in request.POST:
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            
+            if first_name and last_name:
+                Employees.objects.create(first_name=first_name, last_name=last_name)
+                messages.success(request, f"[OK] L'employé {first_name} {last_name} a été ajouté.")
+            else:
+                messages.error(request, "[ERREUR] Veuillez remplir le nom et le prénom.")
+                
+            return redirect('computers_list')
+        
+        # Assign an employee to a PC
+        elif 'assign_employee' in request.POST:
+            mac_address = request.POST.get('mac_address')
+            employees_id = request.POST.get('employees_id')
+            
+            pc = get_object_or_404(SystemInfo, mac_address=mac_address)
+            
+            if employees_id:
+                employees = get_object_or_404(Employees, id=employees_id)
+                pc.employees = employees
+                messages.success(request, f"[OK] {employees.first_name} a été assigné au PC {pc.mac_address}.")
+            else:
+                pc.employees = None
+                messages.success(request, f"[OK] L'assignation a été retirée pour le PC {pc.mac_address}.")
+                
+            pc.save()
+            return redirect('computers_list')
 
     computers = SystemInfo.objects.all()
-    return render(request, 'list.html', {'computers': computers})
+    employees = Employees.objects.all()
+    return render(request, 'list.html', {'computers': computers, 'employees': employees})
 
 @staff_member_required(login_url='admin:login')
 def show_info(request, mac_address):

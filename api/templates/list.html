@@ -1,116 +1,237 @@
 {% extends 'base.html' %}
-{% block content %}
 
-    <header>
-        <div style="width: 120px;"></div> <div class="header-title">💻 Dashboard Grabber</div>
+{% block content %}
+<header class="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-700 bg-slate-800 px-6 shadow-sm">
+    
+    <div class="flex items-center gap-3">
+        <h1 class="text-lg font-bold text-slate-100">Grabber</h1>
         
-        <a href="/logout" class="logout-btn" title="Se déconnecter">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+        <a href="https://github.com/buchtioof/grabber#versions" class="rounded-full border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-orange-400 transition-colors duration-200 hover:border-orange-500/50 hover:bg-orange-500/20" title="Voir les nouveautés de cette version">
+            pre-release v0.6
+        </a>
+        <span id="localhost-pill-warning" class="hidden rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-yellow-400">
+            Mode local
+        </span> 
+    </div>
+    
+    <div class="flex items-center gap-6">
+        
+        <button id="open-employee-modal" class="flex items-center gap-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:underline hover:text-blue-300 cursor-pointer">
+            <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256">
+                <path d="M168,56a8,8,0,0,1,8-8h16V32a8,8,0,0,1,16,0V48h16a8,8,0,0,1,0,16H208V80a8,8,0,0,1-16,0V64H176A8,8,0,0,1,168,56Zm62.56,54.68a103.92,103.92,0,1,1-85.24-85.24,8,8,0,0,1-2.64,15.78A88.07,88.07,0,0,0,40,128a87.62,87.62,0,0,0,22.24,58.41A79.66,79.66,0,0,1,98.3,157.66a48,48,0,1,1,59.4,0,79.66,79.66,0,0,1,36.06,28.75A87.62,87.62,0,0,0,216,128a88.85,88.85,0,0,0-1.22-14.68,8,8,0,1,1,15.78-2.64ZM128,152a32,32,0,1,0-32-32A32,32,0,0,0,128,152Zm0,64a87.57,87.57,0,0,0,53.92-18.5,64,64,0,0,0-107.84,0A87.57,87.57,0,0,0,128,216Z"></path>
+            </svg>
+            Ajouter un employé
+        </button>
+        
+        <a href="/logout" class="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20" title="Se déconnecter">
+            <svg class="h-5 w-5 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                <path d="M124,216a12,12,0,0,1-12,12H48a12,12,0,0,1-12-12V40A12,12,0,0,1,48,28h64a12,12,0,0,1,0,24H60V204h52A12,12,0,0,1,124,216Zm108.49-96.49-40-40a12,12,0,0,0-17,17L195,116H112a12,12,0,0,0,0,24h83l-19.52,19.51a12,12,0,0,0,17,17l40-40A12,12,0,0,0,232.49,119.51Z"></path>
             </svg>
             Déconnexion
         </a>
-    </header>
-
-    <div class="container">
-
-        <div class="card" style="margin-bottom: 40px; border-left: 4px solid var(--accent);">
-            <h3 style="margin-top: 0; color: var(--accent);">Déploiement distant (Alfred)</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
-                Envoyez le script sur une machine du réseau via SSH pour l'ajouter automatiquement au tableau de bord.
-            </p>
-            
-            {% if messages %}
-                <ul style="list-style: none; padding: 0; margin-bottom: 15px;">
-                    {% for message in messages %}
-                        <li style="padding: 10px; border-radius: 4px; font-weight: bold; 
-                            background: {% if message.tags == 'success' %}rgba(16, 185, 129, 0.2); color: #6ee7b7;
-                                        {% else %}rgba(239, 68, 68, 0.2); color: #fca5a5;{% endif %}">
-                            {{ message }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            <form id="deploy-form" method="POST" action="/deploy" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                {% csrf_token %}
-                
-                <input type="text" name="target" placeholder="Adresse IP" required 
-                       style="padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-color); color: white;">
-                
-                <input type="text" name="username" placeholder="Nom d'utilisateur" required 
-                       style="padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-color); color: white;">
-                
-                <input type="password" name="password" placeholder="Mot de passe" required 
-                       style="padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-color); color: white;">
-                
-                <button id="submit-btn" type="submit" style="background-color: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;">
-                    Lancer le scan
-                </button>
-
-                <div id="loading-indicator" style="display: none; align-items: center; gap: 10px; color: var(--accent); font-weight: bold; padding: 10px;">
-                    <svg style="width: 24px; height: 24px; animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="2" x2="12" y2="6"></line>
-                        <line x1="12" y1="18" x2="12" y2="22"></line>
-                        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
-                        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
-                        <line x1="2" y1="12" x2="6" y2="12"></line>
-                        <line x1="18" y1="12" x2="22" y2="12"></line>
-                        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
-                        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
-                    </svg>
-                    Connexion SSH en cours, veuillez patienter...
-                </div>
-            </form>
-        </div>
         
-        <div class="hero">
-            <h1>Machines connectées</h1>
-            <p>Sélectionnez un poste pour voir les détails ou supprimez-le de la base de données.</p>
+    </div>
+</header>
+
+{% if messages %}
+<ul class="flex flex-col gap-2">
+
+    {% for message in messages %}
+
+        <li class="flex items-center gap-1.5 p-3 font-semibold {% if message.tags == 'success' %}bg-emerald-500/20 text-emerald-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+            
+            {% if message.tags == 'success' %}
+                <svg class="fill-emerald-500" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256">
+                    <path d="M176.49,95.51a12,12,0,0,1,0,17l-56,56a12,12,0,0,1-17,0l-24-24a12,12,0,1,1,17-17L112,143l47.51-47.52A12,12,0,0,1,176.49,95.51ZM236,128A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Z"></path>
+                </svg>
+            {% else %}
+                <svg class="fill-red-500/20" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256">
+                    <path d="M240.26,186.1,152.81,34.23h0a28.74,28.74,0,0,0-49.62,0L15.74,186.1a27.45,27.45,0,0,0,0,27.71A28.31,28.31,0,0,0,40.55,228h174.9a28.31,28.31,0,0,0,24.79-14.19A27.45,27.45,0,0,0,240.26,186.1Zm-20.8,15.7a4.46,4.46,0,0,1-4,2.2H40.55a4.46,4.46,0,0,1-4-2.2,3.56,3.56,0,0,1,0-3.73L124,46.2a4.77,4.77,0,0,1,8,0l87.44,151.87A3.56,3.56,0,0,1,219.46,201.8ZM116,136V104a12,12,0,0,1,24,0v32a12,12,0,0,1-24,0Zm28,40a16,16,0,1,1-16-16A16,16,0,0,1,144,176Z"></path>
+                </svg>
+            {% endif %}
+            
+            {{ message }}
+
+        </li>
+
+    {% endfor %}
+</ul>
+
+{% endif %}
+<div class="mx-auto mt-10 max-w-6xl px-5 pb-20">
+
+    <div class="mb-10 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg">
+        <div id="localhost-deploy-warning" class="hidden mb-4 rounded-md border border-yellow-500/30 bg-yellow-500/20 p-3 text-sm font-semibold text-yellow-500 mb-4">
+            <svg class="fill-yellow-500" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256">
+                <path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z"></path>
+            </svg>
+            <h2 class="font-extrabold text-lg">Déploiement désactivé</h2> 
+            <p>Le scan distant n'est pas disponible en mode local.</p>
         </div>
 
-        <ul class="pc-list">
-            {% for computer in computers %}
-                <li class="pc-item" style="display: flex; justify-content: space-between; align-items: center; padding-right: 20px;">
-                    
-                    <a href="/ordi/{{ computer.mac_address }}" class="pc-link" style="flex-grow: 1;">
-                        <span class="pc-name">{{ computer.hostname }}</span>
-                        <span class="pc-mac">{{ computer.mac_address }}</span>
-                    </a>
-                    
-                    <form method="POST" style="margin: 0;">
-                        {% csrf_token %}
-                        <input type="hidden" name="delete_mac" value="{{ computer.mac_address }}">
-                        
-                        <button type="submit" class="delete-btn" title="Supprimer cet ordinateur" 
-                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement {{ computer.hostname }} ?');">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </button>
-                    </form>
+        <h3 class="mb-2 text-xl font-bold text-blue-500">Déploiement distant (Alfred)</h3>
+        <p class="mb-6 text-sm text-slate-400">Envoyez le script sur une machine du réseau via SSH pour l'ajouter automatiquement au tableau de bord.</p>
 
-                </li>
-            {% empty %}
-                <li class="empty-list">En attente de données... Déployez Alfred ou lancez le script local !</li>
-            {% endfor %}
-        </ul>
+        <form id="deploy-form" method="POST" action="/deploy" class="flex flex-wrap items-center gap-4 transition-all duration-300">
+            {% csrf_token %}
+            
+            <input type="text" name="target" placeholder="Adresse IP" required 
+                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            
+            <input type="text" name="username" placeholder="Nom d'utilisateur" required 
+                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            
+            <input type="password" name="password" placeholder="Mot de passe" required 
+                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            
+            <button id="submit-btn" type="submit" 
+                    class="cursor-pointer rounded-md bg-blue-500 px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg">
+                Lancer le scan
+            </button>
 
+            <div id="loading-indicator" class="hidden items-center gap-2 px-2 font-bold text-blue-500">
+                <svg class="h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+                </svg>
+                Connexion SSH en cours...
+            </div>
+        </form>
     </div>
 
-    <style>
-        /* Crée l'animation de rotation pour le spinner */
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-    </style>
+    <div class="mb-8">
+        <h1 class="mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-4xl font-extrabold text-transparent">Machines connectées</h1>
+        <p class="inline-block rounded-md border border-slate-700 bg-white/5 px-3 py-1.5 font-mono text-sm text-slate-400">Sélectionnez un poste pour voir les détails ou assigner un employé.</p>
+    </div>
 
-    <script>
-        // On écoute le moment où le formulaire est validé (soumis)
-        document.getElementById('deploy-form').addEventListener('submit', function() {
-            // On cache le bouton
-            document.getElementById('submit-btn').style.display = 'none';
-            // On affiche le spinner
-            document.getElementById('loading-indicator').style.display = 'flex';
-        });
-    </script>
+    <ul class="grid gap-4">
+        {% for computer in computers %}
+            <li class="flex flex-col overflow-hidden rounded-lg border border-slate-700 bg-slate-800 transition-all duration-200 hover:-translate-y-1 hover:border-blue-500 hover:shadow-xl md:flex-row md:items-center">
+                
+                <a href="/ordi/{{ computer.mac_address }}" class="flex flex-1 items-center justify-between p-5 hover:bg-slate-700/30">
+                    <span class="text-lg font-semibold text-slate-100">{{ computer.hostname }}</span>
+                    <span class="rounded bg-white/5 px-2.5 py-1 font-mono text-sm text-slate-400">{{ computer.mac_address }}</span>
+                </a>
 
+                <form method="post" action="{% url 'computers_list' %}" class="flex items-center gap-3 border-t border-slate-700 bg-slate-800/50 p-4 md:border-t-0 md:border-l">
+                    {% csrf_token %}
+                    <input type="hidden" name="assign_employee" value="1">
+                    <input type="hidden" name="mac_address" value="{{ computer.mac_address }}">
+
+                    <label class="text-sm font-medium text-slate-400">Assigné :</label>
+
+                    <select name="employees_id" class="cursor-pointer appearance-none rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <option value="">-- Aucun --</option>
+                        {% for emp in employees %}
+                            <option value="{{ emp.id }}" {% if computer.employees and computer.employees.id == emp.id %} selected {% endif %}>
+                                {{ emp.first_name }} {{ emp.last_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit" class="rounded-md bg-blue-500 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-600 cursor-pointer">
+                        Sauver
+                    </button>
+                </form>
+            </li>
+        {% empty %}
+            <li class="rounded-lg border border-dashed border-slate-700 bg-slate-800 p-10 text-center text-slate-400">
+                En attente de données... Déployez Alfred ou lancez le script local !
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div id="employee-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity">
+    
+    <div class="relative w-full max-w-lg scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
+        
+        <button id="close-employee-modal" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
+            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-blue-500">
+                <span class="text-2xl leading-none">+</span> Créer un employé
+            </h2>
+        </div>
+
+        <form method="post" action="{% url 'computers_list' %}" class="flex flex-col gap-4">
+            {% csrf_token %}
+            <input type="hidden" name="add_employee" value="1">
+
+            <div>
+                <label for="first_name" class="mb-1 block text-sm font-semibold text-slate-400">Prénom</label>
+                <input type="text" id="first_name" name="first_name" required 
+                       class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="last_name" class="mb-1 block text-sm font-semibold text-slate-400">Nom de famille</label>
+                <input type="text" id="last_name" name="last_name" required 
+                       class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            </div>
+
+            <div class="mt-4 flex justify-end gap-3">
+                <button type="button" id="cancel-employee-modal" class="rounded-md px-4 py-2 text-sm font-semibold text-slate-400 transition-colors hover:text-slate-200 cursor-pointer">
+                    Annuler
+                </button>
+                <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- DÉTECTION DU MODE LOCAL POUR LE DÉPLOIEMENT ---
+    document.addEventListener("DOMContentLoaded", function() {
+        const hostname = window.location.hostname;
+        
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            document.getElementById('localhost-pill-warning').classList.remove('hidden');
+            document.getElementById('localhost-deploy-warning').classList.remove('hidden');
+            
+            const deployForm = document.getElementById('deploy-form');
+            deployForm.classList.add('opacity-50', 'pointer-events-none', 'grayscale');
+            
+            const formInputs = deployForm.querySelectorAll('input, button');
+            formInputs.forEach(input => {
+                input.disabled = true;
+            });
+        }
+    });
+    
+    document.getElementById('deploy-form').addEventListener('submit', function () {
+        document.getElementById('submit-btn').classList.add('hidden');
+        document.getElementById('loading-indicator').classList.remove('hidden');
+        document.getElementById('loading-indicator').classList.add('flex');
+    });
+
+    const modal = document.getElementById('employee-modal');
+    const openBtn = document.getElementById('open-employee-modal');
+    const closeBtn = document.getElementById('close-employee-modal');
+    const cancelBtn = document.getElementById('cancel-employee-modal');
+
+    openBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    });
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+</script>
 {% endblock %}

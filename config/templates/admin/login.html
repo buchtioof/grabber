@@ -3,129 +3,74 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Grabber</title>
-    
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    
-    <style>
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Prend toute la hauteur de l'écran */
-        }
-        
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            padding: 40px !important;
-        }
-
-        /* Styles pour les champs du formulaire */
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* On cible les inputs générés par Django */
-        .form-group input[type="text"],
-        .form-group input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--accent); /* Bordure bleue au focus */
-        }
-
-        /* Bouton de connexion personnalisé */
-        .login-btn {
-            width: 100%;
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
-            font-size: 1rem;
-            margin-top: 10px;
-        }
-
-        .login-btn:hover {
-            background-color: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        /* Boîte d'erreur */
-        .error-msg {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            font-size: 0.9rem;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
 </head>
-<body>
+<body class="flex min-h-screen items-center justify-center bg-slate-900 font-sans text-slate-100 antialiased">
 
-    <div class="login-wrapper">
-        <div class="card login-card">
-            
-            <div class="hero" style="margin-bottom: 30px;">
-                <h1>Grabber</h1>
-                <p>Authentification</p>
-            </div>
-
-            {% if form.errors and not form.non_field_errors %}
-                <div class="error-msg">Identifiant ou mot de passe incorrect.</div>
-            {% endif %}
-            {% if form.non_field_errors %}
-                <div class="error-msg">{{ form.non_field_errors }}</div>
-            {% endif %}
-
-            <form method="post" action="{{ app_path }}">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="id_username">Nom d'utilisateur</label>
-                    {{ form.username }}
-                </div>
-                
-                <div class="form-group">
-                    <label for="id_password">Mot de passe</label>
-                    {{ form.password }}
-                </div>
-                
-                <input type="hidden" name="next" value="{{ next }}">
-                
-                <button type="submit" class="login-btn">Se connecter</button>
-            </form>
-
+    <div class="w-full max-w-md rounded-xl border border-slate-700 bg-slate-800 p-8 shadow-2xl">
+        
+        <div class="mb-8 text-center">
+            <h1 class="mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-4xl font-extrabold text-transparent">
+                Grabber
+            </h1>
+            <p class="inline-block rounded-md border border-slate-700 bg-slate-900 px-3 py-1.5 font-mono text-sm tracking-wide text-slate-400 shadow-sm">
+                Authentification
+            </p>
         </div>
+
+        <div id="localhost-warning" class="hidden mb-6 rounded-md border border-yellow-500/30 bg-yellow-500/20 p-3 text-sm font-semibold text-yellow-500 flex flex-col gap-2">
+            <div>
+                <svg class="fill-yellow-500" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256">
+                    <path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z"></path>
+                </svg>
+                <h2 class="font-extrabold text-lg">Mode Local</h2>
+            </div>
+            <p>En localhost, les requêtes vers d'autres ordinateurs seront impossibles. Modifiez l'adresse hôte depuis les réglages cmd de Grabber.</p>
+        </div>
+
+        {% if form.errors and not form.non_field_errors %}
+            <div class="mb-6 rounded-md border border-red-500/30 bg-red-500/20 p-3 text-center text-sm font-semibold text-red-400">
+                Identifiant ou mot de passe incorrect.
+            </div>
+        {% endif %}
+        {% if form.non_field_errors %}
+            <div class="mb-6 rounded-md border border-red-500/30 bg-red-500/20 p-3 text-center text-sm font-semibold text-red-400">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <form method="post" action="{{ app_path }}" class="flex flex-col gap-5">
+            {% csrf_token %}
+            
+            <div class="flex flex-col [&>input]:w-full [&>input]:rounded-md [&>input]:border [&>input]:border-slate-600 [&>input]:bg-slate-900 [&>input]:px-4 [&>input]:py-2.5 [&>input]:text-slate-100 [&>input]:transition-colors [&>input]:focus:border-blue-500 [&>input]:focus:outline-none [&>input]:focus:ring-1 [&>input]:focus:ring-blue-500">
+                <label for="id_username" class="mb-1.5 text-sm font-semibold text-slate-400">Nom d'utilisateur</label>
+                {{ form.username }}
+            </div>
+            
+            <div class="flex flex-col [&>input]:w-full [&>input]:rounded-md [&>input]:border [&>input]:border-slate-600 [&>input]:bg-slate-900 [&>input]:px-4 [&>input]:py-2.5 [&>input]:text-slate-100 [&>input]:transition-colors [&>input]:focus:border-blue-500 [&>input]:focus:outline-none [&>input]:focus:ring-1 [&>input]:focus:ring-blue-500">
+                <label for="id_password" class="mb-1.5 text-sm font-semibold text-slate-400">Mot de passe</label>
+                {{ form.password }}
+            </div>
+            
+            <input type="hidden" name="next" value="{{ next }}">
+            
+            <button type="submit" class="mt-4 w-full rounded-md bg-blue-500 py-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
+                Se connecter
+            </button>
+        </form>
+
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const hostname = window.location.hostname;
+            
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                document.getElementById('localhost-warning').classList.remove('hidden');
+            }
+        });
+    </script>
 </body>
 </html>

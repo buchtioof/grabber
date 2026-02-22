@@ -1,5 +1,12 @@
 from django.db import models
 
+class Employees(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
 class SystemInfo(models.Model):
 
     # Primary key
@@ -32,6 +39,8 @@ class SystemInfo(models.Model):
 
     # Last update date
     last_updated = models.DateTimeField(auto_now=True)
+
+    employees = models.ForeignKey(Employees, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.hostname} ({self.mac_address})"

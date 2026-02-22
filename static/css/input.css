@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@source "../../api/templates";
+@source "../../config/templates";
+@source "../../templates";
+
+@font-face {
+    font-family: 'Host Grotesk';
+    src: url('../fonts/font.ttf') format('truetype');
+    font-weight: 100 900; 
+    font-display: swap;
+    font-style: normal;
+}
+
+@theme {
+    --font-sans: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif;
+}
