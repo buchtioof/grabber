@@ -8,9 +8,131 @@
     <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans antialiased">
+    <header class="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-700 bg-slate-800 px-6 shadow-sm">
+    
+    <div class="flex items-center gap-3">
+        <h1 class="text-lg font-bold text-slate-100">Grabber</h1>
+        
+        <a href="https://github.com/buchtioof/grabber#versions" class="rounded-full border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-orange-400 transition-colors duration-200 hover:border-orange-500/50 hover:bg-orange-500/20" title="Voir les nouveautés de cette version">
+            pre-release v0.6
+        </a>
+        <span id="localhost-pill-warning" class="hidden rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-yellow-400">
+            Mode local
+        </span> 
+    </div>
+    
+    <div class="flex items-center gap-6">
+        
+        <button id="open-employee-modal" class="flex items-center gap-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:underline hover:text-blue-300 cursor-pointer">
+            <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256">
+                <path d="M168,56a8,8,0,0,1,8-8h16V32a8,8,0,0,1,16,0V48h16a8,8,0,0,1,0,16H208V80a8,8,0,0,1-16,0V64H176A8,8,0,0,1,168,56Zm62.56,54.68a103.92,103.92,0,1,1-85.24-85.24,8,8,0,0,1-2.64,15.78A88.07,88.07,0,0,0,40,128a87.62,87.62,0,0,0,22.24,58.41A79.66,79.66,0,0,1,98.3,157.66a48,48,0,1,1,59.4,0,79.66,79.66,0,0,1,36.06,28.75A87.62,87.62,0,0,0,216,128a88.85,88.85,0,0,0-1.22-14.68,8,8,0,1,1,15.78-2.64ZM128,152a32,32,0,1,0-32-32A32,32,0,0,0,128,152Zm0,64a87.57,87.57,0,0,0,53.92-18.5,64,64,0,0,0-107.84,0A87.57,87.57,0,0,0,128,216Z"></path>
+            </svg>
+            Ajouter un employé
+        </button>
+        
+        <a href="/logout" class="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20" title="Se déconnecter">
+            <svg class="h-5 w-5 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                <path d="M124,216a12,12,0,0,1-12,12H48a12,12,0,0,1-12-12V40A12,12,0,0,1,48,28h64a12,12,0,0,1,0,24H60V204h52A12,12,0,0,1,124,216Zm108.49-96.49-40-40a12,12,0,0,0-17,17L195,116H112a12,12,0,0,0,0,24h83l-19.52,19.51a12,12,0,0,0,17,17l40-40A12,12,0,0,0,232.49,119.51Z"></path>
+            </svg>
+            Déconnexion
+        </a>
+        
+    </div>
+</header>
     
     {% block content %}
     {% endblock %}
+    <div id="employee-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity">
+    
+    <div class="relative w-full max-w-lg scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
+        
+        <button id="close-employee-modal" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
 
+        <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
+            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-blue-500">
+                <span class="text-2xl leading-none">+</span> Créer un employé
+            </h2>
+        </div>
+
+        <form method="post" action="{% url 'computers_list' %}" class="flex flex-col gap-4">
+            {% csrf_token %}
+            <input type="hidden" name="add_employee" value="1">
+
+            <div>
+                <label for="first_name" class="mb-1 block text-sm font-semibold text-slate-400">Prénom</label>
+                <input type="text" id="first_name" name="first_name" required 
+                       class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="last_name" class="mb-1 block text-sm font-semibold text-slate-400">Nom de famille</label>
+                <input type="text" id="last_name" name="last_name" required 
+                       class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            </div>
+
+            <div class="mt-4 flex justify-end gap-3">
+                <button type="button" id="cancel-employee-modal" class="rounded-md px-4 py-2 text-sm font-semibold text-slate-400 transition-colors hover:text-slate-200 cursor-pointer">
+                    Annuler
+                </button>
+                <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    // --- DÉTECTION DU MODE LOCAL POUR LE DÉPLOIEMENT ---
+    document.addEventListener("DOMContentLoaded", function() {
+        const hostname = window.location.hostname;
+        
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            document.getElementById('localhost-pill-warning').classList.remove('hidden');
+            document.getElementById('localhost-deploy-warning').classList.remove('hidden');
+            
+            const deployForm = document.getElementById('deploy-form');
+            deployForm.classList.add('opacity-50', 'pointer-events-none', 'grayscale');
+            
+            const formInputs = deployForm.querySelectorAll('input, button');
+            formInputs.forEach(input => {
+                input.disabled = true;
+            });
+        }
+    });
+    
+    document.getElementById('deploy-form').addEventListener('submit', function () {
+        document.getElementById('submit-btn').classList.add('hidden');
+        document.getElementById('loading-indicator').classList.remove('hidden');
+        document.getElementById('loading-indicator').classList.add('flex');
+    });
+
+    const modal = document.getElementById('employee-modal');
+    const openBtn = document.getElementById('open-employee-modal');
+    const closeBtn = document.getElementById('close-employee-modal');
+    const cancelBtn = document.getElementById('cancel-employee-modal');
+
+    openBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    });
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+</script>
 </body>
 </html>
