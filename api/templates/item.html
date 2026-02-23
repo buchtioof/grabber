@@ -53,7 +53,7 @@
             <ul class="flex flex-col gap-3">
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">Stockage Total</span>
-                    <span class="text-sm font-semibold text-slate-100">{{ data.total_storage }} GB</span>
+                    <span class="text-sm font-semibold text-slate-100">{{ data.total_storage }}</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">Carte Graphique</span>
@@ -113,6 +113,52 @@
         </div>
 
     </div> 
+
+    <div class="mt-6 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:border-blue-500">
+        <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">💽 Disques & Partitions</h2>
+        
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {% for disk in data.disks %}
+            <div class="rounded-lg border border-slate-700/50 bg-slate-900/50 p-4">
+                
+                <h3 class="mb-3 flex items-center gap-2 text-md font-semibold text-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#FFFFFF" viewBox="0 0 256 256">
+                        <path d="M224,60H32A20,20,0,0,0,12,80v96a20,20,0,0,0,20,20H224a20,20,0,0,0,20-20V80A20,20,0,0,0,224,60Zm-4,112H36V84H220Zm-56-44a16,16,0,1,1,16,16A16,16,0,0,1,164,128Z"></path>
+                    </svg>
+                    /dev/{{ disk.name }}
+                </h3>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-400">
+                        <thead class="border-b border-slate-700/50 text-xs uppercase text-slate-500">
+                            <tr>
+                                <th class="pb-2 font-medium">Nom</th>
+                                <th class="pb-2 font-medium">Type</th>
+                                <th class="pb-2 font-medium text-right">Taille</th>
+                                <th class="pb-2 font-medium text-right">Utilisé</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700/20">
+                            {% for part in disk.partitions %}
+                            <tr class="transition-colors hover:bg-slate-800/50">
+                                <td class="py-2 font-mono text-slate-300">{{ part.name }}</td>
+                                <td class="py-2 text-xs">{{ part.fstype }}</td>
+                                <td class="py-2 text-right">{{ part.size }}</td>
+                                <td class="py-2 text-right text-xs">{{ part.used }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="py-4 text-center text-xs italic text-slate-500">Aucune partition détectée</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 
     <div class="mt-12 text-center text-sm font-medium text-slate-500">
         Grabber v0.6 • Données générées le {{ data.last_updated|date:"d/m/Y à H:i"|default:"N/A" }}        

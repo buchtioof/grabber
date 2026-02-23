@@ -28,6 +28,7 @@ class SystemInfo(models.Model):
     ram_slots = models.CharField(max_length=50, null=True, blank=True)
     ram_total = models.CharField(max_length=50, null=True, blank=True)
     total_storage = models.CharField(max_length=50, null=True, blank=True)
+    disks = models.JSONField(null=True, blank=True)
 
     # SOFTWARE
     hostname = models.CharField(max_length=255, null=True, blank=True)

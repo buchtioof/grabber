@@ -44,6 +44,7 @@ def receive_system_info(request):
                     'ram_slots': hw.get('ram_slots'),
                     'ram_total': hw.get('ram_total'),
                     'total_storage': hw.get('total_storage'),
+                    'disks': hw.get('disks'),
                     'hostname': sw.get('hostname'),
                     'os': sw.get('os'),
                     'arch': sw.get('arch'),
