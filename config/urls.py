@@ -19,4 +19,6 @@ urlpatterns = [
     path('deploy', views.deploy_ssh, name='deploy_ssh'),
     path('ordi/<str:mac_address>', views.show_info, name='show_info'),
     path('logout', views.logout_view, name='logout'),
+    path('update-admin/', views.update_admin, name='update_admin'),
+    path('employees/manage/', views.manage_employees, name='manage_employees'),
 ]

@@ -8,43 +8,74 @@
     <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans antialiased">
+    
     <header class="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-700 bg-slate-800 px-6 shadow-sm">
-    
-    <div class="flex items-center gap-3">
-        <h1 class="text-lg font-bold text-slate-100">Grabber</h1>
+        <div class="flex items-center gap-3">
+            {% csrf_token %}
+            <h1 class="text-lg font-bold text-slate-100">Bienvenue sur Grabber, {{ request.user.username }}</h1>
+            
+            <a href="https://github.com/buchtioof/grabber#versions" class="rounded-full border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-orange-400 transition-colors duration-200 hover:border-orange-500/50 hover:bg-orange-500/20" title="Voir les nouveautés de cette version">
+                pre-release v0.6
+            </a>
+            <span id="localhost-pill-warning" class="hidden rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-yellow-400">
+                Mode local
+            </span> 
+        </div>
         
-        <a href="https://github.com/buchtioof/grabber#versions" class="rounded-full border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-orange-400 transition-colors duration-200 hover:border-orange-500/50 hover:bg-orange-500/20" title="Voir les nouveautés de cette version">
-            pre-release v0.6
-        </a>
-        <span id="localhost-pill-warning" class="hidden rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-yellow-400">
-            Mode local
-        </span> 
+        <div class="flex items-center gap-6">
+            <button id="open-settings-modal" class="flex items-center gap-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:underline hover:text-blue-300 cursor-pointer">
+                <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256">
+                    <path d="M226.76,69a8,8,0,0,0-12.84-2.88l-40.3,37.19-17.23-3.7-3.7-17.23,37.19-40.3A8,8,0,0,0,187,29.24,72,72,0,0,0,88,96,72.34,72.34,0,0,0,94,124.94L33.79,177c-.15.12-.29.26-.43.39a32,32,0,0,0,45.26,45.26c.13-.13.27-.28.39-.42L131.06,162A72,72,0,0,0,232,96,71.56,71.56,0,0,0,226.76,69ZM160,152a56.14,56.14,0,0,1-27.07-7,8,8,0,0,0-9.92,1.77L67.11,211.51a16,16,0,0,1-22.62-22.62L109.18,133a8,8,0,0,0,1.77-9.93,56,56,0,0,1,58.36-82.31l-31.2,33.81a8,8,0,0,0-1.94,7.1L141.83,108a8,8,0,0,0,6.14,6.14l26.35,5.66a8,8,0,0,0,7.1-1.94l33.81-31.2A56.06,56.06,0,0,1,160,152Z"></path>
+                </svg>
+                Paramètres
+            </button>
+
+            <button id="open-employee-modal" class="flex items-center gap-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:underline hover:text-blue-300 cursor-pointer">
+                <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256">
+                    <path d="M75.19,198.4a8,8,0,0,0,11.21-1.6,52,52,0,0,1,83.2,0,8,8,0,1,0,12.8-9.6A67.88,67.88,0,0,0,155,165.51a40,40,0,1,0-53.94,0A67.88,67.88,0,0,0,73.6,187.2,8,8,0,0,0,75.19,198.4ZM128,112a24,24,0,1,1-24,24A24,24,0,0,1,128,112Zm72-88H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V40A16,16,0,0,0,200,24Zm0,192H56V40H200ZM88,64a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,64Z"></path>
+                </svg>
+                Employés
+            </button>
+            
+            <a href="/logout" class="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20" title="Se déconnecter">
+                <svg class="h-5 w-5 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                    <path d="M124,216a12,12,0,0,1-12,12H48a12,12,0,0,1-12-12V40A12,12,0,0,1,48,28h64a12,12,0,0,1,0,24H60V204h52A12,12,0,0,1,124,216Zm108.49-96.49-40-40a12,12,0,0,0-17,17L195,116H112a12,12,0,0,0,0,24h83l-19.52,19.51a12,12,0,0,0,17,17l40-40A12,12,0,0,0,232.49,119.51Z"></path>
+                </svg>
+                Déconnexion
+            </a>
+        </div>
+    </header>
+    <div class="mx-auto mt-6 max-w-6xl px-5 empty:hidden">
+        {% if messages %}
+            <ul class="flex flex-col gap-3">
+                {% for message in messages %}
+                    <li class="flex items-center gap-2 rounded-md border p-4 font-semibold shadow-sm transition-all
+                        {% if message.tags == 'success' %}
+                            border-emerald-500/30 bg-emerald-500/10 text-emerald-400
+                        {% elif message.tags == 'error' %}
+                            border-red-500/30 bg-red-500/10 text-red-400
+                        {% else %}
+                            border-blue-500/30 bg-blue-500/10 text-blue-400
+                        {% endif %}">
+                        
+                        {% if message.tags == 'success' %}
+                            <svg class="h-5 w-5 fill-current" viewBox="0 0 256 256"><path d="M176.49,95.51a12,12,0,0,1,0,17l-56,56a12,12,0,0,1-17,0l-24-24a12,12,0,1,1,17-17L112,143l47.51-47.52A12,12,0,0,1,176.49,95.51ZM236,128A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Z"></path></svg>
+                        {% else %}
+                            <svg class="h-5 w-5 fill-current" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"></path></svg>
+                        {% endif %}
+                        
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
-    
-    <div class="flex items-center gap-6">
-        
-        <button id="open-employee-modal" class="flex items-center gap-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:underline hover:text-blue-300 cursor-pointer">
-            <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256">
-                <path d="M168,56a8,8,0,0,1,8-8h16V32a8,8,0,0,1,16,0V48h16a8,8,0,0,1,0,16H208V80a8,8,0,0,1-16,0V64H176A8,8,0,0,1,168,56Zm62.56,54.68a103.92,103.92,0,1,1-85.24-85.24,8,8,0,0,1-2.64,15.78A88.07,88.07,0,0,0,40,128a87.62,87.62,0,0,0,22.24,58.41A79.66,79.66,0,0,1,98.3,157.66a48,48,0,1,1,59.4,0,79.66,79.66,0,0,1,36.06,28.75A87.62,87.62,0,0,0,216,128a88.85,88.85,0,0,0-1.22-14.68,8,8,0,1,1,15.78-2.64ZM128,152a32,32,0,1,0-32-32A32,32,0,0,0,128,152Zm0,64a87.57,87.57,0,0,0,53.92-18.5,64,64,0,0,0-107.84,0A87.57,87.57,0,0,0,128,216Z"></path>
-            </svg>
-            Ajouter un employé
-        </button>
-        
-        <a href="/logout" class="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20" title="Se déconnecter">
-            <svg class="h-5 w-5 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-                <path d="M124,216a12,12,0,0,1-12,12H48a12,12,0,0,1-12-12V40A12,12,0,0,1,48,28h64a12,12,0,0,1,0,24H60V204h52A12,12,0,0,1,124,216Zm108.49-96.49-40-40a12,12,0,0,0-17,17L195,116H112a12,12,0,0,0,0,24h83l-19.52,19.51a12,12,0,0,0,17,17l40-40A12,12,0,0,0,232.49,119.51Z"></path>
-            </svg>
-            Déconnexion
-        </a>
-        
-    </div>
-</header>
     
     {% block content %}
     {% endblock %}
+
     <div id="employee-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity">
-    
-    <div class="relative w-full max-w-lg scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
+    <div class="relative w-full max-w-2xl scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
         
         <button id="close-employee-modal" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,85 +85,254 @@
 
         <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
             <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-blue-500">
-                <span class="text-2xl leading-none">+</span> Créer un employé
+                Gestion des employés
             </h2>
         </div>
 
-        <form method="post" action="{% url 'computers_list' %}" class="flex flex-col gap-4">
+        <div class="mb-6 overflow-hidden rounded-lg border border-slate-700 bg-slate-900/50">
+            
+            <button type="button" id="toggle-add-employee-btn" class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-slate-800/50 cursor-pointer">
+                <h3 class="text-sm font-bold text-slate-300">Ajouter un nouvel employé</h3>
+                <svg id="toggle-add-employee-icon" class="h-5 w-5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <div id="add-employee-form-container" class="hidden border-t border-slate-700 p-4 pt-3">
+                <form method="post" action="{% url 'manage_employees' %}" class="flex flex-col gap-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_employee" value="1">
+                    
+                    <div class="flex gap-3">
+                        <div class="flex-1">
+                            <label class="mb-1 block text-xs font-semibold text-slate-400">Prénom</label>
+                            <input type="text" name="first_name" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                        <div class="flex-1">
+                            <label class="mb-1 block text-xs font-semibold text-slate-400">Nom</label>
+                            <input type="text" name="last_name" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold text-slate-400">Adresse e-mail</label>
+                        <input type="email" name="email" placeholder="jean.dupont@entreprise.com" class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    </div>
+
+                    <div class="mt-1 flex justify-end">
+                        <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
+                            Enregistrer l'employé
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <h3 class="mb-3 text-sm font-bold text-slate-300">Employés existants</h3>
+        
+        <div class="w-full">
+            <ul class="flex flex-col gap-2">
+                {% for emp in employees %}
+                    <li class="overflow-hidden rounded-lg border border-slate-700 bg-slate-800 transition-colors hover:border-slate-500">
+                        
+                        <button type="button" class="emp-toggle-btn flex w-full items-center justify-between p-3 text-left transition-colors hover:bg-slate-700/50 cursor-pointer" data-target="emp-form-{{ emp.id }}">
+                            <span class="text-sm font-semibold text-slate-200">
+                                {{ emp.first_name }} {{ emp.last_name }}
+                            </span>
+                            <svg class="emp-toggle-icon h-5 w-5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <div id="emp-form-{{ emp.id }}" class="hidden border-t border-slate-700 bg-slate-900/30 p-3">
+                            <form method="post" action="{% url 'manage_employees' %}" class="flex flex-col gap-3">
+                                {% csrf_token %}
+                                <input type="hidden" name="employee_id" value="{{ emp.id }}">
+                                
+                                <div class="flex gap-3">
+                                    <div class="flex-1">
+                                        <label class="mb-1 block text-xs font-semibold text-slate-400">Prénom</label>
+                                        <input type="text" name="first_name" value="{{ emp.first_name }}" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="mb-1 block text-xs font-semibold text-slate-400">Nom</label>
+                                        <input type="text" name="last_name" value="{{ emp.last_name }}" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="mb-1 block text-xs font-semibold text-slate-400">Adresse e-mail</label>
+                                    <input type="email" name="email" value="{{ emp.email }}" class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                </div>
+                                
+                                <div class="mt-2 flex justify-end gap-3">
+                                    <button type="submit" name="delete_employee" value="1" class="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-sm font-semibold text-red-500 transition-colors hover:bg-red-500/20 cursor-pointer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">
+                                        Supprimer
+                                    </button>
+                                    <button type="submit" name="edit_employee" value="1" class="rounded-md bg-blue-500 px-4 py-1.5 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-600 shadow-sm cursor-pointer">
+                                        Sauvegarder
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="text-center text-sm text-slate-500 py-4">Aucun employé créé pour le moment.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+            <button type="button" id="cancel-employee-modal" class="rounded-md bg-slate-700 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-slate-600 cursor-pointer">
+                Fermer
+            </button>
+        </div>
+    </div>
+</div>
+
+    <div id="settings-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity">
+    <div class="relative w-full max-w-lg scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
+        
+        <button id="close-settings-modal" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
+            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-slate-100">
+                Paramètres de Grabber
+            </h2>
+            <p class="mt-1 text-sm text-slate-400">Modifiez vos identifiants de connexion administrateur.</p>
+        </div>
+
+        <form method="post" action="{% url 'update_admin' %}" class="flex flex-col gap-4">
             {% csrf_token %}
-            <input type="hidden" name="add_employee" value="1">
-
+            
             <div>
-                <label for="first_name" class="mb-1 block text-sm font-semibold text-slate-400">Prénom</label>
-                <input type="text" id="first_name" name="first_name" required 
+                <label for="new_username" class="mb-1 block text-sm font-semibold text-slate-400">Nouvel identifiant</label>
+                <input type="text" id="new_username" name="new_username" value="{{ request.user.username }}" required 
                        class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
             </div>
 
-            <div>
-                <label for="last_name" class="mb-1 block text-sm font-semibold text-slate-400">Nom de famille</label>
-                <input type="text" id="last_name" name="last_name" required 
-                       class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <div class="mt-2">
+                <label for="new_password" class="mb-1 block text-sm font-semibold text-slate-400">Nouveau mot de passe</label>
+                <input type="password" id="new_password" name="new_password" placeholder="Laissez vide pour ne pas le changer" 
+                       class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
             </div>
 
-            <div class="mt-4 flex justify-end gap-3">
-                <button type="button" id="cancel-employee-modal" class="rounded-md px-4 py-2 text-sm font-semibold text-slate-400 transition-colors hover:text-slate-200 cursor-pointer">
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" id="cancel-settings-modal" class="rounded-md px-4 py-2 text-sm font-semibold text-slate-400 transition-colors hover:text-slate-200 cursor-pointer">
                     Annuler
                 </button>
                 <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
-                    Enregistrer
+                    Mettre à jour
                 </button>
             </div>
         </form>
     </div>
 </div>
+
 <script>
-    // --- DÉTECTION DU MODE LOCAL POUR LE DÉPLOIEMENT ---
+    // Verify if localhost is used, then lock Alfred
     document.addEventListener("DOMContentLoaded", function() {
         const hostname = window.location.hostname;
-        
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            document.getElementById('localhost-pill-warning').classList.remove('hidden');
-            document.getElementById('localhost-deploy-warning').classList.remove('hidden');
+            
+            const pill = document.getElementById('localhost-pill-warning');
+            if(pill) pill.classList.remove('hidden');
+            
+            const deployWarning = document.getElementById('localhost-deploy-warning');
+            if(deployWarning) deployWarning.classList.remove('hidden');
             
             const deployForm = document.getElementById('deploy-form');
-            deployForm.classList.add('opacity-50', 'pointer-events-none', 'grayscale');
-            
-            const formInputs = deployForm.querySelectorAll('input, button');
-            formInputs.forEach(input => {
-                input.disabled = true;
-            });
+            if(deployForm) {
+                deployForm.classList.add('opacity-50', 'pointer-events-none', 'grayscale');
+                deployForm.querySelectorAll('input, button').forEach(input => input.disabled = true);
+            }
         }
     });
     
-    document.getElementById('deploy-form').addEventListener('submit', function () {
-        document.getElementById('submit-btn').classList.add('hidden');
-        document.getElementById('loading-indicator').classList.remove('hidden');
-        document.getElementById('loading-indicator').classList.add('flex');
+    // --- 2. GESTION DU FORMULAIRE DE DÉPLOIEMENT ---
+    const deployForm = document.getElementById('deploy-form');
+    if (deployForm) {
+        deployForm.addEventListener('submit', function () {
+            document.getElementById('submit-btn').classList.add('hidden');
+            const indicator = document.getElementById('loading-indicator');
+            indicator.classList.remove('hidden');
+            indicator.classList.add('flex');
+        });
+    }
+
+    // --- 3. FONCTION GÉNÉRIQUE POUR LES MODALES (La fameuse simplification !) ---
+    function setupModal(modalId, openBtnId, closeBtnIds) {
+        const modal = document.getElementById(modalId);
+        const openBtn = document.getElementById(openBtnId);
+        
+        // Si les éléments n'existent pas sur cette page, on arrête pour éviter les erreurs
+        if (!modal || !openBtn) return;
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        openBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        });
+
+        // Attache l'événement de fermeture à tous les boutons spécifiés (croix, annuler, etc)
+        closeBtnIds.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.addEventListener('click', closeModal);
+        });
+
+        // Fermer la modale en cliquant à l'extérieur (dans le fond flou)
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    }
+
+    // --- 4. INITIALISATION DE VOS MODALES ---
+    setupModal('employee-modal', 'open-employee-modal', ['close-employee-modal', 'cancel-employee-modal']);
+    setupModal('settings-modal', 'open-settings-modal', ['close-settings-modal', 'cancel-settings-modal']);
+
+    const toggleAddEmpBtn = document.getElementById('toggle-add-employee-btn');
+    const addEmpFormContainer = document.getElementById('add-employee-form-container');
+    const toggleAddEmpIcon = document.getElementById('toggle-add-employee-icon');
+
+    if (toggleAddEmpBtn && addEmpFormContainer) {
+        toggleAddEmpBtn.addEventListener('click', () => {
+            // Affiche ou cache le formulaire
+            addEmpFormContainer.classList.toggle('hidden');
+            // Fait pivoter la flèche (180 degrés)
+            toggleAddEmpIcon.classList.toggle('rotate-180');
+        });
+    }
+
+    const empToggleBtns = document.querySelectorAll('.emp-toggle-btn');
+    
+    empToggleBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // On récupère l'ID du formulaire cible via l'attribut data-target du bouton
+            const targetId = this.getAttribute('data-target');
+            const targetContainer = document.getElementById(targetId);
+            
+            // On cherche l'icône de flèche qui se trouve à l'intérieur de ce bouton spécifique
+            const icon = this.querySelector('.emp-toggle-icon');
+            
+            // On ouvre/ferme le menu
+            if (targetContainer) {
+                targetContainer.classList.toggle('hidden');
+            }
+            // On fait pivoter la flèche
+            if (icon) {
+                icon.classList.toggle('rotate-180');
+            }
+        });
     });
 
-    const modal = document.getElementById('employee-modal');
-    const openBtn = document.getElementById('open-employee-modal');
-    const closeBtn = document.getElementById('close-employee-modal');
-    const cancelBtn = document.getElementById('cancel-employee-modal');
-
-    openBtn.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    });
-
-    const closeModal = () => {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    };
-
-    closeBtn.addEventListener('click', closeModal);
-    cancelBtn.addEventListener('click', closeModal);
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
 </script>
 </body>
 </html>
