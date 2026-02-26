@@ -15,7 +15,7 @@
             <h1 class="text-lg font-bold text-slate-100">Bienvenue sur Grabber, {{ request.user.username }}</h1>
             
             <a href="https://github.com/buchtioof/grabber#versions" class="rounded-full border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-orange-400 transition-colors duration-200 hover:border-orange-500/50 hover:bg-orange-500/20" title="Voir les nouveautés de cette version">
-                pre-release v0.6
+                pre-release v0.7
             </a>
             <span id="localhost-pill-warning" class="hidden rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-yellow-400">
                 Mode local
@@ -84,9 +84,8 @@
         </button>
 
         <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
-            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-blue-500">
-                Gestion des employés
-            </h2>
+            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-slate-100">Gestion des employés</h2>
+            <p class="mt-1 text-sm text-slate-400">Éditez la liste des utilisateurs à assigner aux ordinateurs.</p>
         </div>
 
         <div class="mb-6 overflow-hidden rounded-lg border border-slate-700 bg-slate-900/50">
@@ -200,10 +199,8 @@
         </button>
 
         <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
-            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-slate-100">
-                Paramètres de Grabber
-            </h2>
-            <p class="mt-1 text-sm text-slate-400">Modifiez vos identifiants de connexion administrateur.</p>
+            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-slate-100">Paramètres</h2>
+            <p class="mt-1 text-sm text-slate-400">Modifiez les réglages du panel Admin de Grabber.</p>
         </div>
 
         <form method="post" action="{% url 'update_admin' %}" class="flex flex-col gap-4">
@@ -221,12 +218,22 @@
                        class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
             </div>
 
+            <div class="mt-2 border-t border-slate-700 pt-4">
+                <label for="timezone" class="mb-1 block text-sm font-semibold text-slate-400">Fuseau horaire d'affichage</label>
+                <select name="timezone" id="timezone" class="w-full cursor-pointer rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <option value="UTC" {% if request.session.django_timezone == 'UTC' %}selected{% endif %}>UTC (Temps universel)</option>
+                    <option value="Europe/Paris" {% if request.session.django_timezone == 'Europe/Paris' %}selected{% endif %}>Europe/Paris (Heure française)</option>
+                    <option value="America/Montreal" {% if request.session.django_timezone == 'America/Montreal' %}selected{% endif %}>Amérique/Montréal</option>
+                    <option value="Indian/Reunion" {% if request.session.django_timezone == 'Indian/Reunion' %}selected{% endif %}>Océan Indien/Réunion</option>
+                </select>
+            </div>
+
             <div class="mt-6 flex justify-end gap-3">
                 <button type="button" id="cancel-settings-modal" class="rounded-md px-4 py-2 text-sm font-semibold text-slate-400 transition-colors hover:text-slate-200 cursor-pointer">
                     Annuler
                 </button>
                 <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
-                    Mettre à jour
+                    Sauvegarder
                 </button>
             </div>
         </form>
@@ -253,7 +260,7 @@
         }
     });
     
-    // --- 2. GESTION DU FORMULAIRE DE DÉPLOIEMENT ---
+    // Show the loading animation for deployement form
     const deployForm = document.getElementById('deploy-form');
     if (deployForm) {
         deployForm.addEventListener('submit', function () {
@@ -264,12 +271,11 @@
         });
     }
 
-    // --- 3. FONCTION GÉNÉRIQUE POUR LES MODALES (La fameuse simplification !) ---
+    // Modal opener
     function setupModal(modalId, openBtnId, closeBtnIds) {
         const modal = document.getElementById(modalId);
         const openBtn = document.getElementById(openBtnId);
         
-        // Si les éléments n'existent pas sur cette page, on arrête pour éviter les erreurs
         if (!modal || !openBtn) return;
 
         const closeModal = () => {
@@ -282,19 +288,17 @@
             modal.classList.add('flex');
         });
 
-        // Attache l'événement de fermeture à tous les boutons spécifiés (croix, annuler, etc)
         closeBtnIds.forEach(id => {
             const btn = document.getElementById(id);
             if (btn) btn.addEventListener('click', closeModal);
         });
 
-        // Fermer la modale en cliquant à l'extérieur (dans le fond flou)
         modal.addEventListener('click', (e) => {
             if (e.target === modal) closeModal();
         });
     }
 
-    // --- 4. INITIALISATION DE VOS MODALES ---
+    // Modals
     setupModal('employee-modal', 'open-employee-modal', ['close-employee-modal', 'cancel-employee-modal']);
     setupModal('settings-modal', 'open-settings-modal', ['close-settings-modal', 'cancel-settings-modal']);
 
@@ -304,9 +308,7 @@
 
     if (toggleAddEmpBtn && addEmpFormContainer) {
         toggleAddEmpBtn.addEventListener('click', () => {
-            // Affiche ou cache le formulaire
             addEmpFormContainer.classList.toggle('hidden');
-            // Fait pivoter la flèche (180 degrés)
             toggleAddEmpIcon.classList.toggle('rotate-180');
         });
     }
@@ -315,18 +317,14 @@
     
     empToggleBtns.forEach(btn => {
         btn.addEventListener('click', function() {
-            // On récupère l'ID du formulaire cible via l'attribut data-target du bouton
             const targetId = this.getAttribute('data-target');
             const targetContainer = document.getElementById(targetId);
             
-            // On cherche l'icône de flèche qui se trouve à l'intérieur de ce bouton spécifique
             const icon = this.querySelector('.emp-toggle-icon');
             
-            // On ouvre/ferme le menu
             if (targetContainer) {
                 targetContainer.classList.toggle('hidden');
             }
-            // On fait pivoter la flèche
             if (icon) {
                 icon.classList.toggle('rotate-180');
             }
