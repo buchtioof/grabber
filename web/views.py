@@ -23,6 +23,19 @@ def computers_list(request):
             pc = get_object_or_404(SystemInfo, mac_address=mac_to_delete)
             pc.delete()
             return redirect('computers_list')
+        
+        elif 'edit_computer' in request.POST:
+            mac_address = request.POST.get('mac_address')
+            ip_address = request.POST.get('ip_address')
+            ssh_user = request.POST.get('ssh_user')
+            
+            pc = get_object_or_404(SystemInfo, mac_address=mac_address)
+            pc.ip_address = ip_address
+            pc.ssh_user = ssh_user
+            pc.save()
+            
+            messages.success(request, f"[OK] Les informations de {pc.hostname} ont été mises à jour.")
+            return redirect('computers_list')
 
     computers = SystemInfo.objects.all()
     employees = Employees.objects.all()
