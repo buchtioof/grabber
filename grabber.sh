@@ -5,7 +5,7 @@ export LANG=C
 
 # ==============================================================================
 #   Script : grabber.sh
-#   Version: 0.7.2
+#   Version: 0.8
 # ==============================================================================
 
 ##### MAIN VARIABLES #####
@@ -57,6 +57,15 @@ server() {
     SESSION_TOKEN=$(openssl rand -hex 32)
     jq --arg key "$SESSION_TOKEN" '.session_token = $key' settings.json > temp_settings.json
     mv temp_settings.json settings.json
+
+    # Generate an SSH key for Paramiko
+    mkdir -p keys
+    if [ ! -f "keys/id_ed25519" ]; then
+        echo ""
+        echo -e "${YELLOW}No SSH key detected, generating one...${NC}"
+        ssh-keygen -t ed25519 -f keys/id_ed25519 -N "" -q
+        echo "${GREEN}> Done!${NC}"
+    fi
 
     # Check if venv already exists
     if [ ! -d "./gbvenv" ]; then

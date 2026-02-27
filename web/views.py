@@ -125,37 +125,63 @@ def deploy_ssh(request):
         password = request.POST.get('password')
         
         try:
-            # 1. Init SSH connection via paramiko
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(hostname=target, username=username, password=password, timeout=5)
             
-            # 2. Send Alfred in temp path
+            key_path = os.path.join(settings.BASE_DIR, 'keys', 'id_ed25519')
+            pub_key_path = key_path + '.pub'
+            
+            if not os.path.exists(key_path):
+                messages.error(request, "[ERROR] Clé SSH introuvable. Relancez grabber.sh pour configurer une clé.")
+                return redirect('computers_list')
+                
+            connected_with_key = False
+            
+            # If key available
+            try:
+                ssh.connect(hostname=target, username=username, key_filename=key_path, timeout=5)
+                connected_with_key = True
+            except paramiko.AuthenticationException:
+                pass 
+                    
+            # Else, use pswd and install public key
+            if not connected_with_key:
+                if not password:
+                    messages.error(request, "[ERROR] Nouveau PC : vous devez fournir un mot de passe pour le premier déploiement ! (clé refusée)")
+                    return redirect('computers_list')
+                    
+                ssh.connect(hostname=target, username=username, password=password, timeout=5)
+                
+                if os.path.exists(pub_key_path):
+                    with open(pub_key_path, 'r') as f:
+                        pub_key = f.read().strip()
+                    setup_key_cmd = f"mkdir -p ~/.ssh && chmod 700 ~/.ssh && echo '{pub_key}' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+                    ssh.exec_command(setup_key_cmd)
+
+            # Deploy Alfred
             sftp = ssh.open_sftp()
             local_path = os.path.join(settings.BASE_DIR, './lib/alfred.run')
             remote_path = '/tmp/alfred.run'
             sftp.put(local_path, remote_path)
             sftp.close()
             
-            # 3. Execution
-            server = request.get_host()  # Fetch actual server address for Alfred
+            server = request.get_host()
             token = settings.SESSION_TOKEN
             
             formula = f"chmod +x /tmp/alfred.run && /tmp/alfred.run {server} {token} && rm /tmp/alfred.run"
-            
             stdin, stdout, stderr = ssh.exec_command(formula)
-            
-            # Wait for finish then close communication
             exit_status = stdout.channel.recv_exit_status()
             ssh.close()
             
             if exit_status == 0:
-                messages.success(request, f"[OK] Alfred has successfully fetched from {target} !")
+                msg = f"[OK] Alfred a été déployé avec succès sur {target} !"
+                if not connected_with_key:
+                    msg += " (Clé SSH installée)."
+                messages.success(request, msg)
             else:
-                error_output = stderr.read().decode('utf-8')
-                messages.error(request, f"[ERROR] {error_output}")
+                messages.error(request, f"[ERROR] {stderr.read().decode('utf-8')}")
                 
         except Exception as e:
-            messages.error(request, f"[ERROR] Impossible to connect at {target}: {str(e)}")
+            messages.error(request, f"[ERROR] Connexion impossible à {target}: {str(e)}")
             
     return redirect('computers_list')

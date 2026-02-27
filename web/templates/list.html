@@ -24,7 +24,7 @@
             <input type="text" name="username" placeholder="Nom d'utilisateur" required 
                 class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
             
-            <input type="password" name="password" placeholder="Mot de passe" required 
+            <input type="password" name="password" placeholder="Mot de passe" 
                 class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
             
             <button id="submit-btn" type="submit" 
@@ -67,7 +67,14 @@
                     <span class="rounded bg-white/5 px-2.5 py-1 font-mono text-sm text-slate-400">{{ computer.mac_address }}</span>
                 </a>
 
-                <div class="flex items-center border-l border-slate-700/50 pr-4 pl-4">
+                <div class="flex items-center gap-1 border-l border-slate-700/50 pr-4 pl-4">
+                    
+                    <button type="button" onclick="prepareRedeploy('{{ computer.ip_address }}')" class="rounded p-2 text-slate-500 transition-all duration-200 hover:bg-blue-500/20 hover:text-blue-500 cursor-pointer" title="Redéployer via SSH">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </button>
+
                     <form method="post" action="" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer la machine {{ computer.hostname }} ?');">
                         {% csrf_token %}
                         <input type="hidden" name="delete_mac" value="{{ computer.mac_address }}">
@@ -88,4 +95,22 @@
         {% endfor %}
     </ul>
 </div>
+<script>
+    function prepareRedeploy(targetIp) {
+        const targetInput = document.querySelector('input[name="target"]');
+        const usernameInput = document.querySelector('input[name="username"]');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        if (targetInput) {
+            if (targetIp && targetIp !== 'None') {
+                targetInput.value = targetIp;
+                if (usernameInput) usernameInput.focus();
+            } else {
+                targetInput.value = '';
+                targetInput.focus();
+            }
+        }
+    }
+</script>
 {% endblock %}

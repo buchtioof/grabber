@@ -27,11 +27,19 @@ def receive_system_info(request):
             mac = sw.get('mac_address')
             if not mac or mac == "Unknown-MAC":
                 return JsonResponse({'error': 'MAC address is required'}, status=400)
+            
+            # Fetch IP from target PC
+            target_ip = request.META.get('HTTP_X_FORWARDED_FOR')
+            if target_ip:
+                target_ip = target_ip.split(',')[0].strip()
+            else:
+                target_ip = request.META.get('REMOTE_ADDR')
 
             # Use Django module update or create that add or update itself data in SQL
             obj, created = SystemInfo.objects.update_or_create(
                 mac_address=mac, # For that MAC adress PC
                 defaults={ # Add his content
+                    'ip_address': target_ip,
                     'motherboard': hw.get('motherboard'),
                     'cpu_model': hw.get('cpu_model'),
                     'cpu_id': hw.get('cpu_id'),
