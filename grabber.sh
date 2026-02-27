@@ -5,7 +5,7 @@ export LANG=C
 
 # ==============================================================================
 #   Script : grabber.sh
-#   Version: 0.5
+#   Version: 0.7.2
 # ==============================================================================
 
 ##### MAIN VARIABLES #####
@@ -70,12 +70,13 @@ server() {
 
     # Prepare DB
     echo "Checking database..."
+    python manage.py makemigrations > /dev/null
     python manage.py migrate --noinput > /dev/null
 
     # Check for admin user
     echo "Checking Superuser existence..."
     if ! python ./lib/check_admin.py; then
-        echo -e "${ALERT}> No Superuser detected! Create one now in order to use Grabber normally.${ECM}"
+        echo -e "${ALERT}> No Superuser detected! Create one now in order to use the Admin Panel.${ECM}"
         echo ""
         python manage.py createsuperuser
     fi
@@ -122,7 +123,7 @@ echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__)  (__)  (__) "
 echo ""
 
 echo "Hello World! This is the admin side of Grabber"
-echo "1: Launch grabber | 2: Edit settings | 3: Uninstall | c: Cancel"
+echo "1: Launch grabber | 2: Edit settings | c: Cancel"
 read -p ";> " choice
 
 if [ "$choice" = "1" ]; then
@@ -135,11 +136,6 @@ elif [ "$choice" = "2" ]; then
     echo "Opening settings..."
     sleep 1
     nano settings.json
-
-elif [ "$choice" = "3" ]; then 
-    echo "Not available atm, uninstall manually by using "rm -rf gbvenv""
-    # rm -rf gbvenv 
-    exit
 
 elif [ "$choice" = "c" ]; then 
     echo "See you space, cowboy..."
