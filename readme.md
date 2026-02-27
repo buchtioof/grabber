@@ -34,9 +34,10 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 - v0.3 : Minimal uvicorn usage, shows data fetch for one pc saved in json data locally
 - v0.4 : Save fetch data in a sql database and can save multiple pc in a pretty interface
 - v0.5 : Switch to Django, use API model, security update by using session tokens to verify communications, use [Alfred](https://github.com/buchtioof/alfred) to fetch data via SSH
-- v0.6 (actual) : Admin panel refine, login page rework, local session verification that locks Alfred (SSH injection), switch CSS to Tailwind local, employees management and links between them and PCs
-- v0.7 (wip) : QOL update, settings added, employees modal reworked, added middleware (manage timezone in Django)
-- Next : Languages update (add english), add SSH public keys to make more safe connections with Alfred without using credentials
+- v0.6 : Admin panel refine, login page rework, local session verification that locks Alfred (SSH injection), switch CSS to Tailwind local, employees management and links between them and PCs
+- v0.7 (actual) : QOL update, settings added, employees modal reworked, added middleware (manage timezone in Django)
+- v0.8 (wip) : Use SSH keys to reconnect safely
+- Next : Languages update (add english), clean and verified code
 
 ## Dependencies
 

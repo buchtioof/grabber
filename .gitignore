@@ -3,3 +3,5 @@ gbvenv
 __pycache__
 *.sqlite3
 tailwindcss
+keys/
+web/migrations/000*

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
-from api import views, api
+from web import views, api
 
 # Redirect /admin path to / root but lets login possible
 admin_patterns = ([
