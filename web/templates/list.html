@@ -161,28 +161,36 @@
         }
     }
 
-    // --- 2. Gestion du redéploiement intelligent ---
+    // --- Gestion du redéploiement ---
     function prepareRedeploy(targetIp, sshUser) {
         const targetInput = document.querySelector('input[name="target"]');
         const usernameInput = document.querySelector('input[name="username"]');
         const passwordInput = document.querySelector('input[name="password"]');
+        const submitBtn = document.getElementById('submit-btn');
         
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
         if (targetInput && usernameInput) {
-            targetInput.value = (targetIp && targetIp !== 'None') ? targetIp : '';
-            
-            usernameInput.value = (sshUser && sshUser !== 'None') ? sshUser : '';
+            const hasIp = (targetIp && targetIp !== 'None' && targetIp.trim() !== '');
+            const hasUser = (sshUser && sshUser !== 'None' && sshUser.trim() !== '');
+
+            targetInput.value = hasIp ? targetIp : '';
+            usernameInput.value = hasUser ? sshUser : '';
+            if (passwordInput) passwordInput.value = '';
             
             setTimeout(() => {
-                if (!targetInput.value) {
-                    targetInput.focus();
-                } else if (!usernameInput.value) {
-                    usernameInput.focus();
-                } else if (passwordInput) {
-                    passwordInput.focus();
+                if (hasIp && hasUser) {
+                    if (submitBtn) submitBtn.click();
+                } else {
+                    if (!hasIp) {
+                        targetInput.focus();
+                    } else if (!hasUser) {
+                        usernameInput.focus();
+                    } else if (passwordInput) {
+                        passwordInput.focus();
+                    }
                 }
-            }, 100);
+            }, 400); 
         }
     }
 </script>
