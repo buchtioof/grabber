@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
 
@@ -7,7 +8,7 @@
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
-        Tableau de bord
+        {% trans "Dashboard" %}
     </a>
     <div class="mb-10 flex flex-col items-center text-center">
         <h1 class="mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-4xl font-extrabold text-transparent">
@@ -25,14 +26,14 @@
                 <input type="hidden" name="assign_employee" value="1">
                 <input type="hidden" name="mac_address" value="{{ data.mac_address }}">
 
-                <span class="text-slate-400">Assigné à :</span>
+                <span class="text-slate-400">{% trans "Assigned to:" %}</span>
 
                 <div class="relative min-w-max">
                     <select name="employees_id"
                             onchange="this.form.submit()"
                             class="w-full text-left px-4 whitespace-nowrap cursor-pointer">
                         
-                        <option value="" class="bg-slate-800 text-slate-400">-- Aucun --</option>
+                        <option value="" class="bg-slate-800 text-slate-400">{% trans "-- None --" %}</option>
                         
                         {% for emp in employees %}
                             <option value="{{ emp.id }}"
@@ -50,84 +51,63 @@
 
     <div class="grid gap-6 md:grid-cols-2">
         <div class="rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:border-blue-500">
-            <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">Hardware</h2>
+            <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">{% trans "Hardware" %}</h2>
             
             <ul class="flex flex-col gap-3">
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Modèle CPU</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "CPU Model" %}</span>
                     <span class="rounded bg-red-500/10 px-2.5 py-1 text-right text-xs font-semibold text-red-400 border border-red-500/20">{{ data.cpu_model }}</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Coeurs / Threads</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "Cores / Threads" %}</span>
                     <span class="text-sm font-semibold text-slate-100">{{ data.cpu_cores }}C / {{ data.cpu_threads }}T</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Mémoire RAM</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "RAM Memory" %}</span>
                     <span class="rounded bg-emerald-500/10 px-2.5 py-1 text-right text-xs font-semibold text-emerald-400 border border-emerald-500/20">{{ data.ram_total }} GB ({{ data.ram_slots }} slots)</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Carte Graphique</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "Graphics Card" %}</span>
                     <span class="max-w-[60%] text-right text-sm font-semibold text-slate-100">{{ data.gpu_model }}</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Carte Mère</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "Motherboard" %}</span>
                     <span class="max-w-[60%] text-right text-sm font-semibold text-slate-100">{{ data.motherboard }}</span>
                 </li>
             </ul>
         </div>
 
         <div class="rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:border-blue-500">
-            <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">Système d'Exploitation</h2>
+            <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">{% trans "Operating System" %}</h2>
 
             <ul class="flex flex-col gap-3">
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">OS</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "OS" %}</span>
                     <span class="rounded bg-blue-500/10 px-2.5 py-1 text-right text-xs font-semibold text-blue-400 border border-blue-500/20">{{ data.os }}</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Noyau (Kernel)</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "Kernel" %}</span>
                     <span class="max-w-[60%] text-right text-sm font-semibold text-slate-100">{{ data.kernel }}</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Architecture</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "Architecture" %}</span>
                     <span class="text-sm font-semibold text-slate-100">{{ data.arch }}</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Bureau (DE)</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "Desktop (DE)" %}</span>
                     <span class="text-sm font-semibold text-slate-100">{{ data.desktop_env }}</span>
                 </li>
                 <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Gestionnaire (WM)</span>
+                    <span class="text-sm font-medium text-slate-400">{% trans "Window Manager (WM)" %}</span>
                     <span class="text-sm font-semibold text-slate-100">{{ data.window_manager }}</span>
                 </li>
             </ul>
         </div>
 
-        <!-- Rearrangement needed
-        <div class="rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:border-blue-500">
-            <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">Détails CPU</h2>
-            
-            <ul class="flex flex-col gap-3">
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">ID Processeur</span>
-                    <span class="max-w-[60%] truncate text-right font-mono text-xs font-semibold text-slate-300" title="{{ data.cpu_id }}">{{ data.cpu_id }}</span>
-                </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Fréquence Min</span>
-                    <span class="text-sm font-semibold text-slate-100">{{ data.cpu_frequency_min }} MHz</span>
-                </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
-                    <span class="text-sm font-medium text-slate-400">Fréquence Actuelle</span>
-                    <span class="text-sm font-semibold text-slate-100">{{ data.cpu_frequency_cur }} MHz</span>
-                </li>
-            </ul>
-        </div> 
-        -->
-
     </div> 
 
     <div class="mt-6 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:border-blue-500">
-        <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">Disques & Partitions</h2>
+        <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">{% trans "Disks & Partitions" %}</h2>
         
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {% for disk in data.disks %}
@@ -144,10 +124,10 @@
                     <table class="w-full text-left text-sm text-slate-400">
                         <thead class="border-b border-slate-700/50 text-xs uppercase text-slate-500">
                             <tr>
-                                <th class="pb-2 font-medium">Nom</th>
-                                <th class="pb-2 font-medium">Type</th>
-                                <th class="pb-2 font-medium text-right">Taille</th>
-                                <th class="pb-2 font-medium text-right">Utilisé</th>
+                                <th class="pb-2 font-medium">{% trans "Name" %}</th>
+                                <th class="pb-2 font-medium">{% trans "Type" %}</th>
+                                <th class="pb-2 font-medium text-right">{% trans "Size" %}</th>
+                                <th class="pb-2 font-medium text-right">{% trans "Used" %}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-700/20">
@@ -160,7 +140,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="py-4 text-center text-xs italic text-slate-500">Aucune partition détectée</td>
+                                <td colspan="4" class="py-4 text-center text-xs italic text-slate-500">{% trans "No partition detected" %}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -173,7 +153,7 @@
     </div>
 
     <div class="mt-12 text-center text-sm font-medium text-slate-500">
-        Grabber v0.8 (Alfred v0.2) • Données générées le {{ data.last_updated|date:"d/m/Y à H:i"|default:"N/A" }}        
+        Grabber v0.8 (Alfred v0.2) • {% trans "Data generated on" %} {{ data.last_updated|date:"d/m/Y à H:i"|default:"N/A" }}        
     </div>
 
 </div>

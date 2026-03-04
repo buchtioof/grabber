@@ -4,7 +4,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth import logout
+from django.contrib.auth import logout, update_session_auth_hash
+from django.utils.translation import gettext as _
+from django.utils import translation
 from .models import SystemInfo, Employees
 
 def logout_view(request):
@@ -34,7 +36,7 @@ def computers_list(request):
             pc.ssh_user = ssh_user
             pc.save()
             
-            messages.success(request, f"[OK] Les informations de {pc.hostname} ont été mises à jour.")
+            messages.success(request, _("[OK] The information of {hostname} has been updated.").format(hostname=pc.hostname))
             return redirect('computers_list')
 
     computers = SystemInfo.objects.all()
@@ -52,7 +54,7 @@ def manage_employees(request):
             
             if first_name and last_name:
                 Employees.objects.create(first_name=first_name, last_name=last_name, email=email)
-                messages.success(request, f"[OK] L'employé {first_name} {last_name} a été ajouté.")
+                messages.success(request, _("[OK] Employee {first_name} {last_name} has been added.").format(first_name=first_name, last_name=last_name))
 
         elif 'edit_employee' in request.POST:
             emp_id = request.POST.get('employee_id')
@@ -64,14 +66,14 @@ def manage_employees(request):
                 emp.first_name = first_name
                 emp.last_name = last_name
                 emp.save()
-                messages.success(request, f"[OK] L'employé {first_name} {last_name} a été mis à jour.")
+                messages.success(request, _("[OK] Employee {first_name} {last_name} has been updated.").format(first_name=first_name, last_name=last_name))
 
         elif 'delete_employee' in request.POST:
             emp_id = request.POST.get('employee_id')
             emp = get_object_or_404(Employees, id=emp_id)
             nom_complet = f"{emp.first_name} {emp.last_name}"
             emp.delete()
-            messages.success(request, f"[OK] L'employé {nom_complet} a été supprimé.")
+            messages.success(request, _("[OK] Employee {nom_complet} has been deleted.").format(nom_complet=nom_complet))
 
     return redirect(request.META.get('HTTP_REFERER', 'computers_list'))
 
@@ -82,11 +84,16 @@ def update_admin(request):
         user = request.user
         new_username = request.POST.get('new_username')
         new_password = request.POST.get('new_password')
-
+        
+        # Récupération des nouveaux paramètres
         new_timezone = request.POST.get('timezone')
+        new_language = request.POST.get('language')
+
+        # 1. Sauvegarde du Fuseau horaire (Toujours géré par la session)
         if new_timezone:
             request.session['django_timezone'] = new_timezone
         
+        # 2. Sauvegarde du compte utilisateur
         if new_username:
             user.username = new_username
             
@@ -99,9 +106,20 @@ def update_admin(request):
         
         if password_changed:
             update_session_auth_hash(request, user)
-            messages.success(request, "[OK] Identifiant et mot de passe mis à jour avec succès !")
+            messages.success(request, _("[OK] Username and password updated successfully!"))
         else:
-            messages.success(request, "[OK] Identifiant mis à jour avec succès !")
+            messages.success(request, _("[OK] Settings updated successfully!")) 
+            
+        # --- NOUVEAU : On prépare d'abord la redirection (la réponse) ---
+        response = redirect(request.META.get('HTTP_REFERER', 'computers_list'))
+        
+        # 3. Sauvegarde de la Langue via Cookie (Nouvelle norme Django 4.0+)
+        if new_language:
+            translation.activate(new_language)
+            # On attache le cookie de langue directement à la réponse
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, new_language)
+            
+        return response # On retourne la réponse modifiée
             
     return redirect(request.META.get('HTTP_REFERER', 'computers_list'))
 
@@ -115,10 +133,10 @@ def show_info(request, mac_address):
         if employees_id:
             employee = get_object_or_404(Employees, id=employees_id)
             pc.employees = employee
-            messages.success(request, f"[OK] L'ordinateur a été assigné à {employee.first_name} {employee.last_name}.")
+            messages.success(request, _("[OK] The computer has been assigned to {first_name} {last_name}.").format(first_name=employee.first_name, last_name=employee.last_name))
         else:
             pc.employees = None
-            messages.success(request, "[OK] L'assignation a été retirée pour cet ordinateur.")
+            messages.success(request, _("[OK] The assignment has been removed for this computer."))
             
         pc.save()
         return redirect(request.META.get('HTTP_REFERER', 'computers_list'))
@@ -145,7 +163,7 @@ def deploy_ssh(request):
             pub_key_path = key_path + '.pub'
             
             if not os.path.exists(key_path):
-                messages.error(request, "[ERROR] Clé SSH introuvable. Relancez grabber.sh pour configurer une clé.")
+                messages.error(request, _("[ERROR] SSH key not found. Rerun grabber.sh to configure a key."))
                 return redirect('computers_list')
                 
             connected_with_key = False
@@ -160,7 +178,7 @@ def deploy_ssh(request):
             # Else, use pswd and install public key
             if not connected_with_key:
                 if not password:
-                    messages.error(request, "[ERROR] Nouveau PC : vous devez fournir un mot de passe pour le premier déploiement ! (clé refusée)")
+                    messages.error(request, _("[ERROR] New PC: you must provide a password for the first deployment! (key refused)"))
                     return redirect('computers_list')
                     
                 ssh.connect(hostname=target, username=username, password=password, timeout=5)
@@ -187,14 +205,14 @@ def deploy_ssh(request):
             ssh.close()
             
             if exit_status == 0:
-                msg = f"[OK] Alfred a été déployé avec succès sur {target} !"
+                msg = _("[OK] Alfred has been successfully deployed on {target}!").format(target=target)
                 if not connected_with_key:
-                    msg += " (Clé SSH installée)."
+                    msg += _(" (SSH key installed).")
                 messages.success(request, msg)
             else:
                 messages.error(request, f"[ERROR] {stderr.read().decode('utf-8')}")
                 
         except Exception as e:
-            messages.error(request, f"[ERROR] Connexion impossible à {target}: {str(e)}")
+            messages.error(request, _("[ERROR] Unable to connect to {target}: {error}").format(target=target, error=str(e)))
             
     return redirect('computers_list')
