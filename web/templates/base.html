@@ -1,10 +1,11 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grabber - Panel Admin</title>
+    <title>Grabber - {% trans "Admin Panel" %}</title>
     <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans antialiased">
@@ -12,13 +13,13 @@
     <header class="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-700 bg-slate-800 px-6 shadow-sm">
         <div class="flex items-center gap-3">
             {% csrf_token %}
-            <h1 class="text-lg font-bold text-slate-100">Bienvenue sur Grabber, {{ request.user.username }}</h1>
+            <h1 class="text-lg font-bold text-slate-100">{% trans "Welcome to Grabber," %} {{ request.user.username }}</h1>
             
-            <a href="https://github.com/buchtioof/grabber#versions" class="rounded-full border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-orange-400 transition-colors duration-200 hover:border-orange-500/50 hover:bg-orange-500/20" title="Voir les nouveautés de cette version">
-                pre-release v0.7
+            <a href="https://github.com/buchtioof/grabber#versions" class="rounded-full border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-orange-400 transition-colors duration-200 hover:border-orange-500/50 hover:bg-orange-500/20" title="{% trans 'Voir les nouveautés de cette version' %}">
+                pre-release v0.8
             </a>
             <span id="localhost-pill-warning" class="hidden rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-yellow-400">
-                Mode local
+                {% trans "Local Mode" %}
             </span> 
         </div>
         
@@ -27,24 +28,25 @@
                 <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256">
                     <path d="M226.76,69a8,8,0,0,0-12.84-2.88l-40.3,37.19-17.23-3.7-3.7-17.23,37.19-40.3A8,8,0,0,0,187,29.24,72,72,0,0,0,88,96,72.34,72.34,0,0,0,94,124.94L33.79,177c-.15.12-.29.26-.43.39a32,32,0,0,0,45.26,45.26c.13-.13.27-.28.39-.42L131.06,162A72,72,0,0,0,232,96,71.56,71.56,0,0,0,226.76,69ZM160,152a56.14,56.14,0,0,1-27.07-7,8,8,0,0,0-9.92,1.77L67.11,211.51a16,16,0,0,1-22.62-22.62L109.18,133a8,8,0,0,0,1.77-9.93,56,56,0,0,1,58.36-82.31l-31.2,33.81a8,8,0,0,0-1.94,7.1L141.83,108a8,8,0,0,0,6.14,6.14l26.35,5.66a8,8,0,0,0,7.1-1.94l33.81-31.2A56.06,56.06,0,0,1,160,152Z"></path>
                 </svg>
-                Paramètres
+                {% trans "Settings" %}
             </button>
 
             <button id="open-employee-modal" class="flex items-center gap-1.5 text-sm font-semibold text-white transition-colors duration-200 hover:underline hover:text-blue-300 cursor-pointer">
                 <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256">
                     <path d="M75.19,198.4a8,8,0,0,0,11.21-1.6,52,52,0,0,1,83.2,0,8,8,0,1,0,12.8-9.6A67.88,67.88,0,0,0,155,165.51a40,40,0,1,0-53.94,0A67.88,67.88,0,0,0,73.6,187.2,8,8,0,0,0,75.19,198.4ZM128,112a24,24,0,1,1-24,24A24,24,0,0,1,128,112Zm72-88H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V40A16,16,0,0,0,200,24Zm0,192H56V40H200ZM88,64a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,64Z"></path>
                 </svg>
-                Employés
+                {% trans "Employees" %}
             </button>
             
-            <a href="/logout" class="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20" title="Se déconnecter">
+            <a href="/logout" class="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-red-500 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20" title="{% trans 'Logout' %}">
                 <svg class="h-5 w-5 fill-current transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
                     <path d="M124,216a12,12,0,0,1-12,12H48a12,12,0,0,1-12-12V40A12,12,0,0,1,48,28h64a12,12,0,0,1,0,24H60V204h52A12,12,0,0,1,124,216Zm108.49-96.49-40-40a12,12,0,0,0-17,17L195,116H112a12,12,0,0,0,0,24h83l-19.52,19.51a12,12,0,0,0,17,17l40-40A12,12,0,0,0,232.49,119.51Z"></path>
                 </svg>
-                Déconnexion
+                {% trans "Logout" %}
             </a>
         </div>
     </header>
+
     <div class="mx-auto mt-6 max-w-6xl px-5 empty:hidden">
         {% if messages %}
             <ul class="flex flex-col gap-3">
@@ -63,7 +65,6 @@
                         {% else %}
                             <svg class="h-5 w-5 fill-current" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"></path></svg>
                         {% endif %}
-                        
                         {{ message }}
                     </li>
                 {% endfor %}
@@ -75,177 +76,185 @@
     {% endblock %}
 
     <div id="employee-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity">
-    <div class="relative w-full max-w-2xl scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
-        
-        <button id="close-employee-modal" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-
-        <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
-            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-slate-100">Gestion des employés</h2>
-            <p class="mt-1 text-sm text-slate-400">Éditez la liste des utilisateurs à assigner aux ordinateurs.</p>
-        </div>
-
-        <div class="mb-6 overflow-hidden rounded-lg border border-slate-700 bg-slate-900/50">
+        <div class="relative w-full max-w-2xl scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
             
-            <button type="button" id="toggle-add-employee-btn" class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-slate-800/50 cursor-pointer">
-                <h3 class="text-sm font-bold text-slate-300">Ajouter un nouvel employé</h3>
-                <svg id="toggle-add-employee-icon" class="h-5 w-5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            <button id="close-employee-modal" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
 
-            <div id="add-employee-form-container" class="hidden border-t border-slate-700 p-4 pt-3">
-                <form method="post" action="{% url 'manage_employees' %}" class="flex flex-col gap-4">
-                    {% csrf_token %}
-                    <input type="hidden" name="add_employee" value="1">
-                    
-                    <div class="flex gap-3">
-                        <div class="flex-1">
-                            <label class="mb-1 block text-xs font-semibold text-slate-400">Prénom</label>
-                            <input type="text" name="first_name" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        </div>
-                        <div class="flex-1">
-                            <label class="mb-1 block text-xs font-semibold text-slate-400">Nom</label>
-                            <input type="text" name="last_name" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        </div>
-                    </div>
+            <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
+                <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-slate-100">{% trans "Manage employees" %}</h2>
+                <p class="mt-1 text-sm text-slate-400">{% trans "Edit the list of users to assign to computers." %}</p>
+            </div>
 
-                    <div>
-                        <label class="mb-1 block text-xs font-semibold text-slate-400">Adresse e-mail</label>
-                        <input type="email" name="email" placeholder="jean.dupont@entreprise.com" class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    </div>
+            <div class="mb-6 overflow-hidden rounded-lg border border-slate-700 bg-slate-900/50">
+                <button type="button" id="toggle-add-employee-btn" class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-slate-800/50 cursor-pointer">
+                    <h3 class="text-sm font-bold text-slate-300">{% trans "Add an new employee" %}</h3>
+                    <svg id="toggle-add-employee-icon" class="h-5 w-5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
 
-                    <div class="mt-1 flex justify-end">
-                        <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
-                            Enregistrer l'employé
-                        </button>
-                    </div>
-                </form>
+                <div id="add-employee-form-container" class="hidden border-t border-slate-700 p-4 pt-3">
+                    <form method="post" action="{% url 'manage_employees' %}" class="flex flex-col gap-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_employee" value="1">
+                        <div class="flex gap-3">
+                            <div class="flex-1">
+                                <label class="mb-1 block text-xs font-semibold text-slate-400">{% trans "First name" %}</label>
+                                <input type="text" name="first_name" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                            <div class="flex-1">
+                                <label class="mb-1 block text-xs font-semibold text-slate-400">{% trans "Name" %}</label>
+                                <input type="text" name="last_name" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-xs font-semibold text-slate-400">{% trans "E-mail address" %}</label>
+                            <input type="email" name="email" placeholder="{% trans 'jean.dupont@entreprise.com' %}" class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                        <div class="mt-1 flex justify-end">
+                            <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
+                                {% trans "Save" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <h3 class="mb-3 text-sm font-bold text-slate-300">{% trans "Existing employees" %}</h3>
+            <div class="w-full">
+                <ul class="flex flex-col gap-2">
+                    {% for emp in employees %}
+                        <li class="overflow-hidden rounded-lg border border-slate-700 bg-slate-800 transition-colors hover:border-slate-500">
+                            <button type="button" class="emp-toggle-btn flex w-full items-center justify-between p-3 text-left transition-colors hover:bg-slate-700/50 cursor-pointer" data-target="emp-form-{{ emp.id }}">
+                                <span class="text-sm font-semibold text-slate-200">{{ emp.first_name }} {{ emp.last_name }}</span>
+                                <svg class="emp-toggle-icon h-5 w-5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div id="emp-form-{{ emp.id }}" class="hidden border-t border-slate-700 bg-slate-900/30 p-3">
+                                <form method="post" action="{% url 'manage_employees' %}" class="flex flex-col gap-3">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="employee_id" value="{{ emp.id }}">
+                                    
+                                    <div class="flex gap-3">
+                                        <div class="flex-1">
+                                            <label class="mb-1 block text-xs font-semibold text-slate-400">{% trans "First name" %}</label>
+                                            <input type="text" name="first_name" value="{{ emp.first_name }}" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="mb-1 block text-xs font-semibold text-slate-400">{% trans "Name" %}</label>
+                                            <input type="text" name="last_name" value="{{ emp.last_name }}" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="mb-1 block text-xs font-semibold text-slate-400">{% trans "E-mail address" %}</label>
+                                        <input type="email" name="email" value="{{ emp.email }}" class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div class="mt-2 flex justify-end gap-3">
+                                        <button type="submit" name="delete_employee" value="1" class="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-sm font-semibold text-red-500 transition-colors hover:bg-red-500/20 cursor-pointer" onclick="return confirm('{% trans "Are you sure you want to delete this employee?" %}');">
+                                            {% trans "Delete" %}
+                                        </button>
+                                        <button type="submit" name="edit_employee" value="1" class="rounded-md bg-blue-500 px-4 py-1.5 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-600 shadow-sm cursor-pointer">
+                                            {% trans "Save" %}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="text-center text-sm text-slate-500 py-4">{% trans "No employees created for now." %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button type="button" id="cancel-employee-modal" class="rounded-md bg-slate-700 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-slate-600 cursor-pointer">
+                    {% trans "Cancel" %}
+                </button>
             </div>
         </div>
-
-        <h3 class="mb-3 text-sm font-bold text-slate-300">Employés existants</h3>
-        
-        <div class="w-full">
-            <ul class="flex flex-col gap-2">
-                {% for emp in employees %}
-                    <li class="overflow-hidden rounded-lg border border-slate-700 bg-slate-800 transition-colors hover:border-slate-500">
-                        
-                        <button type="button" class="emp-toggle-btn flex w-full items-center justify-between p-3 text-left transition-colors hover:bg-slate-700/50 cursor-pointer" data-target="emp-form-{{ emp.id }}">
-                            <span class="text-sm font-semibold text-slate-200">
-                                {{ emp.first_name }} {{ emp.last_name }}
-                            </span>
-                            <svg class="emp-toggle-icon h-5 w-5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-
-                        <div id="emp-form-{{ emp.id }}" class="hidden border-t border-slate-700 bg-slate-900/30 p-3">
-                            <form method="post" action="{% url 'manage_employees' %}" class="flex flex-col gap-3">
-                                {% csrf_token %}
-                                <input type="hidden" name="employee_id" value="{{ emp.id }}">
-                                
-                                <div class="flex gap-3">
-                                    <div class="flex-1">
-                                        <label class="mb-1 block text-xs font-semibold text-slate-400">Prénom</label>
-                                        <input type="text" name="first_name" value="{{ emp.first_name }}" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                    </div>
-                                    <div class="flex-1">
-                                        <label class="mb-1 block text-xs font-semibold text-slate-400">Nom</label>
-                                        <input type="text" name="last_name" value="{{ emp.last_name }}" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="mb-1 block text-xs font-semibold text-slate-400">Adresse e-mail</label>
-                                    <input type="email" name="email" value="{{ emp.email }}" class="w-full rounded-md border border-slate-600 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                </div>
-                                
-                                <div class="mt-2 flex justify-end gap-3">
-                                    <button type="submit" name="delete_employee" value="1" class="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-sm font-semibold text-red-500 transition-colors hover:bg-red-500/20 cursor-pointer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">
-                                        Supprimer
-                                    </button>
-                                    <button type="submit" name="edit_employee" value="1" class="rounded-md bg-blue-500 px-4 py-1.5 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-600 shadow-sm cursor-pointer">
-                                        Sauvegarder
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </li>
-                {% empty %}
-                    <li class="text-center text-sm text-slate-500 py-4">Aucun employé créé pour le moment.</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div class="mt-6 flex justify-end">
-            <button type="button" id="cancel-employee-modal" class="rounded-md bg-slate-700 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-slate-600 cursor-pointer">
-                Fermer
-            </button>
-        </div>
     </div>
-</div>
 
     <div id="settings-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity">
-    <div class="relative w-full max-w-lg scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
-        
-        <button id="close-settings-modal" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-
-        <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
-            <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-slate-100">Paramètres</h2>
-            <p class="mt-1 text-sm text-slate-400">Modifiez les réglages du panel Admin de Grabber.</p>
-        </div>
-
-        <form method="post" action="{% url 'update_admin' %}" class="flex flex-col gap-4">
-            {% csrf_token %}
+        <div class="relative w-full max-w-lg scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
             
-            <div>
-                <label for="new_username" class="mb-1 block text-sm font-semibold text-slate-400">Nouvel identifiant</label>
-                <input type="text" id="new_username" name="new_username" value="{{ request.user.username }}" required 
-                       class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <button id="close-settings-modal" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
+                <h2 class="flex items-center gap-2 text-lg font-bold uppercase tracking-wide text-slate-100">{% trans "Settings" %}</h2>
+                <p class="mt-1 text-sm text-slate-400">{% trans "Adjust the settings in the Grabber Admin panel." %}</p>
             </div>
 
-            <div class="mt-2">
-                <label for="new_password" class="mb-1 block text-sm font-semibold text-slate-400">Nouveau mot de passe</label>
-                <input type="password" id="new_password" name="new_password" placeholder="Laissez vide pour ne pas le changer" 
-                       class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-            </div>
+            <form method="post" action="{% url 'update_admin' %}" class="flex flex-col gap-6">
+                {% csrf_token %}
+                
+                <div class="rounded-lg border border-slate-700 bg-slate-900/50 p-5">
+                    <h3 class="mb-4 text-xs font-bold uppercase tracking-wider text-blue-400">{% trans "Language & Region (BETA)" %}</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-slate-400">{% trans "Language" %}</label>
+                            <select name="language" class="w-full cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-100 focus:border-blue-500 focus:outline-none">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_available_languages as LANGUAGES %}
+                                {% for lang in LANGUAGES %}
+                                    <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+                                        {{ lang.1 }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-slate-400">{% trans "Timezone" %}</label>
+                            <select name="timezone" class="w-full cursor-pointer rounded-md border border-slate-600 bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-100 focus:border-blue-500 focus:outline-none">
+                                <option value="UTC" {% if request.session.django_timezone == 'UTC' %}selected{% endif %}>UTC</option>
+                                <option value="Europe/Paris" {% if request.session.django_timezone == 'Europe/Paris' %}selected{% endif %}>Europe/Paris</option>
+                                <option value="America/Montreal" {% if request.session.django_timezone == 'America/Montreal' %}selected{% endif %}>America/Montreal</option>
+                                <option value="Indian/Reunion" {% if request.session.django_timezone == 'Indian/Reunion' %}selected{% endif %}>Océan Indien/Réunion</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="mt-2 border-t border-slate-700 pt-4">
-                <label for="timezone" class="mb-1 block text-sm font-semibold text-slate-400">Fuseau horaire d'affichage</label>
-                <select name="timezone" id="timezone" class="w-full cursor-pointer rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    <option value="UTC" {% if request.session.django_timezone == 'UTC' %}selected{% endif %}>UTC (Temps universel)</option>
-                    <option value="Europe/Paris" {% if request.session.django_timezone == 'Europe/Paris' %}selected{% endif %}>Europe/Paris (Heure française)</option>
-                    <option value="America/Montreal" {% if request.session.django_timezone == 'America/Montreal' %}selected{% endif %}>Amérique/Montréal</option>
-                    <option value="Indian/Reunion" {% if request.session.django_timezone == 'Indian/Reunion' %}selected{% endif %}>Océan Indien/Réunion</option>
-                </select>
-            </div>
+                <div class="rounded-lg border border-slate-700 bg-slate-900/50 p-5">
+                    <h3 class="mb-4 text-xs font-bold uppercase tracking-wider text-blue-400">{% trans "Compte Admin" %}</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-slate-400">{% trans "New username" %}</label>
+                            <input type="text" name="new_username" value="{{ request.user.username }}" required class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-sm text-slate-100 focus:border-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-slate-400">{% trans "New password" %}</label>
+                            <input type="password" name="new_password" placeholder="{% trans 'Laissez vide pour ne pas le changer' %}" class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
 
-            <div class="mt-6 flex justify-end gap-3">
-                <button type="button" id="cancel-settings-modal" class="rounded-md px-4 py-2 text-sm font-semibold text-slate-400 transition-colors hover:text-slate-200 cursor-pointer">
-                    Annuler
-                </button>
-                <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">
-                    Sauvegarder
-                </button>
-            </div>
-        </form>
+                <div class="mt-2 flex justify-end gap-2">
+                    <button type="button" id="cancel-settings-modal" class="rounded-md bg-slate-700 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-slate-600 cursor-pointer">
+                        {% trans "Cancel" %}
+                    </button>
+                    <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-600 shadow-sm cursor-pointer">
+                        {% trans "Save" %}
+                    </button>
+                </div>
+
+            </form>
+        </div>
     </div>
-</div>
 
 <script>
-    // Verify if localhost is used, then lock Alfred
+    // Vérifie si localhost est utilisé (Désactive Alfred)
     document.addEventListener("DOMContentLoaded", function() {
         const hostname = window.location.hostname;
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            
             const pill = document.getElementById('localhost-pill-warning');
             if(pill) pill.classList.remove('hidden');
             
@@ -260,7 +269,7 @@
         }
     });
     
-    // Show the loading animation for deployement form
+    // Animation de chargement pour le déploiement
     const deployForm = document.getElementById('deploy-form');
     if (deployForm) {
         deployForm.addEventListener('submit', function () {
@@ -271,7 +280,7 @@
         });
     }
 
-    // Modal opener
+    // Gestion globale de l'ouverture/fermeture des Modales
     function setupModal(modalId, openBtnId, closeBtnIds) {
         const modal = document.getElementById(modalId);
         const openBtn = document.getElementById(openBtnId);
@@ -298,10 +307,10 @@
         });
     }
 
-    // Modals
     setupModal('employee-modal', 'open-employee-modal', ['close-employee-modal', 'cancel-employee-modal']);
     setupModal('settings-modal', 'open-settings-modal', ['close-settings-modal', 'cancel-settings-modal']);
 
+    // Gestion de l'accordéon pour ajouter un employé
     const toggleAddEmpBtn = document.getElementById('toggle-add-employee-btn');
     const addEmpFormContainer = document.getElementById('add-employee-form-container');
     const toggleAddEmpIcon = document.getElementById('toggle-add-employee-icon');
@@ -313,13 +322,12 @@
         });
     }
 
+    // Gestion de l'accordéon pour éditer les employés
     const empToggleBtns = document.querySelectorAll('.emp-toggle-btn');
-    
     empToggleBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const targetId = this.getAttribute('data-target');
             const targetContainer = document.getElementById(targetId);
-            
             const icon = this.querySelector('.emp-toggle-icon');
             
             if (targetContainer) {
@@ -330,7 +338,6 @@
             }
         });
     });
-
 </script>
 </body>
 </html>

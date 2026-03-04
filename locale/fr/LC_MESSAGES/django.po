@@ -1,0 +1,400 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-04 13:06+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: config/settings.py:125
+msgid "English"
+msgstr "Anglais"
+
+#: config/settings.py:126
+msgid "Français"
+msgstr "Français"
+
+#: config/templates/admin/login.html:8
+msgid "Login - Grabber"
+msgstr "Connexion - Grabber"
+
+#: config/templates/admin/login.html:20
+msgid "Authentication"
+msgstr "Authentification"
+
+#: config/templates/admin/login.html:29
+msgid "Local mode (Localhost)"
+msgstr "Mode local (Localhost)"
+
+#: config/templates/admin/login.html:31
+msgid ""
+"In Local mode, requests to other computers are not possible. Change the host "
+"address from the Grabber cmd settings."
+msgstr ""
+"En mode local, les requêtes vers d'autres ordinateurs ne sont pas possibles. "
+"Modifiez l'adresse hôte dans les paramètres de la commande Grabber."
+
+#: config/templates/admin/login.html:36
+msgid "Incorrect username or password."
+msgstr "Identifiant ou mot de passe incorrect."
+
+#: config/templates/admin/login.html:52 web/templates/list.html:25
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: config/templates/admin/login.html:57 web/templates/list.html:28
+msgid "Password"
+msgstr "Mot de passe"
+
+#: config/templates/admin/login.html:64
+msgid "Login"
+msgstr "Se connecter"
+
+#: web/templates/base.html:8
+msgid "Admin Panel"
+msgstr "Panel Admin"
+
+#: web/templates/base.html:16
+msgid "Welcome to Grabber,"
+msgstr "Bienvenue sur Grabber,"
+
+#: web/templates/base.html:18
+msgid "Voir les nouveautés de cette version"
+msgstr "Voir les nouveautés de cette version"
+
+#: web/templates/base.html:22
+msgid "Local Mode"
+msgstr "Mode local"
+
+#: web/templates/base.html:31 web/templates/base.html:192
+msgid "Settings"
+msgstr "Paramètres"
+
+#: web/templates/base.html:38
+msgid "Employees"
+msgstr "Employés"
+
+#: web/templates/base.html:41 web/templates/base.html:45
+msgid "Logout"
+msgstr "Déconnexion"
+
+#: web/templates/base.html:88
+msgid "Manage employees"
+msgstr "Gestion des employés"
+
+#: web/templates/base.html:89
+msgid "Edit the list of users to assign to computers."
+msgstr "Éditez la liste des utilisateurs à assigner aux ordinateurs."
+
+#: web/templates/base.html:94
+msgid "Add an new employee"
+msgstr "Ajouter un nouvel employé"
+
+#: web/templates/base.html:106 web/templates/base.html:146
+msgid "First name"
+msgstr "Prénom"
+
+#: web/templates/base.html:110 web/templates/base.html:150
+#: web/templates/item.html:127
+msgid "Name"
+msgstr "Nom"
+
+#: web/templates/base.html:115 web/templates/base.html:155
+msgid "E-mail address"
+msgstr "Adresse e-mail"
+
+#: web/templates/base.html:116
+msgid "jean.dupont@entreprise.com"
+msgstr "jean.dupont@entreprise.com"
+
+#: web/templates/base.html:120 web/templates/base.html:163
+#: web/templates/base.html:240 web/templates/list.html:136
+msgid "Save"
+msgstr "Enregistrer"
+
+#: web/templates/base.html:127
+msgid "Existing employees"
+msgstr "Employés existants"
+
+#: web/templates/base.html:159
+msgid "Are you sure you want to delete this employee?"
+msgstr "Êtes-vous sûr de vouloir supprimer cet employé ?"
+
+#: web/templates/base.html:170
+msgid "No employees created for now."
+msgstr "Aucun employé créé pour le moment."
+
+#: web/templates/base.html:176 web/templates/base.html:248
+#: web/templates/list.html:135
+msgid "Cancel"
+msgstr "Annuler"
+
+#: web/templates/base.html:193
+msgid "Adjust the settings in the Grabber Admin panel."
+msgstr "Modifiez les réglages du panel Admin de Grabber."
+
+#: web/templates/base.html:200
+msgid "Language & Region (BETA)"
+msgstr "Langue & Région (BETA)"
+
+#: web/templates/base.html:203
+msgid "Language"
+msgstr "Langue"
+
+#: web/templates/base.html:215
+msgid "Timezone"
+msgstr "Fuseau horaire d'affichage"
+
+#: web/templates/base.html:227
+msgid "Compte Admin"
+msgstr "Compte Admin"
+
+#: web/templates/base.html:230
+msgid "New username"
+msgstr "Nouvel identifiant"
+
+#: web/templates/base.html:234
+msgid "New password"
+msgstr "Nouveau mot de passe"
+
+#: web/templates/base.html:235
+msgid "Laissez vide pour ne pas le changer"
+msgstr "Laissez vide pour ne pas le changer"
+
+#: web/templates/item.html:11
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#: web/templates/item.html:29
+msgid "Assigned to:"
+msgstr "Assigné à :"
+
+#: web/templates/item.html:36
+msgid "-- None --"
+msgstr "-- Aucun --"
+
+#: web/templates/item.html:54
+msgid "Hardware"
+msgstr "Hardware"
+
+#: web/templates/item.html:58
+msgid "CPU Model"
+msgstr "Modèle CPU"
+
+#: web/templates/item.html:62
+msgid "Cores / Threads"
+msgstr "Coeurs / Threads"
+
+#: web/templates/item.html:66
+msgid "RAM Memory"
+msgstr "Mémoire RAM"
+
+#: web/templates/item.html:70
+msgid "Graphics Card"
+msgstr "Carte Graphique"
+
+#: web/templates/item.html:74
+msgid "Motherboard"
+msgstr "Carte Mère"
+
+#: web/templates/item.html:81
+msgid "Operating System"
+msgstr "Système d'Exploitation"
+
+#: web/templates/item.html:85
+msgid "OS"
+msgstr "OS"
+
+#: web/templates/item.html:89
+msgid "Kernel"
+msgstr "Noyau (Kernel)"
+
+#: web/templates/item.html:93
+msgid "Architecture"
+msgstr "Architecture"
+
+#: web/templates/item.html:97
+msgid "Desktop (DE)"
+msgstr "Bureau (DE)"
+
+#: web/templates/item.html:101
+msgid "Window Manager (WM)"
+msgstr "Gestionnaire (WM)"
+
+#: web/templates/item.html:110
+msgid "Disks & Partitions"
+msgstr "Disques & Partitions"
+
+#: web/templates/item.html:128
+msgid "Type"
+msgstr "Type"
+
+#: web/templates/item.html:129
+msgid "Size"
+msgstr "Taille"
+
+#: web/templates/item.html:130
+msgid "Used"
+msgstr "Utilisé"
+
+#: web/templates/item.html:143
+msgid "No partition detected"
+msgstr "Aucune partition détectée"
+
+#: web/templates/item.html:156
+msgid "Data generated on"
+msgstr "Données générées le"
+
+#: web/templates/list.html:12
+msgid "Deployment disabled"
+msgstr "Déploiement désactivé"
+
+#: web/templates/list.html:13
+msgid "Remote scan is not available in local mode."
+msgstr "Le scan distant n'est pas disponible en mode local."
+
+#: web/templates/list.html:16
+msgid "Remote deployment (Alfred)"
+msgstr "Déploiement distant (Alfred)"
+
+#: web/templates/list.html:17
+msgid ""
+"Send the script to a network machine via SSH to automatically add it to the "
+"dashboard."
+msgstr ""
+"Envoyez le script sur une machine du réseau via SSH pour l'ajouter "
+"automatiquement au tableau de bord."
+
+#: web/templates/list.html:22 web/templates/list.html:125
+msgid "IP Address"
+msgstr "Adresse IP"
+
+#: web/templates/list.html:33
+msgid "Start scan"
+msgstr "Lancer le scan"
+
+#: web/templates/list.html:40
+msgid "SSH connection in progress..."
+msgstr "Connexion SSH en cours..."
+
+#: web/templates/list.html:46
+msgid "Connected machines"
+msgstr "Machines connectées"
+
+#: web/templates/list.html:47
+msgid "Select a machine to view its details."
+msgstr "Sélectionnez un poste pour voir les détails de celui-ci."
+
+#: web/templates/list.html:59
+msgid "Assigned"
+msgstr "Assigné"
+
+#: web/templates/list.html:63
+msgid "Unassigned"
+msgstr "Non assigné"
+
+#: web/templates/list.html:73
+msgid "Edit machine"
+msgstr "Éditer la machine"
+
+#: web/templates/list.html:79
+msgid "Redeploy via SSH"
+msgstr "Redéployer via SSH"
+
+#: web/templates/list.html:85
+msgid "Are you sure you want to delete the machine"
+msgstr "Êtes-vous sûr de vouloir supprimer la machine"
+
+#: web/templates/list.html:89
+msgid "Delete this computer"
+msgstr "Supprimer cet ordinateur"
+
+#: web/templates/list.html:100
+msgid "Waiting for data... Deploy Alfred or run the local script!"
+msgstr "En attente de données... Déployez Alfred ou lancez le script local !"
+
+#: web/templates/list.html:115
+msgid "Edit"
+msgstr "Éditer"
+
+#: web/templates/list.html:130
+msgid "SSH User (Deployment)"
+msgstr "Utilisateur SSH (Déploiement)"
+
+#: web/templates/list.html:131
+msgid "Ex: root, admin..."
+msgstr "Ex: root, admin..."
+
+#: web/views.py:39
+#, python-brace-format
+msgid "[OK] The information of {hostname} has been updated."
+msgstr "[OK] Les informations de {hostname} ont été mises à jour."
+
+#: web/views.py:57
+#, python-brace-format
+msgid "[OK] Employee {first_name} {last_name} has been added."
+msgstr "[OK] L'employé {first_name} {last_name} a été ajouté."
+
+#: web/views.py:69
+#, python-brace-format
+msgid "[OK] Employee {first_name} {last_name} has been updated."
+msgstr "[OK] L'employé {first_name} {last_name} a été mis à jour."
+
+#: web/views.py:76
+#, python-brace-format
+msgid "[OK] Employee {nom_complet} has been deleted."
+msgstr "[OK] L'employé {nom_complet} a été supprimé."
+
+#: web/views.py:109
+msgid "[OK] Username and password updated successfully!"
+msgstr "[OK] Identifiant et mot de passe mis à jour avec succès !"
+
+#: web/views.py:111
+msgid "[OK] Settings updated successfully!"
+msgstr "[OK] Paramètres mis à jour avec succès !"
+
+#: web/views.py:136
+#, python-brace-format
+msgid "[OK] The computer has been assigned to {first_name} {last_name}."
+msgstr "[OK] L'ordinateur a été assigné à {first_name} {last_name}."
+
+#: web/views.py:139
+msgid "[OK] The assignment has been removed for this computer."
+msgstr "[OK] L'assignation a été retirée pour cet ordinateur."
+
+#: web/views.py:166
+msgid "[ERROR] SSH key not found. Rerun grabber.sh to configure a key."
+msgstr "[ERROR] Clé SSH introuvable. Relancez grabber.sh pour configurer une clé."
+
+#: web/views.py:181
+msgid ""
+"[ERROR] New PC: you must provide a password for the first deployment! (key "
+"refused)"
+msgstr ""
+"[ERROR] Nouveau PC : vous devez fournir un mot de passe pour le premier déploiement ! (clé refusée)"
+
+#: web/views.py:208
+#, python-brace-format
+msgid "[OK] Alfred has been successfully deployed on {target}!"
+msgstr "[OK] Alfred a été déployé avec succès sur {target} !"
+
+#: web/views.py:210
+msgid " (SSH key installed)."
+msgstr " (Clé SSH installée)."
+
+#: web/views.py:216
+#, python-brace-format
+msgid "[ERROR] Unable to connect to {target}: {error}"
+msgstr "[ERROR] Connexion impossible à {target}: {error}"

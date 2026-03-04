@@ -15,6 +15,12 @@ class SystemInfo(models.Model):
 
     # ID of computer
     mac_address = models.CharField(max_length=100, unique=True)
+
+    # IP ADDRESS of computer
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    # Username for SSH
+    ssh_user = models.CharField(max_length=50, null=True, blank=True)
     
     # HARDWARE
     motherboard = models.CharField(max_length=255, null=True, blank=True)

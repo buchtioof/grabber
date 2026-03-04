@@ -35,9 +35,10 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 - v0.4 : Save fetch data in a sql database and can save multiple pc in a pretty interface
 - v0.5 : Switch to Django, use API model, security update by using session tokens to verify communications, use [Alfred](https://github.com/buchtioof/alfred) to fetch data via SSH
 - v0.6 : Admin panel refine, login page rework, local session verification that locks Alfred (SSH injection), switch CSS to Tailwind local, employees management and links between them and PCs
-- v0.7 (actual) : QOL update, settings added, employees modal reworked, added middleware (manage timezone in Django)
-- v0.8 (wip) : Use SSH keys to reconnect safely
-- Next : Languages update (add english), clean and verified code
+- v0.7 : QOL update, settings added, employees modal reworked, added middleware (manage timezone in Django)
+- v0.8 (actual) : Use SSH keys to reconnect safely, Languages update in beta (English and French available)
+- v0.9 (next) : Clean and verified code
+- v1 : Deployment with Docker, all working fine
 
 ## Dependencies
 
@@ -54,6 +55,25 @@ These ones is already available in Grabber:
 - [Alfred](https://github.com/buchtioof/alfred)
 - [Tailwind](https://tailwindcss.com/)
 - [Phosphor Icons](https://phosphoricons.com/)
+
+## Project rules
+
+### Versioning in this project
+
+Every updates starts with the letter v and uses three numbers separated by points (example: v0.8.1 or v1.0.5)
+
+- Each bug fixes and light cleaning code is coded by the third number of the version code (example: vx.x.N / N as the update number)
+- A feature added is coded by the second number of the version code (example: vx.N / N as the update number)
+- When the project is at a stable point and has all the features planned, it is coded by the first number of the version code (example: vN / N as the update number)
+
+### Git usage
+
+Branches use the versioning rules: (*N stands for the version number*)
+
+- To work on a feature update, create a branch called feature-vx.N
+- For a bug fix, create a branch called bugfix-vx.x.N
+
+Before merging, be sure the code is verified and clean as possible, use comments
 
 # Credits
 To the big work of all the dependencies used\
