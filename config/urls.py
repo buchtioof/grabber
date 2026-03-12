@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
-from web import views, api
+from web import views, api, actions
 
 # Redirect /admin path to / root but lets login possible
 admin_patterns = ([
@@ -14,11 +14,13 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),                        # Request translations
     path('endpoint', api.receive_system_info, name='receive_system_info'),  # Endpoint fetch Alfred data from target PC
 
-    # Views for user
+    # Pages
     path('', views.computers_list, name='computers_list'),
-    path('deploy', views.deploy_ssh, name='deploy_ssh'),
     path('ordi/<str:mac_address>', views.show_info, name='show_info'),
-    path('logout', views.logout_view, name='logout'),
-    path('update_admin/', views.update_admin, name='update_admin'),
-    path('employees/manage/', views.manage_employees, name='manage_employees'),
+
+    # Actions
+    path('deploy', actions.deploy_ssh, name='deploy'),
+    path('logout', actions.disconnect, name='logout'),
+    path('settings/', actions.user_settings, name='editsetting'),
+    path('employees/manage/', actions.emp_settings, name='editemployee'),
 ]

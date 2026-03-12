@@ -1,4 +1,4 @@
-# api.py (Manage the API between grabber.sh and Django)
+# api.py (Manage the API between alfred.sh and Django)
 
 import json
 from django.http import JsonResponse

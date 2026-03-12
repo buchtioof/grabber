@@ -5,31 +5,33 @@
 <div class="mx-auto mt-10 max-w-6xl px-5 pb-20">
 
     <div class="mb-10 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg">
-        <div id="localhost-deploy-warning" class="hidden mb-4 rounded-md border border-yellow-500/30 bg-yellow-500/20 p-3 text-sm font-semibold text-yellow-500 mb-4">
-            <svg class="fill-yellow-500" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256">
+        <div id="localhost-deploy-warning" class="hidden mb-4 rounded-md border border-yellow-500/30 bg-yellow-500/20 p-3 text-sm font-semibold text-yellow-500">
+            <svg class="fill-yellow-500 inline-block mr-2 align-middle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256">
                 <path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z"></path>
             </svg>
-            <h2 class="font-extrabold text-lg">{% trans "Deployment disabled" %}</h2> 
-            <p>{% trans "Remote scan is not available in local mode." %}</p>
+            <div class="inline-block align-middle">
+                <h2 class="text-lg font-extrabold">{% trans "Deployment disabled" %}</h2> 
+                <p class="font-normal">{% trans "Remote scan is not available in local mode." %}</p>
+            </div>
         </div>
 
         <h3 class="mb-2 text-xl font-bold text-blue-500">{% trans "Remote deployment (Alfred)" %}</h3>
         <p class="mb-6 text-sm text-slate-400">{% trans "Send the script to a network machine via SSH to automatically add it to the dashboard." %}</p>
 
-        <form id="deploy-form" method="POST" action="/deploy" class="flex flex-wrap items-center gap-4 transition-all duration-300">
+        <form id="deploy-form" method="POST" action="/deploy" class="flex flex-wrap items-center gap-4">
             {% csrf_token %}
             
-            <input type="text" id="deploy-target" name="target" placeholder="{% trans 'IP Address' %}" required 
-                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <input type="text" name="target" placeholder="{% trans 'IP Address' %}" required 
+                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
             
-            <input type="text" id="deploy-username" name="username" placeholder="{% trans 'Username' %}" required 
-                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <input type="text" name="username" placeholder="{% trans 'Username' %}" required 
+                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
             
-            <input type="password" id="deploy-password" name="password" placeholder="{% trans 'Password' %}" 
-                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <input type="password" name="password" placeholder="{% trans 'Password' %}" 
+                class="rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
             
             <button id="submit-btn" type="submit" 
-                    class="cursor-pointer rounded-md bg-blue-500 px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg">
+                    class="rounded-md bg-blue-500 px-6 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg">
                 {% trans "Start scan" %}
             </button>
 
@@ -55,45 +57,35 @@
                     <div class="flex items-center gap-3">
                         <span class="text-lg font-semibold text-slate-100">{{ computer.hostname }}</span>
                         {% if computer.employees %}
-                            <span class="rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-semibold text-blue-400 border border-blue-500/20">
+                            <span class="rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-0.5 text-xs font-semibold text-blue-400">
                                 {% trans "Assigned" %}
                             </span>
                         {% else %}
-                            <span class="rounded-full bg-red-500/10 px-2.5 py-0.5 text-xs font-semibold text-red-400 border border-red-500/20">
+                            <span class="rounded-full border border-red-500/20 bg-red-500/10 px-2.5 py-0.5 text-xs font-semibold text-red-400">
                                 {% trans "Unassigned" %}
                             </span>
                         {% endif %}
                     </div>
-                    
                     <span class="rounded bg-white/5 px-2.5 py-1 font-mono text-sm text-slate-400">{{ computer.mac_address }}</span>
                 </a>
 
-                <div class="flex items-center gap-1 border-l border-slate-700/50 pr-4 pl-4">
-                    
-                    <button type="button" onclick="openEditModal('{{ computer.mac_address }}', '{{ computer.hostname }}', '{{ computer.ip_address|default:'' }}', '{{ computer.ssh_user|default:'' }}')" class="rounded p-2 text-slate-500 transition-all duration-200 hover:bg-blue-500/20 hover:text-blue-500 cursor-pointer" title="{% trans 'Edit machine' %}">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
+                <div class="flex items-center gap-1 border-l border-slate-700/50 px-4">
+                    <button type="button" onclick="openEditModal('{{ computer.mac_address }}', '{{ computer.hostname }}', '{{ computer.ip_address|default:'' }}', '{{ computer.ssh_user|default:'' }}')" class="rounded p-2 text-slate-500 transition-colors hover:bg-blue-500/20 hover:text-blue-500" title="{% trans 'Edit machine' %}">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     </button>
 
-                    <button type="button" onclick="prepareRedeploy('{{ computer.ip_address|default:'' }}', '{{ computer.ssh_user|default:'' }}')" class="rounded p-2 text-slate-500 transition-all duration-200 hover:bg-blue-500/20 hover:text-blue-500 cursor-pointer" title="{% trans 'Redeploy via SSH' %}">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
+                    <button type="button" onclick="prepareRedeploy('{{ computer.ip_address|default:'' }}', '{{ computer.ssh_user|default:'' }}')" class="rounded p-2 text-slate-500 transition-colors hover:bg-blue-500/20 hover:text-blue-500" title="{% trans 'Redeploy via SSH' %}">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
 
-                    <form method="post" action="" onsubmit="return confirm('{% trans "Are you sure you want to delete the machine" %} {{ computer.hostname }} ?');" class="m-0">
+                    <form method="post" action="" onsubmit="return confirm('{% trans "Are you sure you want to delete the machine" %} {{ computer.hostname }} ?');" class="flex items-center">
                         {% csrf_token %}
                         <input type="hidden" name="delete_mac" value="{{ computer.mac_address }}">
-                        
-                        <button type="submit" class="rounded p-2 text-slate-500 transition-all duration-200 hover:bg-red-500/20 hover:text-red-500 cursor-pointer" title="{% trans 'Delete this computer' %}">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
+                        <button type="submit" class="rounded p-2 text-slate-500 transition-colors hover:bg-red-500/20 hover:text-red-500" title="{% trans 'Delete this computer' %}">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </form>
                 </div>
-
             </li>
         {% empty %}
             <li class="rounded-lg border border-dashed border-slate-700 bg-slate-800 p-10 text-center text-slate-400">
@@ -101,13 +93,12 @@
             </li>
         {% endfor %}
     </ul>
-    <div id="edit-computer-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity">
-        <div class="relative w-full max-w-md scale-100 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl transition-transform">
+
+    <div id="edit-computer-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm transition-opacity">
+        <div class="relative w-full max-w-md rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-2xl">
             
-            <button type="button" onclick="closeEditModal()" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500 cursor-pointer">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
+            <button type="button" onclick="toggleEditModal(false)" class="absolute right-4 top-4 text-slate-400 transition-colors hover:text-red-500">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
             <div class="mb-5 border-b border-slate-700 pb-4 pr-6">
@@ -119,80 +110,69 @@
             <form method="post" action="{% url 'computers_list' %}" class="flex flex-col gap-4">
                 {% csrf_token %}
                 <input type="hidden" name="edit_computer" value="1">
-                <input type="hidden" name="mac_address" id="edit-mac-address" value="">
+                <input type="hidden" name="mac_address" id="edit-mac-address">
 
                 <div>
                     <label class="mb-1 block text-sm font-semibold text-slate-400">{% trans "IP Address" %}</label>
-                    <input type="text" name="ip_address" id="edit-ip-address" placeholder="192.168.1.50" class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <input type="text" name="ip_address" id="edit-ip-address" placeholder="192.168.1.50" class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                 </div>
 
                 <div>
                     <label class="mb-1 block text-sm font-semibold text-slate-400">{% trans "SSH User (Deployment)" %}</label>
-                    <input type="text" name="ssh_user" id="edit-ssh-user" placeholder="{% trans 'Ex: root, admin...' %}" class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2 text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <input type="text" name="ssh_user" id="edit-ssh-user" placeholder="{% trans 'Ex: root, admin...' %}" class="w-full rounded-md border border-slate-600 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                 </div>
 
                 <div class="mt-4 flex justify-end gap-3">
-                    <button type="button" onclick="closeEditModal()" class="rounded-md px-4 py-2 text-sm font-semibold text-slate-400 transition-colors hover:text-slate-200 cursor-pointer">{% trans "Cancel" %}</button>
-                    <button type="submit" class="rounded-md bg-blue-500 px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg cursor-pointer">{% trans "Save" %}</button>
+                    <button type="button" onclick="toggleEditModal(false)" class="rounded-md bg-slate-700 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-slate-600">
+                        {% trans "Cancel" %}
+                    </button>
+                    <button type="submit" class="rounded-md bg-blue-500 px-6 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-600 hover:shadow-lg">
+                        {% trans "Save" %}
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 <script>
+    const modal = document.getElementById('edit-computer-modal');
+    const deployForm = document.getElementById('deploy-form');
+
+    // Gestion de la modale d'édition
+    function toggleEditModal(show) {
+        if (modal) modal.classList.toggle('hidden', !show);
+    }
+
     function openEditModal(mac, hostname, ipAddress, sshUser) {
         document.getElementById('edit-mac-address').value = mac;
         document.getElementById('edit-hostname').textContent = hostname;
+        document.getElementById('edit-ip-address').value = ipAddress;
+        document.getElementById('edit-ssh-user').value = sshUser;
         
-        document.getElementById('edit-ip-address').value = (ipAddress && ipAddress !== 'None') ? ipAddress : '';
-        document.getElementById('edit-ssh-user').value = (sshUser && sshUser !== 'None') ? sshUser : '';
-        
-        const modal = document.getElementById('edit-computer-modal');
-        if(modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
+        toggleEditModal(true);
     }
 
-    function closeEditModal() {
-        const modal = document.getElementById('edit-computer-modal');
-        if(modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    }
-
-    // --- Gestion du redéploiement ---
+    // Gestion du redéploiement
     function prepareRedeploy(targetIp, sshUser) {
-        const targetInput = document.querySelector('input[name="target"]');
-        const usernameInput = document.querySelector('input[name="username"]');
-        const passwordInput = document.querySelector('input[name="password"]');
-        const submitBtn = document.getElementById('submit-btn');
-        
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
-        if (targetInput && usernameInput) {
-            const hasIp = (targetIp && targetIp !== 'None' && targetIp.trim() !== '');
-            const hasUser = (sshUser && sshUser !== 'None' && sshUser.trim() !== '');
+        if (!deployForm) return;
 
-            targetInput.value = hasIp ? targetIp : '';
-            usernameInput.value = hasUser ? sshUser : '';
-            if (passwordInput) passwordInput.value = '';
-            
-            setTimeout(() => {
-                if (hasIp && hasUser) {
-                    if (submitBtn) submitBtn.click();
-                } else {
-                    if (!hasIp) {
-                        targetInput.focus();
-                    } else if (!hasUser) {
-                        usernameInput.focus();
-                    } else if (passwordInput) {
-                        passwordInput.focus();
-                    }
-                }
-            }, 400); 
-        }
+        const inputs = deployForm.elements;
+        inputs['target'].value = targetIp;
+        inputs['username'].value = sshUser;
+        inputs['password'].value = ''; 
+        
+        setTimeout(() => {
+            if (targetIp && sshUser) {
+                document.getElementById('submit-btn').click();
+            } else if (!targetIp) {
+                inputs['target'].focus();
+            } else {
+                inputs['username'].focus();
+            }
+        }, 400);
     }
 </script>
 {% endblock %}

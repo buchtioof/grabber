@@ -2,102 +2,94 @@
 {% load i18n %}
 
 {% block content %}
-
 <div class="mx-auto mt-10 max-w-5xl px-5 pb-20">
-    <a href="/" class="flex w-40 gap-2 text-sm font-semibold text-slate-400 transition-colors hover:text-blue-500">
+    
+    <a href="/" class="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-400 transition-colors hover:text-blue-500">
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
         {% trans "Dashboard" %}
     </a>
-    <div class="mb-10 flex flex-col items-center text-center">
+
+    <div class="mb-10 text-center">
         <h1 class="mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-4xl font-extrabold text-transparent">
             {{ data.hostname }}
         </h1>
         
         <div class="flex flex-wrap items-center justify-center gap-4">
-            
-            <div class="inline-flex items-center rounded-md border border-slate-700 bg-slate-800 px-4 py-1.5 font-mono text-sm tracking-wide text-slate-400 shadow-sm">
+            <span class="rounded-md border border-slate-700 bg-slate-800 px-4 py-2 font-mono text-sm tracking-wide text-slate-400 shadow-sm">
                 MAC: {{ data.mac_address }}
-            </div>
+            </span>
 
-            <form method="post" action="" class="inline-flex items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-4 py-1.5 font-mono text-sm tracking-wide text-slate-400 shadow-sm transition-colors hover:border-slate-500 hover:bg-slate-700/50">
+            <form method="post" action="" class="flex items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-4 py-2 font-mono text-sm tracking-wide text-slate-400 shadow-sm transition-colors hover:border-slate-500 hover:bg-slate-700/50">
                 {% csrf_token %}
                 <input type="hidden" name="assign_employee" value="1">
                 <input type="hidden" name="mac_address" value="{{ data.mac_address }}">
 
-                <span class="text-slate-400">{% trans "Assigned to:" %}</span>
+                <span>{% trans "Assigned to:" %}</span>
 
-                <div class="relative min-w-max">
-                    <select name="employees_id"
-                            onchange="this.form.submit()"
-                            class="w-full text-left px-4 whitespace-nowrap cursor-pointer">
-                        
-                        <option value="" class="bg-slate-800 text-slate-400">{% trans "-- None --" %}</option>
-                        
-                        {% for emp in employees %}
-                            <option value="{{ emp.id }}"
-                                    class="bg-slate-800 text-slate-100"
-                                    {% if data.employees and data.employees.id == emp.id %} selected {% endif %}>
-                                {{ emp.first_name }} {{ emp.last_name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
+                <select name="employees_id" onchange="this.form.submit()" class="cursor-pointer bg-transparent text-slate-100 outline-none">
+                    <option value="" class="bg-slate-800 text-slate-400">{% trans "-- None --" %}</option>
+                    {% for emp in employees %}
+                        <option value="{{ emp.id }}" class="bg-slate-800" {% if data.employees and data.employees.id == emp.id %} selected {% endif %}>
+                            {{ emp.first_name }} {{ emp.last_name }}
+                        </option>
+                    {% endfor %}
+                </select>
             </form>
-
         </div>
     </div>
 
     <div class="grid gap-6 md:grid-cols-2">
-        <div class="rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:border-blue-500">
-            <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">{% trans "Hardware" %}</h2>
+        
+        <div class="rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:border-blue-500">
+            <h2 class="mb-4 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">{% trans "Hardware" %}</h2>
             
-            <ul class="flex flex-col gap-3">
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+            <ul class="flex flex-col divide-y divide-slate-700/50">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "CPU Model" %}</span>
-                    <span class="rounded bg-red-500/10 px-2.5 py-1 text-right text-xs font-semibold text-red-400 border border-red-500/20">{{ data.cpu_model }}</span>
+                    <span class="rounded border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-right text-xs font-semibold text-red-400">{{ data.cpu_model }}</span>
                 </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "Cores / Threads" %}</span>
                     <span class="text-sm font-semibold text-slate-100">{{ data.cpu_cores }}C / {{ data.cpu_threads }}T</span>
                 </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "RAM Memory" %}</span>
-                    <span class="rounded bg-emerald-500/10 px-2.5 py-1 text-right text-xs font-semibold text-emerald-400 border border-emerald-500/20">{{ data.ram_total }} GB ({{ data.ram_slots }} slots)</span>
+                    <span class="rounded border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-right text-xs font-semibold text-emerald-400">{{ data.ram_total }} GB ({{ data.ram_slots }} slots)</span>
                 </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "Graphics Card" %}</span>
                     <span class="max-w-[60%] text-right text-sm font-semibold text-slate-100">{{ data.gpu_model }}</span>
                 </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "Motherboard" %}</span>
                     <span class="max-w-[60%] text-right text-sm font-semibold text-slate-100">{{ data.motherboard }}</span>
                 </li>
             </ul>
         </div>
 
-        <div class="rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:border-blue-500">
-            <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">{% trans "Operating System" %}</h2>
+        <div class="rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:border-blue-500">
+            <h2 class="mb-4 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">{% trans "Operating System" %}</h2>
 
-            <ul class="flex flex-col gap-3">
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+            <ul class="flex flex-col divide-y divide-slate-700/50">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "OS" %}</span>
-                    <span class="rounded bg-blue-500/10 px-2.5 py-1 text-right text-xs font-semibold text-blue-400 border border-blue-500/20">{{ data.os }}</span>
+                    <span class="rounded border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-right text-xs font-semibold text-blue-400">{{ data.os }}</span>
                 </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "Kernel" %}</span>
                     <span class="max-w-[60%] text-right text-sm font-semibold text-slate-100">{{ data.kernel }}</span>
                 </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "Architecture" %}</span>
                     <span class="text-sm font-semibold text-slate-100">{{ data.arch }}</span>
                 </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "Desktop (DE)" %}</span>
                     <span class="text-sm font-semibold text-slate-100">{{ data.desktop_env }}</span>
                 </li>
-                <li class="flex items-center justify-between border-b border-slate-700/50 pb-3 last:border-0 last:pb-0">
+                <li class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                     <span class="text-sm font-medium text-slate-400">{% trans "Window Manager (WM)" %}</span>
                     <span class="text-sm font-semibold text-slate-100">{{ data.window_manager }}</span>
                 </li>
@@ -106,15 +98,15 @@
 
     </div> 
 
-    <div class="mt-6 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:border-blue-500">
+    <div class="mt-6 rounded-xl border border-slate-700 bg-slate-800 p-6 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:border-blue-500">
         <h2 class="mb-5 border-b border-slate-700 pb-3 text-lg font-bold uppercase tracking-wide text-blue-500">{% trans "Disks & Partitions" %}</h2>
         
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {% for disk in data.disks %}
             <div class="rounded-lg border border-slate-700/50 bg-slate-900/50 p-4">
                 
-                <h3 class="mb-3 flex items-center gap-2 text-md font-semibold text-slate-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#FFFFFF" viewBox="0 0 256 256">
+                <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-slate-200">
+                    <svg class="h-6 w-6 text-slate-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
                         <path d="M224,60H32A20,20,0,0,0,12,80v96a20,20,0,0,0,20,20H224a20,20,0,0,0,20-20V80A20,20,0,0,0,224,60Zm-4,112H36V84H220Zm-56-44a16,16,0,1,1,16,16A16,16,0,0,1,164,128Z"></path>
                     </svg>
                     /dev/{{ disk.name }}
@@ -126,8 +118,8 @@
                             <tr>
                                 <th class="pb-2 font-medium">{% trans "Name" %}</th>
                                 <th class="pb-2 font-medium">{% trans "Type" %}</th>
-                                <th class="pb-2 font-medium text-right">{% trans "Size" %}</th>
-                                <th class="pb-2 font-medium text-right">{% trans "Used" %}</th>
+                                <th class="pb-2 text-right font-medium">{% trans "Size" %}</th>
+                                <th class="pb-2 text-right font-medium">{% trans "Used" %}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-700/20">
@@ -146,7 +138,6 @@
                         </tbody>
                     </table>
                 </div>
-                
             </div>
             {% endfor %}
         </div>
@@ -157,5 +148,4 @@
     </div>
 
 </div>
-
 {% endblock %}
