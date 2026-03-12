@@ -139,7 +139,7 @@
     const modal = document.getElementById('edit-computer-modal');
     const deployForm = document.getElementById('deploy-form');
 
-    // Gestion de la modale d'édition
+    // Computer editor modal
     function toggleEditModal(show) {
         if (modal) modal.classList.toggle('hidden', !show);
     }
@@ -153,7 +153,7 @@
         toggleEditModal(true);
     }
 
-    // Gestion du redéploiement
+    // Redeployment
     function prepareRedeploy(targetIp, sshUser) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
