@@ -17,11 +17,7 @@ from pathlib import Path
 
 dynamic_host = os.environ.get('HOST', '0.0.0.0')
 
-ALLOWED_HOSTS = [
-    dynamic_host,
-    '127.0.0.1',
-    'localhost',
-]
+ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
     f'http://{dynamic_host}:8000',
@@ -163,6 +159,10 @@ STORAGES = {
 }
 
 # Session token verification
+
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = BASE_DIR / "data" / "sessions"
+os.makedirs(SESSION_FILE_PATH, exist_ok=True)
 
 SESSION_TOKEN = os.environ.get('SESSION_TOKEN')
 
