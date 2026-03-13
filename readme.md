@@ -36,9 +36,9 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 - v0.5 : Switch to Django, use API model, security update by using session tokens to verify communications, use [Alfred](https://github.com/buchtioof/alfred) to fetch data via SSH
 - v0.6 : Admin panel refine, login page rework, local session verification that locks Alfred (SSH injection), switch CSS to Tailwind local, employees management and links between them and PCs
 - v0.7 : QOL update, settings added, employees modal reworked, added middleware (manage timezone in Django)
-- v0.8 (actual) : Use SSH keys to reconnect safely, Languages update in beta (English and French available)
-- v0.9 (next) : Security fixes, clean and verified code
-- v1 : Deployment with Docker, all working fine
+- v0.8 : Use SSH keys to reconnect safely, Languages update in beta (English and French available)
+- v0.9 (actual) : Security fixes, clean and verified code
+- v1 (next) : Deployment with Docker, all working fine
 
 ## Dependencies
 
