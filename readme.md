@@ -25,7 +25,7 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 }
 ```
 
-## Versions
+## Changelogs
 
 ### Pre-release phase
 
@@ -38,6 +38,9 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 - v0.7 : QOL update, settings added, employees modal reworked, added middleware (manage timezone in Django)
 - v0.8 : Use SSH keys to reconnect safely, Languages update in beta (English and French available)
 - v0.9 (actual) : Use Gunicorn+Whitenoise for production, bug fixes, clean and verified code
+
+### Production releases
+
 - v1 (next) : Deployment with Docker, all working fine
 
 ## Dependencies
