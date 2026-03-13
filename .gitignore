@@ -5,3 +5,4 @@ __pycache__
 tailwindcss
 keys/
 web/migrations/000*
+staticfiles/

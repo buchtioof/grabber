@@ -5,7 +5,7 @@ export LANG=C
 
 # ==============================================================================
 #   Script : grabber.sh
-#   Version: 0.8
+#   Version: 0.9
 # ==============================================================================
 
 ##### MAIN VARIABLES #####
@@ -52,6 +52,11 @@ cleanup() {
 ########## ADMIN PANEL ##########
 
 server() {
+
+    # Create if needed the data folder
+    if [ ! -d "./data" ]; then
+        mkdir -p data
+    fi
     
     # Creating a session token to identify grabber
     SESSION_TOKEN=$(openssl rand -hex 32)
@@ -59,11 +64,11 @@ server() {
     mv temp_settings.json settings.json
 
     # Generate an SSH key for Paramiko
-    mkdir -p keys
-    if [ ! -f "keys/id_ed25519" ]; then
+    mkdir -p ./data/keys
+    if [ ! -f "data/keys/id_ed25519" ]; then
         echo ""
         echo -e "${YELLOW}No SSH key detected, generating one...${NC}"
-        ssh-keygen -t ed25519 -f keys/id_ed25519 -N "" -q
+        ssh-keygen -t ed25519 -f ./data/keys/id_ed25519 -N "" -q
         echo "${GREEN}> Done!${NC}"
     fi
 
@@ -81,6 +86,9 @@ server() {
     echo "Checking database..."
     python manage.py makemigrations > /dev/null
     python manage.py migrate --noinput > /dev/null
+
+    echo "Collecting static files..."
+    python manage.py collectstatic --noinput --ignore "input.css" > /dev/null
 
     # Check for admin user
     echo "Checking Superuser existence..."
@@ -105,7 +113,7 @@ server() {
     # Run server in background
     sleep 2
     export DJANGO_ALLOWED_HOST=$ADMIN_ADDRESS
-    python manage.py runserver $ADMIN_ADDRESS:$PORT > /dev/null &
+    gunicorn config.wsgi:application --bind $ADMIN_ADDRESS:$PORT --workers 3 --access-logfile - &
     SERVER_PID=$!
 
     trap cleanup INT

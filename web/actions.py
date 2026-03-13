@@ -29,7 +29,7 @@ def deploy_ssh(request):
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             
-            key_path = os.path.join(settings.BASE_DIR, 'keys', 'id_ed25519')
+            key_path = os.path.join(settings.BASE_DIR, 'data', 'keys', 'id_ed25519')
             pub_key_path = key_path + '.pub'
             
             if not os.path.exists(key_path):

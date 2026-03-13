@@ -37,7 +37,7 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 - v0.6 : Admin panel refine, login page rework, local session verification that locks Alfred (SSH injection), switch CSS to Tailwind local, employees management and links between them and PCs
 - v0.7 : QOL update, settings added, employees modal reworked, added middleware (manage timezone in Django)
 - v0.8 : Use SSH keys to reconnect safely, Languages update in beta (English and French available)
-- v0.9 (actual) : Security fixes, clean and verified code
+- v0.9 (actual) : Use Gunicorn+Whitenoise for production, bug fixes, clean and verified code
 - v1 (next) : Deployment with Docker, all working fine
 
 ## Dependencies
@@ -47,11 +47,13 @@ To run Grabber properly on your device, you will need these 3 dependencies avail
 - [Python3](https://www.python.org/)
 - [Sqlite3](https://sqlite.org/index.html)
 
-Grabber will install automatically these 2 dependencies in python virtual environment:
+Grabber will install automatically these 4 dependencies in python virtual environment:
 - [Paramiko](https://www.paramiko.org/)
 - [Django](https://www.djangoproject.com/)
+- [Gunicorn](https://gunicorn.org/)
+- [Whitenoise](https://github.com/evansd/whitenoise)
 
-These ones is already available in Grabber:
+These 3 are already available in Grabber:
 - [Alfred](https://github.com/buchtioof/alfred)
 - [Tailwind](https://tailwindcss.com/)
 - [Phosphor Icons](https://phosphoricons.com/)
