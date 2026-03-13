@@ -49,6 +49,11 @@ server() {
         echo "${GREEN}> Done!${ECM}"
     fi
 
+    if [ ! -f "./data/keys/secret.key" ]; then
+        echo -e "${YELLOW}No Django Secret Key detected, generating one...${ECM}"
+        openssl rand -base64 48 > ./data/keys/secret.key
+    fi
+
     # Prepare DB
     echo "Checking database..."
     python manage.py makemigrations > /dev/null
@@ -92,7 +97,7 @@ server() {
     # Run server in background
     sleep 2
     export DJANGO_ALLOWED_HOST=$ADMIN_ADDRESS
-    gunicorn config.wsgi:application --bind $ADMIN_ADDRESS:$PORT --workers 3 - &
+    gunicorn config.wsgi:application --bind $ADMIN_ADDRESS:$PORT --workers 3 &
     SERVER_PID=$!
 
     trap cleanup INT
