@@ -3,7 +3,7 @@ gbvenv
 __pycache__
 *.sqlite3
 tailwindcss
-keys/
+data/
 web/migrations/000*
 staticfiles/
 .env

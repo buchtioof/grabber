@@ -31,10 +31,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p88lx%vb+t&&glqmqwv9oyjvvm1%32b4+jx@u$6l25pn7z85%z'
+secret_path = BASE_DIR / 'data' / 'keys' / 'secret.key'
+
+try:
+    with open(secret_path, 'r') as f:
+        SECRET_KEY = f.read().strip()
+except FileNotFoundError:
+    raise ImproperlyConfigured("[ERROR] : The secret.key file was not found. Restart grabber to generate it.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = false
+DEBUG = False
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
