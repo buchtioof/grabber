@@ -8,6 +8,31 @@ Grabber is an administration interface that allows you to manage a group of comp
 
 ## Usage
 
+### Docker-compose setup
+
+Firstly, git clone this repo:\
+`git clone https://github.com/buchtioof/grabber.git`
+
+In order to use properly your admin panel, create an .env file with these variables:\
+```text
+# Fill the blank spaces with your host IP, a username, an email and a password for admin user in order to use Grabber Admin.
+# DO NOT USE ""
+
+# SERVER SETTINGS
+HOST=
+PORT=8000
+
+# ADMIN SETTINGS
+DJANGO_SUPERUSER_USERNAME=
+DJANGO_SUPERUSER_EMAIL=
+DJANGO_SUPERUSER_PASSWORD=
+```
+
+Then, build the container with docker-compose:\
+`docker-compose up -d --build`
+
+Finally, access to your Grabber panel via the IP you've given in your .env file!
+
 ### For pre-release versions
 
 Firstly, git clone this repo:\
@@ -37,11 +62,11 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 - v0.6 : Admin panel refine, login page rework, local session verification that locks Alfred (SSH injection), switch CSS to Tailwind local, employees management and links between them and PCs
 - v0.7 : QOL update, settings added, employees modal reworked, added middleware (manage timezone in Django)
 - v0.8 : Use SSH keys to reconnect safely, Languages update in beta (English and French available)
-- v0.9 (actual) : Use Gunicorn+Whitenoise for production, bug fixes, clean and verified code
+- v0.9 : Use Gunicorn+Whitenoise for production, bug fixes, clean and verified code
 
 ### Production releases
 
-- v1 (next) : Deployment with Docker, all working fine
+- v1 (actual) : Deployment with Docker, all working fine
 
 ## Dependencies
 
