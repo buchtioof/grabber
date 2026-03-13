@@ -9,31 +9,13 @@ export LANG=C
 # ==============================================================================
 
 ##### MAIN VARIABLES #####
-ALERT='\033[0;31m'
-SUCCESS='\033[0;32m'
-WARNING='\033[0;33m'
-ECM='\033[0m' # stands for END COLOR MESSAGE
+ALERT='\033[0;31m'      # RED
+SUCCESS='\033[0;32m'    # GREEN
+WARNING='\033[0;33m'    # YELLOW
+ECM='\033[0m'           # END COLOR MESSAGE
 
-ADMIN_ADDRESS=$(cat settings.json | jq -r .ip_address)
-PORT=$(cat settings.json | jq -r .port)
-
-########## REQUIREMENTS ##########
-
-REQUIRED_CMDS=(python3 sqlite3 jq)
-requirements() {
-    echo -n "Checking dependencies... "
-    MISSING=()
-    for cmd in "${REQUIRED_CMDS[@]}"; do
-        command -v "$cmd" >/dev/null 2>&1 || MISSING+=("$cmd")
-    done
-    if (( ${#MISSING[@]} > 0 )); then
-        echo "${ALERT}> Missing dependencies: ${MISSING[*]}${ECM}"
-        echo "> Install with: sudo apt install ${MISSING[*]}"
-        exit 1
-    else
-        echo "All set!"
-    fi
-}
+ADMIN_ADDRESS=${HOST:-0.0.0.0}
+PORT=${PORT:-8000}
 
 ##############################
 
@@ -42,12 +24,12 @@ requirements() {
 cleanup() {
     echo -e "\n${WARNING}> Closing the Server...${ECM}"
     kill $SERVER_PID
-    jq '.session_token = ""' settings.json > temp_settings.json
-    mv temp_settings.json settings.json
     echo ""
     echo "See you space cowboy..."
     exit 0
 }
+
+##############################
 
 ########## ADMIN PANEL ##########
 
@@ -57,70 +39,66 @@ server() {
     if [ ! -d "./data" ]; then
         mkdir -p data
     fi
-    
-    # Creating a session token to identify grabber
-    SESSION_TOKEN=$(openssl rand -hex 32)
-    jq --arg key "$SESSION_TOKEN" '.session_token = $key' settings.json > temp_settings.json
-    mv temp_settings.json settings.json
 
     # Generate an SSH key for Paramiko
     mkdir -p ./data/keys
     if [ ! -f "data/keys/id_ed25519" ]; then
         echo ""
-        echo -e "${YELLOW}No SSH key detected, generating one...${NC}"
+        echo -e "${YELLOW}No SSH key detected, generating one...${ECM}"
         ssh-keygen -t ed25519 -f ./data/keys/id_ed25519 -N "" -q
-        echo "${GREEN}> Done!${NC}"
+        echo "${GREEN}> Done!${ECM}"
     fi
-
-    # Check if venv already exists
-    if [ ! -d "./gbvenv" ]; then
-        python3 -m venv gbvenv
-    fi
-
-    # Run venv
-    source gbvenv/bin/activate
-    pip install -q --upgrade pip
-    pip install -q -r requirements.txt
 
     # Prepare DB
     echo "Checking database..."
     python manage.py makemigrations > /dev/null
     python manage.py migrate --noinput > /dev/null
 
-    echo "Collecting static files..."
-    python manage.py collectstatic --noinput --ignore "input.css" > /dev/null
 
     # Check for admin user
-    echo "Checking Superuser existence..."
-    if ! python ./lib/check_admin.py; then
-        echo -e "${ALERT}> No Superuser detected! Create one now in order to use the Admin Panel.${ECM}"
-        echo ""
-        python manage.py createsuperuser
+    echo "Checking Admin existence..."
+    if ! python ./lib/check_admin.py > /dev/null 2>&1; then
+
+        if [[ -n "$ADMIN_USERNAME" && -n "$ADMIN_PASSWORD" ]]; then
+            echo "Creating default admin from .env variables..."
+            python manage.py createsuperuser --noinput > /dev/null 2>&1 || echo -e "${WARNING}> Failed to create admin. Password might be too common.${ECM}"
+        else
+            echo -e "${WARNING}> No Superuser detected and no credentials found in .env!${ECM}"
+            echo -e "${WARNING}> To create one later, run: docker exec -it grabber-prod python manage.py createsuperuser${ECM}"
+        fi
+    else
+        echo -e "${WARNING}> Done!${ECM}"
     fi
 
+    # Place static files inside "staticfiles" Django folder
+    echo "Collecting static files..."
+    python manage.py collectstatic --noinput --ignore "input.css" > /dev/null
+    
+    # Generate session token and save in a variable
+    export SESSION_TOKEN=$(openssl rand -hex 32)
+
     echo "Starting the server..."
+    export DJANGO_ALLOWED_HOST=$ADMIN_ADDRESS
+
     # Check if user added settings
     if [[ -z "$ADMIN_ADDRESS" || "$ADMIN_ADDRESS" == "null" ]]; then 
         echo -e "${WARNING}> No Address set in settings.json, address "localhost" is chosen${ECM}"
-        ADMIN_ADDRESS="localhost" 
     fi
     sleep 1
     if [[ -z "$PORT" || "$PORT" == "null" ]]; then 
-        echo -e "${WARNING}> No Address set in settings.json, port "8000" is chosen${ECM}"; 
-        PORT="8000"
+        echo -e "${WARNING}> No Address set in settings.json, port "8000" is chosen${ECM}";
     fi
 
     # Run server in background
     sleep 2
     export DJANGO_ALLOWED_HOST=$ADMIN_ADDRESS
-    gunicorn config.wsgi:application --bind $ADMIN_ADDRESS:$PORT --workers 3 --access-logfile - &
+    gunicorn config.wsgi:application --bind $ADMIN_ADDRESS:$PORT --workers 3 - &
     SERVER_PID=$!
 
     trap cleanup INT
 
     echo ""
     echo -e "${SUCCESS}> Dashboard launched at http://$ADMIN_ADDRESS:$PORT${ECM}"
-    echo "> End the session with "CTRL+C""
     echo ""
     echo "[SERVER LOGS]"
 
@@ -139,7 +117,8 @@ echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_ <<   >>   / /  \ \  "
 echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__)  (__)  (__) "      
 echo ""
 echo "Hello World!"
-requirements
 echo ""
 echo "Starting Admin Panel..."
 server
+
+##############################

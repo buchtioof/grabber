@@ -15,10 +15,10 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 from pathlib import Path
 
-dynamic_host = os.environ.get('DJANGO_ALLOWED_HOST', 'localhost')
+dynamic_host = os.environ.get('HOST', '0.0.0.0')
 
 ALLOWED_HOSTS = [
-    dynamic_host, # IP given by the user
+    dynamic_host,
     '127.0.0.1',
     'localhost',
 ]
@@ -34,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-p88lx%vb+t&&glqmqwv9oyjvvm1%32b4+jx@u$6l25pn7z85%z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = false
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -152,16 +152,7 @@ STORAGES = {
 
 # Session token verification
 
-SETTINGS_FILE = os.path.join(BASE_DIR, 'settings.json')
+SESSION_TOKEN = os.environ.get('SESSION_TOKEN')
 
-if not os.path.exists(SETTINGS_FILE):
-    raise ImproperlyConfigured("ERROR: Settings not found!")
-
-with open(SETTINGS_FILE, 'r') as f:
-    try:
-        config_data = json.load(f)
-        SESSION_TOKEN = config_data['session_token']
-    except json.JSONDecodeError:
-        raise ImproperlyConfigured("[ERROR]: JSON is not understandable.")
-    except KeyError:
-        raise ImproperlyConfigured("[ERROR] : The Session Token is not found in the settings.")
+if not SESSION_TOKEN:
+    raise ImproperlyConfigured("[ERROR] : The SESSION_TOKEN environment variable is not set. Please check your .env file.")
