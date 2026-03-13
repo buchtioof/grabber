@@ -54,17 +54,19 @@ server() {
         openssl rand -base64 48 > ./data/keys/secret.key
     fi
 
+    # Generate session token and save in a variable
+    export SESSION_TOKEN=$(openssl rand -hex 32)
+
     # Prepare DB
     echo "Checking database..."
     python manage.py makemigrations > /dev/null
     python manage.py migrate --noinput > /dev/null
 
-
     # Check for admin user
     echo "Checking Admin existence..."
     if ! python ./lib/check_admin.py > /dev/null 2>&1; then
 
-        if [[ -n "$ADMIN_USERNAME" && -n "$ADMIN_PASSWORD" ]]; then
+        if [[ -n "$DJANGO_SUPERUSER_USERNAME" && -n "$DJANGO_SUPERUSER_PASSWORD" ]]; then
             echo "Creating default admin from .env variables..."
             python manage.py createsuperuser --noinput > /dev/null 2>&1 || echo -e "${WARNING}> Failed to create admin. Password might be too common.${ECM}"
         else
@@ -79,9 +81,6 @@ server() {
     echo "Collecting static files..."
     python manage.py collectstatic --noinput --ignore "input.css" > /dev/null
     
-    # Generate session token and save in a variable
-    export SESSION_TOKEN=$(openssl rand -hex 32)
-
     echo "Starting the server..."
     export DJANGO_ALLOWED_HOST=$ADMIN_ADDRESS
 
@@ -97,7 +96,7 @@ server() {
     # Run server in background
     sleep 2
     export DJANGO_ALLOWED_HOST=$ADMIN_ADDRESS
-    gunicorn config.wsgi:application --bind $ADMIN_ADDRESS:$PORT --workers 3 &
+    gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --access-logfile - &
     SERVER_PID=$!
 
     trap cleanup INT

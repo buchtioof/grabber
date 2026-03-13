@@ -23,6 +23,12 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    f'http://{dynamic_host}:8000',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
