@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-13 07:27-0500\n"
+"POT-Creation-Date: 2026-03-13 21:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: config/settings.py:125
+#: config/settings.py:133
 msgid "English"
 msgstr "Anglais"
 
-#: config/settings.py:126
+#: config/settings.py:134
 msgid "Français"
 msgstr "Français"
 
@@ -62,17 +62,22 @@ msgstr "Mot de passe"
 msgid "Login"
 msgstr "Connexion"
 
+#: web/templates/base.html:156
+msgid "Delete"
+msgstr "Supprimer"
+
 #: web/actions.py:36
 msgid "[ERROR] SSH key not found. Rerun grabber.sh to configure a key."
-msgstr "[ERREUR] Clé SSH introuvable. Relancez grabber.sh pour configurer une clé."
+msgstr ""
+"[ERREUR] Clé SSH introuvable. Relancez grabber.sh pour configurer une clé."
 
 #: web/actions.py:51
 msgid ""
 "[ERROR] New PC: you must provide a password for the first deployment! (key "
 "refused)"
 msgstr ""
-"[ERREUR] Nouveau PC : vous devez fournir un mot de passe pour le premier déploiement ! "
-"(clé refusée)"
+"[ERREUR] Nouveau PC : vous devez fournir un mot de passe pour le premier "
+"déploiement ! (clé refusée)"
 
 #: web/actions.py:80
 #, python-brace-format
@@ -128,8 +133,8 @@ msgid "Welcome to Grabber,"
 msgstr "Bienvenue sur Grabber,"
 
 #: web/templates/base.html:18
-msgid "Voir les nouveautés de cette version"
-msgstr "Voir les nouveautés de cette version"
+msgid "See the upgrades in the changelogs"
+msgstr "Voir les nouveautés dans le journal des modifications"
 
 #: web/templates/base.html:22
 msgid "Local Mode"
@@ -188,10 +193,6 @@ msgstr "Employés existants"
 #: web/templates/base.html:155
 msgid "Are you sure you want to delete this employee?"
 msgstr "Êtes-vous sûr de vouloir supprimer cet employé ?"
-
-#: web/templates/base.html:156
-msgid "Delete"
-msgstr "Supprimer"
 
 #: web/templates/base.html:166
 msgid "No employees created for now."
@@ -335,8 +336,8 @@ msgid ""
 "Send the script to a network machine via SSH to automatically add it to the "
 "dashboard."
 msgstr ""
-"Envoyez le script à une machine du réseau via SSH pour l'ajouter automatiquement au "
-"tableau de bord."
+"Envoyez le script à une machine du réseau via SSH pour l'ajouter "
+"automatiquement au tableau de bord."
 
 #: web/templates/list.html:24 web/templates/list.html:116
 msgid "IP Address"
@@ -411,3 +412,6 @@ msgstr "[OK] L'ordinateur a été assigné à {first_name} {last_name}."
 #: web/views.py:56
 msgid "[OK] The assignment has been removed for this computer."
 msgstr "[OK] L'assignation a été retirée pour cet ordinateur."
+
+#~ msgid "Voir les nouveautés de cette version"
+#~ msgstr "Voir les nouveautés de cette version"
