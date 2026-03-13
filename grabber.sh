@@ -130,26 +130,8 @@ echo "  \____|   |_| \_\   / ___ \    |____/   |____/  |_____|    |_| \_\   "
 echo "  _)(|_    //   \ \_ \ \  \ \  _|| \ \_  _|| \ \_ <<   >>   / /  \ \  "
 echo " (__)__)  (__)  (__)(__)  (__)(__) (__)(__) (__)(__) (__)  (__)  (__) "      
 echo ""
-
-echo "Hello World! This is the admin side of Grabber"
-echo "1: Launch grabber | 2: Edit settings | c: Cancel"
-read -p ";> " choice
-
-if [ "$choice" = "1" ]; then
-    requirements
-    echo ""
-    echo "Starting Admin Panel..."
-    server
-
-elif [ "$choice" = "2" ]; then
-    echo "Opening settings..."
-    sleep 1
-    nano settings.json
-
-elif [ "$choice" = "c" ]; then 
-    echo "See you space, cowboy..."
-    exit
-
-else echo "Your choice has an error, please retry."; exit; 
-
-fi
+echo "Hello World!"
+requirements
+echo ""
+echo "Starting Admin Panel..."
+server
