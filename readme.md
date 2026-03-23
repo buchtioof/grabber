@@ -70,8 +70,6 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 
 ## Contributing
 
-### DEBUG Mode
-
 In order to develop new features or work on the design, launch Grabber by using the docker-compose dedicated for development:
 ```
 # enable HOT RELOADING and DEBUG in Django
