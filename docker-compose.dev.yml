@@ -1,0 +1,15 @@
+services:
+  grabber:
+    build: .
+    container_name: grabberdev
+    env_file:
+      - .env
+    environment:
+      - DEBUG=True
+      - SESSION_TOKEN=temporarydevkey_dontuseinprod
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+    command: python manage.py runserver 0.0.0.0:${PORT:-8000}

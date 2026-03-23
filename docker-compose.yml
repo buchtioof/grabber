@@ -5,9 +5,7 @@ services:
     env_file:
       - .env
     ports:
-      # Expose dynamiquement le port choisi dans le .env
       - "${PORT:-8000}:${PORT:-8000}"
     volumes:
-      # Persistance de la DB et des clés SSH
       - ./data:/app/data
     restart: unless-stopped

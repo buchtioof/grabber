@@ -8,7 +8,7 @@ Grabber is an administration interface that allows you to manage a group of comp
 
 ## Usage
 
-### Docker-compose setup
+### Docker deployment
 
 Firstly, git clone this repo:\
 `git clone https://github.com/buchtioof/grabber.git`
@@ -67,6 +67,16 @@ In order to use [Alfred](https://github.com/buchtioof/alfred) and fetch other co
 ### Production releases
 
 - v1 (actual) : Deployment with Docker, all working fine
+
+## Contributing
+
+### DEBUG Mode
+
+In order to develop new features or work on the design, launch Grabber by using the docker-compose dedicated for development:
+```
+# enable HOT RELOADING and DEBUG in Django
+docker-compose -f docker-compose.dev.yml up
+```
 
 ## Dependencies
 
