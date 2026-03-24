@@ -1,5 +1,5 @@
 services:
-  grabber:
+  grabberdev:
     build: .
     container_name: grabberdev
     env_file:

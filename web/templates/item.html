@@ -143,9 +143,12 @@
         </div>
     </div>
 
-    <div class="mt-12 text-center text-sm font-medium text-slate-500">
-        Grabber v0.9 (Alfred v0.2) • {% trans "Data generated on" %} {{ data.last_updated|date:"d/m/Y à H:i"|default:"N/A" }}        
-    </div>
+    <div class="mt-10 border-t border-slate-700 pt-6 text-center text-sm text-slate-500">
+    <p>
+        {% trans "Grabber version :" %} <span class="font-bold text-slate-400">v{{ grabber_version }}</span> | 
+        {% trans "Motor used :" %} <span class="font-bold text-slate-400">{{ motor_used }}</span>
+    </p>
+</div>
 
 </div>
 {% endblock %}

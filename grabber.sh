@@ -14,6 +14,9 @@ SUCCESS='\033[0;32m'    # GREEN
 WARNING='\033[0;33m'    # YELLOW
 ECM='\033[0m'           # END COLOR MESSAGE
 
+GB_VERSION='1.2'
+MOTOR_VERSION='Alfred v0.2'
+
 ADMIN_ADDRESS=${HOST:-0.0.0.0}
 PORT=${PORT:-8000}
 
@@ -83,6 +86,10 @@ server() {
     
     echo "Starting the server..."
     export DJANGO_ALLOWED_HOST=$ADMIN_ADDRESS
+
+    # Change by the version 
+    export GRABBER_VERSION=$GB_VERSION
+    export MOTOR_USED=$MOTOR_VERSION
 
     # Check if user added settings
     if [[ -z "$ADMIN_ADDRESS" || "$ADMIN_ADDRESS" == "null" ]]; then 

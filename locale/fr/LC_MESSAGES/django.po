@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-13 21:44+0100\n"
+"POT-Creation-Date: 2026-03-24 09:31-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: config/settings.py:133
+#: config/settings.py:141
 msgid "English"
 msgstr "Anglais"
 
-#: config/settings.py:134
+#: config/settings.py:142
 msgid "Français"
 msgstr "Français"
 
@@ -61,10 +61,6 @@ msgstr "Mot de passe"
 #: config/templates/admin/login.html:64
 msgid "Login"
 msgstr "Connexion"
-
-#: web/templates/base.html:156
-msgid "Delete"
-msgstr "Supprimer"
 
 #: web/actions.py:36
 msgid "[ERROR] SSH key not found. Rerun grabber.sh to configure a key."
@@ -132,106 +128,110 @@ msgstr "Panneau d'administration"
 msgid "Welcome to Grabber,"
 msgstr "Bienvenue sur Grabber,"
 
-#: web/templates/base.html:18
+#: web/templates/base.html:25
 msgid "See the upgrades in the changelogs"
 msgstr "Voir les nouveautés dans le journal des modifications"
 
-#: web/templates/base.html:22
+#: web/templates/base.html:30
+msgid "Unknown grabber version / Dev Mode"
+msgstr "Version de grabber inconnue / Mode Dev"
+
+#: web/templates/base.html:35
 msgid "Local Mode"
 msgstr "Mode Local"
 
-#: web/templates/base.html:31 web/templates/base.html:188
+#: web/templates/base.html:44 web/templates/base.html:201
 msgid "Settings"
 msgstr "Paramètres"
 
-#: web/templates/base.html:38
+#: web/templates/base.html:51
 msgid "Employees"
 msgstr "Employés"
 
-#: web/templates/base.html:41 web/templates/base.html:45
+#: web/templates/base.html:54 web/templates/base.html:58
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: web/templates/base.html:84
+#: web/templates/base.html:97
 msgid "Manage employees"
 msgstr "Gérer les employés"
 
-#: web/templates/base.html:85
+#: web/templates/base.html:98
 msgid "Edit the list of users to assign to computers."
 msgstr "Modifiez la liste des utilisateurs à assigner aux ordinateurs."
 
-#: web/templates/base.html:90
+#: web/templates/base.html:103
 msgid "Add an new employee"
 msgstr "Ajouter un nouvel employé"
 
-#: web/templates/base.html:102 web/templates/base.html:142
+#: web/templates/base.html:115 web/templates/base.html:155
 msgid "First name"
 msgstr "Prénom"
 
-#: web/templates/base.html:106 web/templates/base.html:146
+#: web/templates/base.html:119 web/templates/base.html:159
 #: web/templates/item.html:119
 msgid "Name"
 msgstr "Nom"
 
-#: web/templates/base.html:111 web/templates/base.html:151
+#: web/templates/base.html:124 web/templates/base.html:164
 msgid "E-mail address"
 msgstr "Adresse e-mail"
 
-#: web/templates/base.html:112
+#: web/templates/base.html:125
 msgid "jean.dupont@entreprise.com"
 msgstr "jean.dupont@entreprise.com"
 
-#: web/templates/base.html:116 web/templates/base.html:159
-#: web/templates/base.html:241 web/templates/list.html:130
+#: web/templates/base.html:129 web/templates/base.html:172
+#: web/templates/base.html:254 web/templates/list.html:130
 msgid "Save"
 msgstr "Enregistrer"
 
-#: web/templates/base.html:123
+#: web/templates/base.html:136
 msgid "Existing employees"
 msgstr "Employés existants"
 
-#: web/templates/base.html:155
+#: web/templates/base.html:168
 msgid "Are you sure you want to delete this employee?"
 msgstr "Êtes-vous sûr de vouloir supprimer cet employé ?"
 
-#: web/templates/base.html:166
+#: web/templates/base.html:179
 msgid "No employees created for now."
 msgstr "Aucun employé créé pour le moment."
 
-#: web/templates/base.html:172 web/templates/base.html:238
+#: web/templates/base.html:185 web/templates/base.html:251
 #: web/templates/list.html:127
 msgid "Cancel"
 msgstr "Annuler"
 
-#: web/templates/base.html:189
+#: web/templates/base.html:202
 msgid "Adjust the settings in the Grabber Admin panel."
 msgstr "Ajustez les paramètres dans le panneau d'administration Grabber."
 
-#: web/templates/base.html:196
+#: web/templates/base.html:209
 msgid "Language & Region (BETA)"
 msgstr "Langue & Région (BÊTA)"
 
-#: web/templates/base.html:199
+#: web/templates/base.html:212
 msgid "Language"
 msgstr "Langue"
 
-#: web/templates/base.html:211
+#: web/templates/base.html:224
 msgid "Timezone"
 msgstr "Fuseau horaire"
 
-#: web/templates/base.html:223
+#: web/templates/base.html:236
 msgid "Admin profile"
 msgstr "Profil administrateur"
 
-#: web/templates/base.html:226
+#: web/templates/base.html:239
 msgid "New username"
 msgstr "Nouveau nom d'utilisateur"
 
-#: web/templates/base.html:230
+#: web/templates/base.html:243
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
-#: web/templates/base.html:231
+#: web/templates/base.html:244
 msgid "Laissez vide pour ne pas le changer"
 msgstr "Laissez vide pour ne pas le changer"
 
@@ -315,9 +315,13 @@ msgstr "Utilisé"
 msgid "No partition detected"
 msgstr "Aucune partition détectée"
 
-#: web/templates/item.html:147
-msgid "Data generated on"
-msgstr "Données générées le"
+#: web/templates/item.html:148
+msgid "Grabber version :"
+msgstr "Version de Grabber :"
+
+#: web/templates/item.html:149
+msgid "Motor used :"
+msgstr "Moteur utilisé :"
 
 #: web/templates/list.html:13
 msgid "Deployment disabled"
@@ -413,5 +417,8 @@ msgstr "[OK] L'ordinateur a été assigné à {first_name} {last_name}."
 msgid "[OK] The assignment has been removed for this computer."
 msgstr "[OK] L'assignation a été retirée pour cet ordinateur."
 
-#~ msgid "Voir les nouveautés de cette version"
+#~ msgid "Data generated on"
+#~ msgstr "Données générées le"
+
+#~ msgid "See the upgrades of this version"
 #~ msgstr "Voir les nouveautés de cette version"

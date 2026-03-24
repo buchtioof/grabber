@@ -15,9 +15,22 @@
             {% csrf_token %}
             <h1 class="text-lg font-bold text-slate-100">{% trans "Welcome to Grabber," %} {{ request.user.username }}</h1>
             
-            <a href="https://github.com/buchtioof/grabber#changelogs" class="rounded-full border border-green-500/30 bg-green-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-green-400 transition-colors duration-200 hover:border-green-500/50 hover:bg-green-500/20" title="{% trans 'See the upgrades in the changelogs' %}">
-                prod v1
-            </a>
+            <a href="https://github.com/buchtioof/grabber#changelogs" 
+                class="rounded-full border px-2 py-0.5 text-xs font-semibold tracking-wide transition-colors duration-200 
+                {% if grabber_version != 'Unknown Grabber version' %}
+                        border-green-500/30 bg-green-500/10 text-green-400 hover:border-green-500/50 hover:bg-green-500/20
+                {% else %}
+                        border-orange-500/30 bg-orange-500/10 text-orange-400 hover:border-orange-500/50 hover:bg-orange-500/20
+                {% endif %}" 
+                title="{% trans 'See the upgrades in the changelogs' %}">
+                    
+                    {% if grabber_version != 'Unknown Grabber version' %}
+                        v{{ grabber_version }}
+                    {% else %}
+                        {% trans "Unknown grabber version / Dev Mode" %}
+                    {% endif %}
+                    
+                </a>
             <span id="localhost-pill-warning" class="hidden rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-yellow-400">
                 {% trans "Local Mode" %}
             </span> 
